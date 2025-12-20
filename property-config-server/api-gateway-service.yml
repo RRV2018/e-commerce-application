@@ -1,0 +1,28 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: api-gateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: user-management-service
+          uri: lb://user-management-service
+          predicates:
+            - Path=/api/users/**,/api/auth/**
+          filters:
+            - StripPrefix=1
+            - JwtAuthenticationFilter
+        - id: product-catalog-service
+          uri: lb://product-catalog-service
+          predicates:
+            - Path=/api/products/**
+          filters:
+            - JwtAuthenticationFilter
+        - id: order-management-service
+          uri: lb://order-management-service
+          predicates:
+            - Path=/api/orders/**
+          filters:
+            - JwtAuthenticationFilter
