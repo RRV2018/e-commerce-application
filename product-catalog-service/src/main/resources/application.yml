@@ -1,6 +1,6 @@
 spring:
   application:
-    name: user-service
+    name: product-catalog-service
   config:
     import: configserver:http://localhost:8888
 
