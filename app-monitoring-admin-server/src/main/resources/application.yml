@@ -10,6 +10,9 @@ spring:
       password: admin123
   boot:
     admin:
+      discovery:
+        ignored-services:
+          - app-monitoring-admin-server
       client:
         enabled: false
         instance:

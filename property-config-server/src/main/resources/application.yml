@@ -6,13 +6,20 @@ spring:
     name: property-config-server
   cloud:
     config:
-      enabled: false
       server:
         git:
-          uri: https://github.com/RRV2018/property-config-server.git
+          uri: https://github.com/RRV2018/e-commerce-application.git
           default-label: main
-
+          refresh-rate: 0
+          search-paths: config_properties
+  boot:
+    admin:
+      client:
+        instance:
+          hostname: localhost
 eureka:
+  instance:
+    hostname: localhost
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka
