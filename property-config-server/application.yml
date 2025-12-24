@@ -5,7 +5,11 @@ spring:
         url: http://localhost:8087
         username: admin
         password: admin123
-
+  cloud:
+    config:
+      server:
+        git:
+          refresh-rate: 0
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
