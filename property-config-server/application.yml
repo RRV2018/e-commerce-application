@@ -10,6 +10,13 @@ spring:
       ddl-auto: update
     show-sql: true
 
+  boot:
+    admin:
+      client:
+        url: http://localhost:8087
+        username: admin
+        password: admin123
+
 eureka:
   client:
     serviceUrl:
@@ -20,3 +27,12 @@ eureka:
 application:
   secret:
     key: mySecretKeyForJwtTokenGeneration123
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

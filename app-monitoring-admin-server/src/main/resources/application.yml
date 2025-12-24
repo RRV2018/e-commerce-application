@@ -1,0 +1,17 @@
+server:
+  port: 8087
+
+spring:
+  application:
+    name: app-monitoring-admin-server
+  security:
+    user:
+      name: admin
+      password: admin123
+  boot:
+    admin:
+      client:
+        enabled: false
+  cloud:
+    config:
+      enabled: false

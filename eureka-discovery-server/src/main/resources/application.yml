@@ -4,11 +4,10 @@ server:
 spring:
   application:
     name: spring-boot-eureka-server
-  config:
-    import: configserver:http://localhost:8888
 
   cloud:
     config:
+      enabled: false
       fail-fast: true
       retry:
         max-attempts: 10
