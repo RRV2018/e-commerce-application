@@ -6,6 +6,7 @@ spring:
     name: property-config-server
   cloud:
     config:
+      enabled: false
       server:
         git:
           uri: https://github.com/RRV2018/property-config-server.git

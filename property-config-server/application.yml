@@ -1,4 +1,11 @@
 spring:
+  boot:
+    admin:
+      client:
+        url: http://localhost:8087
+        username: admin
+        password: admin123
+
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
@@ -9,13 +16,6 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-
-  boot:
-    admin:
-      client:
-        url: http://localhost:8087
-        username: admin
-        password: admin123
 
 eureka:
   client:
