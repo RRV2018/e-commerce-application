@@ -23,6 +23,10 @@
             <artifactId>spring-boot-admin-starter-server</artifactId>
             <version>${de.codecentric.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

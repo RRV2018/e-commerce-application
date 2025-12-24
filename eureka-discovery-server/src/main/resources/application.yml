@@ -16,6 +16,8 @@ spring:
         max-interval: 10000
 
 eureka:
+  instance:
+    hostname: localhost
   client:
     registerWithEureka: false
     fetchRegistry: false
