@@ -2,9 +2,6 @@ spring:
   boot:
     admin:
       client:
-        url: http://localhost:8087
-        username: admin
-        password: admin123
         instance:
           hostname: localhost
   datasource:
