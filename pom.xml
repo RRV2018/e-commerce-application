@@ -25,6 +25,7 @@
         <module>payment-management-service</module>
         <module>eureka-discovery-server</module>
         <module>app-monitoring-admin-server</module>
+        <module>notification-management-service</module>
     </modules>
 
     <properties>
@@ -92,6 +93,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
     </dependencies>
 </project>
