@@ -9,6 +9,8 @@ spring:
       server:
         git:
           uri: https://github.com/RRV2018/e-commerce-application.git
+          username: ${app.git.username}
+          password: ${app.git.password}
           default-label: main
           refresh-rate: 0
           search-paths: config_properties
