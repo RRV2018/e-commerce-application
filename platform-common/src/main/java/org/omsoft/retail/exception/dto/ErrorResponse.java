@@ -1,18 +1,21 @@
-package com.omsoft.retail.user.exception;
+package org.omsoft.retail.exception.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ErrorResponse {
-    private LocalDateTime timestamp;
-    private int status;
-    private String error;
+    private String service;
+    private String errorCode;
     private String message;
+    private int httpStatus;
     private String path;
+    private Instant timestamp;
 }

@@ -6,11 +6,14 @@ import com.omsoft.retail.user.entiry.User;
 import com.omsoft.retail.user.repository.AddressRepository;
 import com.omsoft.retail.user.repository.UserRepository;
 import com.omsoft.retail.user.service.AddressService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 public class AddressServiceImpl implements AddressService {
 
     private final AddressRepository addressRepository;
@@ -21,6 +24,7 @@ public class AddressServiceImpl implements AddressService {
         this.addressRepository = addressRepository;
         this.userRepository = userRepository;
     }
+    @CircuitBreaker(name = "userServiceCB", fallbackMethod = "fallback")
     @Override
     public Address addAddress(Long userId, AddressRequest dto) {
 
@@ -57,5 +61,11 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public void deleteAddress(Long addressId) {
         addressRepository.deleteById(addressId);
+    }
+
+    // Fallback must match method signature + Throwable
+    public String fallback(String userId, Throwable ex) {
+        log.error("Fallback triggered for userId={}, reason={}", userId, ex.getMessage());
+        return "User service is temporarily unavailable";
     }
 }
