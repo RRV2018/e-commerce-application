@@ -25,6 +25,12 @@
             <artifactId>spring-boot-starter-mail</artifactId>
             <version>${spring.email.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.omsoft.retail</groupId>
+            <artifactId>logging-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>

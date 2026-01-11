@@ -23,6 +23,6 @@ spring:
         - id: order-management-service
           uri: lb://order-management-service
           predicates:
-            - Path=/api/orders/**
+            - Path=/api/orders/**,/api/orders
           filters:
             - JwtAuthenticationFilter
