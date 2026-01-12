@@ -1,8 +1,7 @@
 package com.omsoft.retail.product.controller;
 
-import com.omsoft.retail.product.dto.PageResponse;
-import com.omsoft.retail.product.dto.ProductRequest;
-import com.omsoft.retail.product.dto.ProductResponse;
+import com.omsoft.retail.product.dto.*;
+import com.omsoft.retail.product.entity.Category;
 import com.omsoft.retail.product.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +28,9 @@ public class ProductController {
         return service.getProduct(id);
     }
 
-    @PostMapping
-    public ProductResponse create(@RequestBody @Valid ProductRequest dto) {
-        return service.create(dto);
+    @PostMapping("/category")
+    public CategoryResponse createCategory(@RequestBody @Valid CategoryRequest dto) {
+        return service.createCategory(dto);
     }
 
     @GetMapping("/filter")
@@ -43,5 +42,12 @@ public class ProductController {
 
         return service.getProducts(page, size, sort, dir);
     }
+
+    @PostMapping
+    public ProductResponse create(@RequestBody @Valid ProductRequest dto) {
+        return service.create(dto);
+    }
+
+
 }
 

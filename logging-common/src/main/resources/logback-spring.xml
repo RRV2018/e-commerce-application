@@ -4,6 +4,9 @@
                     name="APP_NAME"
                     source="spring.application.name"/>
 
+    <property name="LOG_PATTERN"
+              value="${LOG_PATTERN:-%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n}"/>
+    ✅
     <!-- ===================== -->
     <!-- Console Appender -->
     <!-- ===================== -->

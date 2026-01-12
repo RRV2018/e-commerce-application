@@ -1,9 +1,7 @@
 package com.omsoft.retail.product.service;
 
 
-import com.omsoft.retail.product.dto.PageResponse;
-import com.omsoft.retail.product.dto.ProductRequest;
-import com.omsoft.retail.product.dto.ProductResponse;
+import com.omsoft.retail.product.dto.*;
 import com.omsoft.retail.product.entity.Category;
 import com.omsoft.retail.product.entity.Product;
 import com.omsoft.retail.product.mapper.ProductMapper;
@@ -88,4 +86,12 @@ public class ProductService {
                 productPage.isLast()
         );
     }
+
+    public CategoryResponse createCategory(CategoryRequest categoryRequest) {
+        Category category = new Category();
+        category.setName(categoryRequest.name());
+        Category cat = categoryRepo.save(category);
+        return new CategoryResponse(cat.getId(), cat.getName());
+    }
+
 }

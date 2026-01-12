@@ -21,3 +21,9 @@ eureka:
   client:
     registerWithEureka: false
     fetchRegistry: false
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n"
+
+LOG_PATTERN: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n"
