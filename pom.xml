@@ -16,6 +16,7 @@
     </parent>
 
     <modules>
+        <module>logging-common</module>
         <module>api-gateway-service</module>
         <module>property-config-server</module>
         <module>user-management-service</module>
