@@ -144,6 +144,9 @@ services:
     image: property-config
     ports:
       - "8888:8888"
+    depends_on:
+      eureka-discovery:
+        condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
       interval: 10s
