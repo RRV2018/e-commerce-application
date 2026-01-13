@@ -24,7 +24,7 @@ eureka:
     hostname: localhost
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://eureka-discovery-server:8761/eureka
     instance:
       preferIpAddress: true
 
