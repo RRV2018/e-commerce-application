@@ -11,4 +11,5 @@ docker build -t eureka-discovery eureka-discovery-server/
 docker build -t app-monitoring-admin app-monitoring-admin-server/
 
 Write-Host "Starting containers..."
+docker compose down
 docker compose up --build

@@ -18,6 +18,7 @@ services:
       context: ./eureka-discovery-server
       dockerfile: Dockerfile
     image: eureka-discovery
+    container_name: eureka-discovery
     ports:
       - "8761:8761"
     healthcheck:
