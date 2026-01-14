@@ -31,4 +31,4 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     serviceUrl:
-      defaultZone: http://eureka-discovery-service:8761/eureka
+      defaultZone: http://eureka-discovery-server:8761/eureka
