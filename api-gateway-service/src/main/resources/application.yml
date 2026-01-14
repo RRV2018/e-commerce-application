@@ -4,7 +4,7 @@ spring:
   application:
     name: api-gateway-service
   config:
-    import: configserver:http://localhost:8888
+    import: configserver:http://property-config-service:8888
 
   cloud:
     config:

@@ -1,24 +1,25 @@
 version: "3.9"
 
 services:
-  api-gateway:
+  api-gateway-server:
     build:
       context: ./api-gateway-service
       dockerfile: Dockerfile
-    image: api-gateway
+    image: api-gateway-service
     ports:
       - "8081:8081"
+    networks:
+      - app-net
     depends_on:
-      property-config:
+      property-config-service:
         condition: service_healthy
-      eureka-discovery:
+      eureka-discovery-service:
         condition: service_healthy
-  eureka-discovery:
+  eureka-discovery-server:
     build:
       context: ./eureka-discovery-server
       dockerfile: Dockerfile
-    image: eureka-discovery
-    container_name: eureka-discovery
+    image: eureka-discovery-server
     ports:
       - "8761:8761"
     healthcheck:
@@ -26,23 +27,23 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-  app-monitoring-admin:
+  app-monitoring-admin-server:
     build:
       context: ./app-monitoring-admin-server
       dockerfile: Dockerfile
-    image: app-monitoring-admin
+    image: app-monitoring-admin-server
     ports:
       - "8087:8087"
     depends_on:
-      property-config:
+      property-config-service:
         condition: service_healthy
-      eureka-discovery:
+      eureka-discovery-service:
         condition: service_healthy
-  inventory-management:
+  inventory-management-server:
     build:
       context: ./inventory-management-service
       dockerfile: Dockerfile
-    image: inventory-management
+    image: inventory-management-server
     ports:
       - "8085:8085"
     environment:
@@ -53,9 +54,9 @@ services:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS}
       - KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
     depends_on:
-      property-config:
+      property-config-service:
         condition: service_healthy
-      eureka-discovery:
+      eureka-discovery-service:
         condition: service_healthy
       postgres:
         condition: service_healthy
@@ -63,11 +64,11 @@ services:
         condition: service_healthy
       keycloak:
         condition: service_healthy
-  order-management:
+  order-management-server:
     build:
       context: ./order-management-service
       dockerfile: Dockerfile
-    image: order-management
+    image: order-management-server
     ports:
       - "8084:8084"
     environment:
@@ -78,9 +79,9 @@ services:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS}
       - KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
     depends_on:
-      property-config:
+      property-config-service:
         condition: service_healthy
-      eureka-discovery:
+      eureka-discovery-service:
         condition: service_healthy
       postgres:
         condition: service_healthy
@@ -88,11 +89,11 @@ services:
         condition: service_healthy
       keycloak:
         condition: service_healthy
-  payment-management:
+  payment-management-server:
     build:
       context: ./payment-management-service
       dockerfile: Dockerfile
-    image: payment-management
+    image: payment-management-server
     ports:
       - "8086:8086"
     environment:
@@ -103,9 +104,9 @@ services:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS}
       - KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
     depends_on:
-      property-config:
+      property-config-service:
         condition: service_healthy
-      eureka-discovery:
+      eureka-discovery-service:
         condition: service_healthy
       postgres:
         condition: service_healthy
@@ -113,11 +114,11 @@ services:
         condition: service_healthy
       keycloak:
         condition: service_healthy
-  product-catalog:
+  product-catalog-server:
     build:
       context: ./product-catalog-service
       dockerfile: Dockerfile
-    image: product-catalog
+    image: product-catalog-server
     ports:
       - "8083:8083"
     environment:
@@ -128,9 +129,9 @@ services:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS}
       - KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
     depends_on:
-      property-config:
+      property-config-service:
         condition: service_healthy
-      eureka-discovery:
+      eureka-discovery-service:
         condition: service_healthy
       postgres:
         condition: service_healthy
@@ -138,22 +139,22 @@ services:
         condition: service_healthy
       keycloak:
         condition: service_healthy
-  property-config:
+  property-config-server:
     build:
       context: ./property-config-server
       dockerfile: Dockerfile
-    image: property-config
+    image: property-config-server
     ports:
       - "8888:8888"
     depends_on:
-      eureka-discovery:
+      eureka-discovery-service:
         condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
       interval: 10s
       timeout: 5s
       retries: 10
-  user-management:
+  user-management-service:
     build:
       context: ./user-management-service
       dockerfile: Dockerfile
@@ -167,10 +168,12 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS}
       - KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
+    networks:
+      - app-net
     depends_on:
-      property-config:
+      property-config-service:
         condition: service_healthy
-      eureka-discovery:
+      eureka-discovery-service:
         condition: service_healthy
       postgres:
         condition: service_healthy

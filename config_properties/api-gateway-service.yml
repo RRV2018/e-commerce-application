@@ -10,7 +10,8 @@ spring:
         - id: user-management-service
           uri: lb://user-management-service
           predicates:
-            - Path=/api/users/**,/api/auth/**
+            - Path=/api/users/**
+            - Path=/api/auth/**
           filters:
             - StripPrefix=1
             - JwtAuthenticationFilter
