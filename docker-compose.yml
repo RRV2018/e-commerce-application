@@ -6,7 +6,7 @@ services:
   api-gateway-service:
     build:
       context: ./api-gateway-service
-      dockerfile: Dockerfile
+      dockerfile: ../docker/api-gateway-service/Dockerfile
     image: api-gateway-service
     ports:
       - "8081:8081"
@@ -20,7 +20,7 @@ services:
   eureka-discovery-server:
     build:
       context: ./eureka-discovery-server
-      dockerfile: Dockerfile
+      dockerfile: ../docker/eureka-discovery-server/Dockerfile
     image: eureka-discovery-server
     ports:
       - "8761:8761"
@@ -34,7 +34,7 @@ services:
   app-monitoring-admin-server:
     build:
       context: ./app-monitoring-admin-server
-      dockerfile: Dockerfile
+      dockerfile: ../docker/app-monitoring-admin-server/Dockerfile
     image: app-monitoring-admin-server
     ports:
       - "8087:8087"
@@ -53,7 +53,7 @@ services:
   inventory-management-service:
     build:
       context: ./inventory-management-service
-      dockerfile: Dockerfile
+      dockerfile: ../docker/inventory-management-service/Dockerfile
     image: inventory-management-service
     ports:
       - "8085:8085"
@@ -81,7 +81,7 @@ services:
   order-management-service:
     build:
       context: ./order-management-service
-      dockerfile: Dockerfile
+      dockerfile: ../docker/order-management-service/Dockerfile
     image: order-management-service
     ports:
       - "8084:8084"
@@ -109,7 +109,7 @@ services:
   payment-management-service:
     build:
       context: ./payment-management-service
-      dockerfile: Dockerfile
+      dockerfile: ../docker/payment-management-service/Dockerfile
     image: payment-management-service
     ports:
       - "8086:8086"
@@ -137,7 +137,7 @@ services:
   product-catalog-service:
     build:
       context: ./product-catalog-service
-      dockerfile: Dockerfile
+      dockerfile: ../docker/product-catalog-service/Dockerfile
     image: product-catalog-service
     ports:
       - "8083:8083"
@@ -165,7 +165,7 @@ services:
   property-config-server:
     build:
       context: ./property-config-server
-      dockerfile: Dockerfile
+      dockerfile: ../docker/property-config-server/Dockerfile
     image: property-config-server
     ports:
       - "8888:8888"
@@ -182,7 +182,7 @@ services:
   user-management-service:
     build:
       context: ./user-management-service
-      dockerfile: Dockerfile
+      dockerfile: ../docker/user-management-service/Dockerfile
     image: user-management-service
     ports:
       - "8082:8082"
