@@ -1,0 +1,15 @@
+INSERT INTO products( id, description, name, price, stock, category_id) VALUES (1, 'Nokia 1100', 'Nokia001', 5500, 25, 1);
+INSERT INTO products( id, description, name, price, stock, category_id) VALUES (2, 'Nokia Cityman 100', 'Nokia100', 5500, 25, 1);
+INSERT INTO products( id, description, name, price, stock, category_id) VALUES (3, 'Nokia Talkman 510', 'Nokia510', 5500, 25, 1);
+INSERT INTO products( id, description, name, price, stock, category_id) VALUES (4, 'Mobira Cityman 900', 'Nokia900', 5500, 25, 1);
+INSERT INTO products( id, description, name, price, stock, category_id) VALUES (5, 'Nokia 116', 'Nokia116', 5500, 25, 1);
+INSERT INTO products( id, description, name, price, stock, category_id) VALUES (6, 'Nokia 211', 'Nokia211', 5500, 25, 1);
+INSERT INTO products( id, description, name, price, stock, category_id) VALUES (7, 'Nokia Ringo', 'Nokia1995', 5500, 25, 1);
+INSERT INTO products( id, description, name, price, stock, category_id) VALUES (8, 'Nokia Ringo 2', 'Nokia1998', 29000, 25, 1);
+INSERT INTO products( id, description, name, price, stock, category_id) VALUES (9, 'Nokia 638', 'Nokia1998', 21999, 25, 1);
+INSERT INTO products( id, description, name, price, stock, category_id) VALUES (10, 'iPhone 4s', 'iPhone4s', 55999, 25, 1);
+INSERT INTO products( id, description, name, price, stock, category_id) VALUES (11, 'iPhone 5s', 'iPhone5s', 55999, 22, 1);
+INSERT INTO products( id, description, name, price, stock, category_id) VALUES (12, 'iPhone 6 / 6 Plus', 'iPhone66p', 55999, 22, 1);
+INSERT INTO products( id, description, name, price, stock, category_id) VALUES (13, 'iPhone 17', 'iPhone17p', 155999, 42, 1);
+INSERT INTO products( id, description, name, price, stock, category_id) VALUES (14, 'Pro / 17 Pro Max', 'iPhone17pm', 185999, 42, 1);
+INSERT INTO products( id, description, name, price, stock, category_id) VALUES (15, 'iPhone Air', 'iPhone17a', 115999, 32, 1);

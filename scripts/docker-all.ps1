@@ -33,8 +33,12 @@ docker build -f docker/payment-management-service/Dockerfile -t payment-manageme
 docker build -f docker/eureka-discovery-server/Dockerfile -t eureka-discovery-server .
 docker build -f docker/app-monitoring-admin-server/Dockerfile -t app-monitoring-admin-server .
 
+Write-Host "FE Application==============================="
+docker build --no-cache -f docker/e-commerce-fe/Dockerfile -t e-commerce-fe ./e-commerce-fe
+
 Write-Host ""
 Write-Host "==============================="
 Write-Host "Starting all containers..."
 Write-Host "==============================="
-docker compose up
+docker-compose pull
+docker compose up -d

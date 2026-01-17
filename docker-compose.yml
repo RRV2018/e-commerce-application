@@ -10,6 +10,9 @@ services:
     image: api-gateway-service
     ports:
       - "8081:8081"
+    labels:
+      app: api-gateway
+      env: local
     networks:
       - app-net
     depends_on:
@@ -24,6 +27,9 @@ services:
     image: eureka-discovery-server
     ports:
       - "8761:8761"
+    labels:
+      app: eureka-server
+      env: local
     networks:
       - app-net
     healthcheck:
@@ -38,6 +44,9 @@ services:
     image: app-monitoring-admin-server
     ports:
       - "8087:8087"
+    labels:
+      app: app-monitoring
+      env: local
     networks:
       - app-net
     healthcheck:
@@ -57,6 +66,9 @@ services:
     image: inventory-management-service
     ports:
       - "8085:8085"
+    labels:
+      app: inventory-service
+      env: local
     networks:
       - app-net
     healthcheck:
@@ -85,6 +97,9 @@ services:
     image: order-management-service
     ports:
       - "8084:8084"
+    labels:
+      app: order-service
+      env: local
     networks:
       - app-net
     healthcheck:
@@ -113,6 +128,9 @@ services:
     image: payment-management-service
     ports:
       - "8086:8086"
+    labels:
+      app: payment
+      env: local
     networks:
       - app-net
     healthcheck:
@@ -141,6 +159,9 @@ services:
     image: product-catalog-service
     ports:
       - "8083:8083"
+    labels:
+      app: product-catalog
+      env: local
     networks:
       - app-net
     healthcheck:
@@ -169,6 +190,9 @@ services:
     image: property-config-server
     ports:
       - "8888:8888"
+    labels:
+      app: property-config
+      env: local
     networks:
       - app-net
     depends_on:
@@ -186,6 +210,9 @@ services:
     image: user-management-service
     ports:
       - "8082:8082"
+    labels:
+      app: user-service
+      env: local
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8082/actuator/health" ]
       interval: 10s
@@ -209,6 +236,23 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
+  e-commerce-fe:
+    build:
+      context: ./e-commerce-fe
+      dockerfile: ../docker/e-commerce-fe/Dockerfile
+    image: e-commerce-fe
+    ports:
+      - "3001:3001"
+    labels:
+      app: e-commerce-fe
+      env: local
+    networks:
+      - app-net
+    depends_on:
+      property-config-server:
+        condition: service_healthy
+      eureka-discovery-server:
+        condition: service_healthy
   postgres:
     image: postgres:15
     container_name: postgres
@@ -218,6 +262,8 @@ services:
       POSTGRES_PASSWORD: postgres
     ports:
       - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
@@ -225,3 +271,44 @@ services:
       start_period: 10s
     networks:
       - app-net
+  flyway:
+    image: flyway/flyway:10
+    command: >
+      -url=jdbc:postgresql://postgres:5432/postgres
+      -user=postgres
+      -password=postgres
+      -baselineOnMigrate=true
+      migrate
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./db/migration:/flyway/sql
+    networks:
+      - app-net
+  loki:
+    image: grafana/loki:2.9.6
+    ports:
+      - "3100:3100"
+    networks:
+      - app-net
+    command: -config.file=/etc/loki/local-config.yaml
+  grafana:
+    image: grafana/grafana:10.2.3
+    ports:
+      - "3000:3000"
+    networks:
+      - app-net
+    depends_on:
+      - loki
+  promtail:
+    image: grafana/promtail:2.9.6
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./promtail-config.yml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - app-net
+
+volumes:
+  pgdata:

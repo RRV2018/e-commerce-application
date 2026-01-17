@@ -94,4 +94,30 @@ public class ProductService {
         return new CategoryResponse(cat.getId(), cat.getName());
     }
 
+    public boolean deleteProductById(Long id) {
+        if (productRepo.existsById(id)) {
+            productRepo.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+    public ProductResponse updateProduct(Long id, ProductRequest dto) {
+        Category category = categoryRepo.findById(dto.categoryId())
+                .orElseThrow(() -> new EntityNotFoundException("Category not found"));
+        Product product = mapper.toEntity(dto, category);
+
+        Product response = productRepo.findById(id)
+                .map(existingProduct -> {
+                    existingProduct.setName(product.getName());
+                    existingProduct.setDescription(product.getDescription());
+                    existingProduct.setPrice(product.getPrice());
+                    existingProduct.setStock(product.getStock());
+                    existingProduct.setCategory(product.getCategory());
+                    return productRepo.save(existingProduct);
+                })
+                .orElse(null);
+        assert response != null;
+        return mapper.toDto(response);
+
+    }
 }

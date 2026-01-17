@@ -61,7 +61,8 @@ echo.
 echo ===============================
 echo Starting all containers...
 echo ===============================
-docker compose up --build
+docker compose pull
+docker compose up
 IF ERRORLEVEL 1 GOTO :error
 
 echo.

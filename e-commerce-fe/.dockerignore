@@ -1,11 +1,4 @@
 node_modules
-target
-.git
-.gitignore
-.idea
-.vscode
-logs
-*.log
 build
 npm-debug.log
 .DS_Store

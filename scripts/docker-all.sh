@@ -37,4 +37,5 @@ echo
 echo "==============================="
 echo "Starting all containers..."
 echo "==============================="
-docker compose up --build
+docker compose pull
+docker compose up

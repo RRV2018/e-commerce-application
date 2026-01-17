@@ -4,6 +4,7 @@ import com.omsoft.retail.product.dto.*;
 import com.omsoft.retail.product.entity.Category;
 import com.omsoft.retail.product.service.ProductService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,6 +49,26 @@ public class ProductController {
         return service.create(dto);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        boolean deleted = service.deleteProductById(id);
+        if (deleted) {
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } else {
+            return ResponseEntity.notFound().build(); // 404 Not Found
+        }
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductResponse> updateProduct(
+            @PathVariable Long id,
+            @RequestBody ProductRequest productRequest) {
+        ProductResponse updatedProduct = service.updateProduct(id, productRequest);
+        if (updatedProduct != null) {
+            return ResponseEntity.ok(updatedProduct); // 200 OK
+        } else {
+            return ResponseEntity.notFound().build(); // 404
+        }
+    }
 
 }
 
