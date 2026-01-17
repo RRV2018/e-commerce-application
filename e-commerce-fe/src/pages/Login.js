@@ -9,7 +9,7 @@ function Login() {
 
  // ✅ ADD THIS BLOCK HERE (TOP OF COMPONENT)
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (token) {
       navigate("/dashboard", { replace: true });
     }
@@ -19,7 +19,7 @@ function Login() {
     e.preventDefault();
 
     // remove old/expired token
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
 
     try {
       const res = await api.post("/auth/login", {
@@ -27,7 +27,7 @@ function Login() {
         password,
       });
 
-      localStorage.setItem("token", res.data.token);
+      sessionStorage.setItem("token", res.data.token);
 
       // ✅ redirect AFTER success
       navigate("/dashboard", { replace: true });

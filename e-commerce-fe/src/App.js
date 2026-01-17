@@ -6,22 +6,28 @@ import Users from "./pages/Users";
 import Products from "./pages/Products";
 import Orders from "./pages/Orders";
 import Report from "./pages/Report";
+import Login from "./pages/Login";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import HeaderWrapper from "./components/HeaderWrapper";
+
+
 
 const App = () => {
   return (
     <Router>
-      <Header />
       <div className="container mx-auto mt-6">
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/users" element={<Users />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/report" element={<Report />} />
-        </Routes>
+        <HeaderWrapper>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />  {/* redirect / to dashboard */}
+              <Route path="/dashboard" element={ <ProtectedRoute> <Dashboard /></ProtectedRoute>} />
+              <Route path="/products" element={ <ProtectedRoute> <Products /></ProtectedRoute>} />
+              <Route path="/dashboard" element={ <ProtectedRoute> <Dashboard /></ProtectedRoute>} />
+              <Route path="/users" element={ <ProtectedRoute> <Users /></ProtectedRoute>} />
+              <Route path="/orders" element={ <ProtectedRoute><Orders /></ProtectedRoute>} />
+              <Route path="/report" element={ <ProtectedRoute> <Report /></ProtectedRoute>} />
+            </Routes>
+        </HeaderWrapper>
       </div>
     </Router>
   );

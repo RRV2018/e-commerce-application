@@ -14,7 +14,7 @@ function Products() {
   });
   const [editingId, setEditingId] = useState(null);
 
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   // Fetch products
   const fetchProducts = async () => {
@@ -98,18 +98,35 @@ function Products() {
   return (
     <div style={styles.container}>
     <h2>{editingId ? "Edit Product" : "Add Product"}</h2>
-
-      <input name="name" placeholder="Name" value={form.name} onChange={handleChange} /><br />
-      <input name="description" placeholder="Description" value={form.description} onChange={handleChange} /><br />
-      <input type="number" name="price" placeholder="Price" value={form.price} onChange={handleChange} /><br />
-      <input type="number" name="stock" placeholder="Stock" value={form.stock} onChange={handleChange} /><br />
-      <input type="number" name="categoryId" placeholder="Category ID" value={form.categoryId} onChange={handleChange} /><br />
-
-      <button onClick={saveProduct}>
-        {editingId ? "Update" : "Add"}
-      </button>
-      {editingId && <button onClick={resetForm}>Cancel</button>}
-
+      <table>
+            <tr>
+                <td>Product Name:</td>
+                <td><input name="name" placeholder="Name" value={form.name} onChange={handleChange} /></td>
+            </tr>
+            <tr>
+                <td>Description: </td>
+                <td><input name="description" placeholder="Description" value={form.description} onChange={handleChange} /></td>
+            </tr>
+            <tr>
+                <td>Product Price:</td>
+                <td> <input type="number" name="price" placeholder="Price" value={form.price} onChange={handleChange} /></td>
+            </tr>
+            <tr>
+                <td>Quantity: </td>
+                <td><input type="number" name="stock" placeholder="Stock" value={form.stock} onChange={handleChange} /></td>
+            </tr>
+            <tr>
+                <td>Product Category: </td>
+                <td><input type="number" name="categoryId" placeholder="Category ID" value={form.categoryId} onChange={handleChange} /></td>
+            </tr>
+            <tr>
+               <td></td>
+                <td>      <button onClick={saveProduct}>
+                                        {editingId ? "Update" : "Add"}
+                                      </button>
+                                      {editingId && <button onClick={resetForm}>Cancel</button>}</td>
+            </tr>
+        </table>
       <hr />
 
       <h2 style={styles.title}>Products</h2>

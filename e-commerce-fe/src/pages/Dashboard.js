@@ -4,27 +4,12 @@ import Category from "./Category";
 function Dashboard() {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    // ✅ remove token
-    localStorage.removeItem("token");
-
-    // ✅ redirect to login
-    navigate("/login", { replace: true });
-  };
 
   return (
     <div style={styles.container}>
-      <div style={styles.header}>
-        <h2>Dashboard</h2>
-
-        <button style={styles.logoutBtn} onClick={handleLogout}>
-          Logout
-        </button>
-      </div>
 
       <p>Welcome to your dashboard 🎉</p>
       <Category />
-      <Link to="/products">View Products</Link>
     </div>
   );
 }
