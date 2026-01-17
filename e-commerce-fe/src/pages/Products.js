@@ -3,6 +3,7 @@ import api from "../api/axios";
 
 function Products() {
   const [products, setProducts] = useState([]);
+  const [search, setSearch] = useState(""); // 🔹 SEARCH STATE
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [form, setForm] = useState({
@@ -14,13 +15,11 @@ function Products() {
   });
   const [editingId, setEditingId] = useState(null);
 
-  const token = sessionStorage.getItem("token");
-
-  // Fetch products
+  /* ---------- FETCH PRODUCTS ---------- */
   const fetchProducts = async () => {
     try {
       const res = await api.get("/api/products");
-      setProducts(res.data);
+      setProducts(res.data || []);
     } catch (err) {
       console.error(err);
       setError("Failed to load products");
@@ -29,108 +28,147 @@ function Products() {
     }
   };
 
-  /* ---------- FORM HANDLING ---------- */
-
-    const handleChange = (e) => {
-      setForm({ ...form, [e.target.name]: e.target.value });
-    };
-
-    const resetForm = () => {
-      setForm({
-        name: "",
-        description: "",
-        price: "",
-        stock: "",
-        categoryId: ""
-      });
-      setEditingId(null);
-    };
-
-   /* ---------- ADD / UPDATE ---------- */
-
-   const saveProduct = async () => {
-     const payload = {
-       ...form,
-       price: Number(form.price),
-       stock: Number(form.stock),
-       categoryId: Number(form.categoryId)
-     };
-
-     if (editingId) {
-       // EDIT
-       await api.put(`/api/products/${editingId}`, payload);
-       alert("Product updated successfully");
-     } else {
-       // ADD
-       await api.post("/api/products", payload);
-       alert("Product added successfully");
-     }
-     resetForm();
-     fetchProducts();
-   };
-
- /* ---------- EDIT ---------- */
-  const editProduct = (product) => {
-    setForm({
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      stock: product.stock,
-      categoryId: product.category?.id
-    });
-    setEditingId(product.id);
-  };
-  /* ---------- DELETE ---------- */
-    const deleteProduct = async (id) => {
-      if (!window.confirm("Are you sure you want to delete this product?")) return;
-      await api.delete(`/products/${id}`);
-      alert("Product deleted");
-      fetchProducts();
-    };
-
   useEffect(() => {
     fetchProducts();
   }, []);
+
+  /* ---------- SEARCH FILTER ---------- */
+  const filteredProducts = products.filter((p) =>
+    (p.name || "").toLowerCase().includes(search.toLowerCase()) ||
+    (p.description || "").toLowerCase().includes(search.toLowerCase()) ||
+    (p.category?.name || "").toLowerCase().includes(search.toLowerCase()) ||
+    String(p.id).includes(search)
+  );
+
+  /* ---------- FORM HANDLING ---------- */
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const resetForm = () => {
+    setForm({
+      name: "",
+      description: "",
+      price: "",
+      stock: "",
+      categoryId: ""
+    });
+    setEditingId(null);
+  };
+
+  /* ---------- ADD / UPDATE ---------- */
+
+  const saveProduct = async () => {
+    const payload = {
+      ...form,
+      price: Number(form.price),
+      stock: Number(form.stock),
+      categoryId: Number(form.categoryId)
+    };
+
+    if (editingId) {
+       // EDIT
+      await api.put(`/api/products/${editingId}`, payload);
+      alert("Product updated successfully");
+    } else {
+       // ADD
+      await api.post("/api/products", payload);
+      alert("Product added successfully");
+    }
+    resetForm();
+    fetchProducts();
+  };
+
+  /* ---------- EDIT ---------- */
+  const editProduct = (product) => {
+    setForm({
+      name: product.name || "",
+      description: product.description || "",
+      price: product.price || "",
+      stock: product.stock || "",
+      categoryId: product.category?.id || ""
+    });
+    setEditingId(product.id);
+  };
+
+  /* ---------- DELETE ---------- */
+  const deleteProduct = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this product?")) return;
+    await api.delete(`/products/${id}`);
+    alert("Product deleted");
+    fetchProducts();
+  };
 
   if (loading) return <p style={styles.loading}>Loading products...</p>;
   if (error) return <p style={styles.error}>{error}</p>;
 
   return (
     <div style={styles.container}>
-    <h2>{editingId ? "Edit Product" : "Add Product"}</h2>
+      <h2>{editingId ? "Edit Product" : "Add Product"}</h2>
+
+      {/* ---------- PRODUCT FORM ---------- */}
       <table>
-            <tr>
-                <td>Product Name:</td>
-                <td><input name="name" placeholder="Name" value={form.name} onChange={handleChange} /></td>
-            </tr>
-            <tr>
-                <td>Description: </td>
-                <td><input name="description" placeholder="Description" value={form.description} onChange={handleChange} /></td>
-            </tr>
-            <tr>
-                <td>Product Price:</td>
-                <td> <input type="number" name="price" placeholder="Price" value={form.price} onChange={handleChange} /></td>
-            </tr>
-            <tr>
-                <td>Quantity: </td>
-                <td><input type="number" name="stock" placeholder="Stock" value={form.stock} onChange={handleChange} /></td>
-            </tr>
-            <tr>
-                <td>Product Category: </td>
-                <td><input type="number" name="categoryId" placeholder="Category ID" value={form.categoryId} onChange={handleChange} /></td>
-            </tr>
-            <tr>
-               <td></td>
-                <td>      <button onClick={saveProduct}>
-                                        {editingId ? "Update" : "Add"}
-                                      </button>
-                                      {editingId && <button onClick={resetForm}>Cancel</button>}</td>
-            </tr>
-        </table>
+        <tbody>
+          <tr>
+            <td>Product Name:</td>
+            <td>
+              <input name="name" value={form.name} onChange={handleChange} />
+            </td>
+          </tr>
+          <tr>
+            <td>Description:</td>
+            <td>
+              <input name="description" value={form.description} onChange={handleChange} />
+            </td>
+          </tr>
+          <tr>
+            <td>Product Price:</td>
+            <td>
+              <input type="number" name="price" value={form.price} onChange={handleChange} />
+            </td>
+          </tr>
+          <tr>
+            <td>Quantity:</td>
+            <td>
+              <input type="number" name="stock" value={form.stock} onChange={handleChange} />
+            </td>
+          </tr>
+          <tr>
+            <td>Product Category:</td>
+            <td>
+              <input type="number" name="categoryId" value={form.categoryId} onChange={handleChange} />
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              <button onClick={saveProduct}>
+                {editingId ? "Update" : "Add"}
+              </button>
+              {editingId && <button onClick={resetForm}>Cancel</button>}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
       <hr />
+
+      {/* ---------- SEARCH INPUT ---------- */}
+      <input
+        type="text"
+        placeholder="Search by id, name, category, description..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        style={{
+          marginBottom: "15px",
+          padding: "8px",
+          width: "300px"
+        }}
+      />
 
       <h2 style={styles.title}>Products</h2>
 
+      {/* ---------- PRODUCTS TABLE ---------- */}
       <div style={styles.card}>
         <table style={styles.table}>
           <thead>
@@ -146,7 +184,7 @@ function Products() {
           </thead>
 
           <tbody>
-            {products.map((p) => (
+            {filteredProducts.map((p) => (
               <tr key={p.id}>
                 <td>{p.id}</td>
                 <td style={styles.name}>{p.name}</td>
@@ -156,14 +194,19 @@ function Products() {
                 <td>{p.category?.name}</td>
                 <td>
                   <button onClick={() => editProduct(p)}>Edit</button>
-                  <button style={styles.deleteBtn} onClick={() => deleteProduct(p.id)}>Delete</button>
+                  <button
+                    style={styles.deleteBtn}
+                    onClick={() => deleteProduct(p.id)}
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
 
-        {products.length === 0 && (
+        {filteredProducts.length === 0 && (
           <p style={styles.noData}>No products found</p>
         )}
       </div>

@@ -9,4 +9,5 @@ public interface UserService {
     UserResponse registerUser(UserRequest request);
     UserResponse getUserById(Long id);
     List<UserResponse> getAllUsers();
+    boolean deleteUserById(Long id);
 }

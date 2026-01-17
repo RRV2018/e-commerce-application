@@ -83,4 +83,13 @@ public class UserServiceImpl implements UserService {
                 )
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public boolean deleteUserById(Long id) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }
