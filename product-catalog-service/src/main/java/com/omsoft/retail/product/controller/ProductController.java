@@ -2,6 +2,7 @@ package com.omsoft.retail.product.controller;
 
 import com.omsoft.retail.product.dto.*;
 import com.omsoft.retail.product.entity.Category;
+import com.omsoft.retail.product.entity.UserCard;
 import com.omsoft.retail.product.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -49,8 +50,13 @@ public class ProductController {
         return service.create(dto);
     }
 
-    @PostMapping("/{id}")
-    public ResponseEntity<Void> addProductToCard(@RequestHeader("X-User-Id") long userId, @PathVariable Long id) {
+    @GetMapping("/book")
+    public List<UserCard> getCardProducts(@RequestHeader("X-User-Id") String userId) {
+        return service.getUserCardData(userId);
+    }
+
+    @PostMapping("/book/{id}")
+    public ResponseEntity<Void> addProductToCard(@RequestHeader("X-User-Id") String userId, @PathVariable("id") Long id) {
         boolean added = service.addProductToCard(userId, id);
         if (added) {
             return ResponseEntity.noContent().build(); // 204 No Content

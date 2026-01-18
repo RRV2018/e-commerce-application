@@ -1,4 +1,4 @@
-package com.omsoft.retail.product.entity;
+package com.omsoft.retail.order.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,8 +8,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "user_card")
 @Getter
@@ -30,10 +28,4 @@ public class UserCard {
 
     @Column(name = "amount")
     private BigDecimal amount;
-
-    @Transient // This field is not persisted
-    private String productName;
-
-    @Transient // This field is not persisted
-    private BigDecimal productPrice;
 }

@@ -28,6 +28,17 @@ public class OrderController {
         return service.placeOrder(dto, userId);
     }
 
+    @PostMapping("/book")
+    public ResponseEntity<Void> bookOrderFromCard(@RequestHeader("X-User-Id") String userId) {
+        boolean booked = service.bookOrderFromCard(userId);
+        if (booked) {
+            return ResponseEntity.ok().build(); // 204 No Content
+        } else {
+            return ResponseEntity.notFound().build(); // 404 Not Found
+        }
+    }
+
+
     @GetMapping
     public List<OrderResponse> getOrders(
             @RequestHeader("X-User-Id") String userId) {

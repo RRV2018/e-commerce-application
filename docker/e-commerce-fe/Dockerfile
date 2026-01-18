@@ -14,6 +14,8 @@ COPY package*.json ./
 
 # Install dependencies
 RUN npm install
+RUN npm install react-icons
+
 
 # Copy source code
 COPY . .

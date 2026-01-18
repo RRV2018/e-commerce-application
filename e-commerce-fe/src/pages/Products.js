@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
+import { FaTrash, FaEdit, FaCartPlus   } from "react-icons/fa";
 
 function Products() {
   const [products, setProducts] = useState([]);
+  const [cardData, setCardData] = useState([]);
+
   const [search, setSearch] = useState(""); // 🔹 SEARCH STATE
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,6 +23,9 @@ function Products() {
     try {
       const res = await api.get("/api/products");
       setProducts(res.data || []);
+
+      const cardItem = await api.get("/api/products/book");
+      setCardData(cardItem.data);
     } catch (err) {
       console.error(err);
       setError("Failed to load products");
@@ -57,6 +63,10 @@ function Products() {
   };
 
   /* ---------- ADD / UPDATE ---------- */
+  const bookOrder = async () => {
+      await api.post("/api/orders/book");
+      alert("Order booked successfully.")
+  };
 
   const saveProduct = async () => {
     const payload = {
@@ -81,6 +91,7 @@ function Products() {
 
   /* ---------- EDIT ---------- */
   const editProduct = (product) => {
+    alert("In edit method  " + product.name);
     setForm({
       name: product.name || "",
       description: product.description || "",
@@ -94,24 +105,26 @@ function Products() {
   /* ---------- DELETE ---------- */
   const deleteProduct = async (id) => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
-    await api.delete(`/products/${id}`);
+    await api.delete(`/api/products/${id}`);
     alert("Product deleted");
     fetchProducts();
   };
 
-  /* ---------- DELETE ---------- */
-    const addProductToCard = async (id) => {
-      await api.delete(`/products/${id}`);
-      alert("Product deleted");
-      fetchProducts();
+    const addToCart = async(p) => {
+      await api.post(`/api/products/book/${p.id}`);
+      // example cart logic
+       alert("Product added to card.");
+       fetchProducts();
     };
-
   if (loading) return <p style={styles.loading}>Loading products...</p>;
   if (error) return <p style={styles.error}>{error}</p>;
 
   return (
     <div style={styles.container}>
-      <h2>{editingId ? "Edit Product" : "Add Product"}</h2>
+      <table border="1" cellPadding="8" cellSpacing="0" width="100%">
+         <tr>
+           <td>
+            <h2>{editingId ? "Edit Product" : "Add Product"}</h2>
 
       {/* ---------- PRODUCT FORM ---------- */}
       <table>
@@ -157,8 +170,45 @@ function Products() {
           </tr>
         </tbody>
       </table>
+           </td>
+           <td>
+             <h2>Card Items</h2>
+             <table  border="1" cellPadding="8" cellSpacing="0" width="100%">
+
+                     <thead>
+                       <tr>
+                           <td>Product Name</td>
+                           <td>Quantity</td>
+                           <td>Amount</td>
+                       </tr>
+                     </thead>
+                     <tbody>
+                     {cardData.map((c) => (
+                       <tr key={c.id}>
+                              <td>{c.productName}</td>
+                              <td>{c.quantity}</td>
+                              <td>{c.amount}</td>
+                          </tr>
+                       ))}
+                     </tbody>
+                     <tr>
+                       <td><button onClick={bookOrder}>
+                               Book Order
+                                         </button>
+                       </td>
+                       <td></td>
+                       <td></td>
+                     </tr>
+             </table>
+
+           </td>
+         </tr>
+      </table>
+
 
       <hr />
+
+      <h2 style={styles.title}>Products</h2>
 
       {/* ---------- SEARCH INPUT ---------- */}
       <input
@@ -172,12 +222,9 @@ function Products() {
           width: "300px"
         }}
       />
-
-      <h2 style={styles.title}>Products</h2>
-
       {/* ---------- PRODUCTS TABLE ---------- */}
       <div style={styles.card}>
-        <table style={styles.table}>
+        <table style={styles.table}  border="1" cellPadding="8" cellSpacing="0" width="100%">
           <thead>
             <tr>
               <th>ID</th>
@@ -200,13 +247,48 @@ function Products() {
                 <td>{p.stock}</td>
                 <td>{p.category?.name}</td>
                 <td>
-                  <button onClick={() => editProduct(p)}>Edit</button>
-                  <button
-                    style={styles.deleteBtn}
+                <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+                <span
+                     onClick={() => editProduct(p)}
+                      style={{
+                                      cursor: "pointer",
+                                      display: "inline-flex",
+                                      alignItems: "center"
+                                    }}
+                                  >
+                    <FaEdit
+                      title="Edit product"
+                      color="#16a34a"
+                      size={17}
+                    />
+                    </span>
+                  <FaTrash
                     onClick={() => deleteProduct(p.id)}
+                    title="Delete product"
+                    style={{
+                      cursor: "pointer",
+                      color: "#dc2626",
+                      fontSize: "16px"
+                    }}
+                    onMouseOver={(e) => e.target.style.color = "#b91c1c"}
+                    onMouseOut={(e) => e.target.style.color = "#dc2626"}
+                  />
+                 {/* Add to Cart */}
+                  <span
+                    onClick={() => addToCart(p)}
+                    style={{
+                      cursor: "pointer",
+                      display: "inline-flex",
+                      alignItems: "center"
+                    }}
                   >
-                    Delete
-                  </button>
+                    <FaCartPlus
+                      title="Add to cart"
+                      color="#16a34a"
+                      size={17}
+                    />
+                  </span>
+                  </div>
                 </td>
               </tr>
             ))}

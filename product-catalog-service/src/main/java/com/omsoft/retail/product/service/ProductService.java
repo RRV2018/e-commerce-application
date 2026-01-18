@@ -107,7 +107,11 @@ public class ProductService {
         return false;
     }
 
-    public boolean addProductToCard(Long userId, Long productId) {
+    public List<UserCard> getUserCardData(String userId) {
+        return cardRepo.findUserOrders(userId);
+    }
+
+    public boolean addProductToCard(String userId, Long productId) {
         UserCard card = cardRepo.findUserOrder(userId, productId);
         Optional<Product> product = productRepo.findById(productId);
         if (product.isEmpty()) {
@@ -129,7 +133,7 @@ public class ProductService {
         }
     }
 
-    public ProductResponse updateProduct(Long id, ProductRequest dto) {
+        public ProductResponse updateProduct(Long id, ProductRequest dto) {
         Category category = categoryRepo.findById(dto.categoryId())
                 .orElseThrow(() -> new EntityNotFoundException("Category not found"));
         Product product = mapper.toEntity(dto, category);

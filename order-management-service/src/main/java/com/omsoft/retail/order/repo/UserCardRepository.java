@@ -1,6 +1,6 @@
-package com.omsoft.retail.product.repo;
+package com.omsoft.retail.order.repo;
 
-import com.omsoft.retail.product.entity.UserCard;
+import com.omsoft.retail.order.entity.UserCard;
 import feign.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,8 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface UserCardRepository extends JpaRepository<UserCard, Long> {
-    @Query("SELECT new com.omsoft.retail.product.entity.UserCard(u.id, u.productId, u.userId, u.quantity, u.amount,  p.name, p.price) FROM UserCard u " +
-            "JOIN Product p ON u.productId = p.id " +
+    @Query("SELECT u FROM UserCard u " +
             "WHERE u.userId = :userId")
     List<UserCard> findUserOrders(@Param("userId") String userId);
 

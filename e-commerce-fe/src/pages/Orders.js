@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import api from "../api/axios";
 
-const API_BASE = "http://localhost:8081/api/orders";
-
-// Simple reusable Card component (no shadcn dependency)
 const Card = ({ title, children }) => (
-  <div style={{ border: "1px solid #e5e7eb", borderRadius: 12, padding: 16, boxShadow: "0 2px 6px rgba(0,0,0,0.05)" }}>
+  <div style={{
+    border: "1px solid #e5e7eb",
+    borderRadius: 12,
+    padding: 16,
+    boxShadow: "0 2px 6px rgba(0,0,0,0.05)"
+  }}>
     <h3 style={{ fontWeight: 600, marginBottom: 12 }}>{title}</h3>
     {children}
   </div>
@@ -13,50 +15,73 @@ const Card = ({ title, children }) => (
 
 export default function Orders() {
   const [orderId, setOrderId] = useState("");
-  const [result, setResult] = useState(null);
- // replace with real token
+  const [orders, setOrders] = useState([]); // ✅ always array
+  const [loading, setLoading] = useState(false);
 
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
+const [searchTerm, setSearchTerm] = useState("");
 
   // 1. Book Order
   const bookOrder = async () => {
-    const payload = {
-      items: [
-        { productId: 1, quantity: 1, price: 55999 },
-      ],
-    };
+    try {
+      setLoading(true);
+      const payload = {
+        items: [{ productId: 1, quantity: 1, price: 55999 }],
+      };
 
-    const saveProduct = async () => {
-        const payload = {
-          ...form,
-          price: Number(form.price),
-          stock: Number(form.stock),
-          categoryId: Number(form.categoryId)
-        };
-
-    const res = await fetch(API_BASE, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(payload),
-    });
-
-    setResult(await res.json());
+      const res = await api.post("/api/orders", payload);
+      setOrders([res.data]); // show created order
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // 2. Get all orders
   const getOrders = async () => {
-  const res = await api.get("/api/orders");
-  setResult(res.data);
+    try {
+      setLoading(true);
+      const res = await api.get("/api/orders");
+      setOrders(res.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
+
+    useEffect(() => {
+      getOrders();
+    }, []);
+
+    const filteredOrders = orders.filter((o) => {
+      const search = searchTerm.toLowerCase();
+
+      return (
+        String(o.orderId || o.id).includes(search) ||
+        String(o.userId).includes(search) ||
+        String(o.totalAmount).includes(search) ||
+        (o.status && o.status.toLowerCase().includes(search)) ||
+        (o.items &&
+          o.items.some(item =>
+            String(item.productId).includes(search)
+          ))
+      );
+    });
 
   // 3. Get single order
   const getSingleOrder = async () => {
     if (!orderId) return;
-    const res = await api.get(`/api/orders/${orderId}`);
-    setResult(await res.json());
+    try {
+      setLoading(true);
+      const res = await api.get(`/api/orders/${orderId}`);
+      setOrders([res.data]); // ✅ wrap in array
+    } catch (err) {
+      console.error(err);
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -65,7 +90,11 @@ export default function Orders() {
         Order Management
       </h1>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16 }}>
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+        gap: 16
+      }}>
         <Card title="Book Order">
           <button onClick={bookOrder}>Create Order</button>
         </Card>
@@ -74,70 +103,58 @@ export default function Orders() {
           <button onClick={getOrders}>Get All Orders</button>
         </Card>
 
-        <Card title="Cancel Order">
+        <Card title="Search Single Order">
           <input
             placeholder="Order ID"
             value={orderId}
             onChange={(e) => setOrderId(e.target.value)}
           />
-          <button disabled style={{ marginTop: 8 }}>
-            Cancel (API Pending)
-          </button>
-        </Card>
-
-        <Card title="Modify Order">
-          <input
-            placeholder="Order ID"
-            value={orderId}
-            onChange={(e) => setOrderId(e.target.value)}
-          />
-          <button disabled style={{ marginTop: 8 }}>
-            Modify (API Pending)
+          <button onClick={getSingleOrder} style={{ marginTop: 8 }}>
+            Search
           </button>
         </Card>
       </div>
 
-      <div style={{ marginTop: 32, maxWidth: 400 }}>
-        <h3>Search Single Order</h3>
-        <input
-          placeholder="Enter Order ID"
-          value={orderId}
-          onChange={(e) => setOrderId(e.target.value)}
-        />
-        <button onClick={getSingleOrder} style={{ marginLeft: 8 }}>
-          Search
-        </button>
+      {/* RESULT TABLE */}
+      <div style={{ marginTop: 32 }}>
+        <h3>Orders</h3>
+            <input
+              type="text"
+              placeholder="Search by Order ID, Product ID, Amount, Status..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ marginBottom: 12, padding: 6, width: 300 }}
+            />
+        {loading && <p>Loading...</p>}
+
+        {!loading && orders.length === 0 && (
+          <p>No orders found</p>
+        )}
+
+
+        {filteredOrders.length > 0 && (
+          <table border="1" cellPadding="8" cellSpacing="0" width="100%">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>User ID</th>
+                <th>Status</th>
+                <th>Total Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredOrders.map((o) => (
+                <tr key={o.orderId || o.id}>
+                  <td>{o.orderId || o.id}</td>
+                  <td>{o.userId}</td>
+                  <td>{o.status}</td>
+                  <td>{o.totalAmount}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
-      <div style={styles.card}>
-              <table style={styles.table}>
-                <thead>
-                  <tr>
-                    <th>Order ID</th>
-                    <th>User ID</th>
-                    <th>Order Status</th>
-                    <th>Total Amount (₹)</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {result.map((o) => (
-                    <tr key={o.orderId}>
-                      <td>{o.orderId}</td>
-                      <td>{o.userId}</td>
-                      <td>{o.status}</td>
-                      <td>{o.totalAmount}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-
-              {result.length === 0 && (
-                <p style={styles.noData}>No order found</p>
-              )}
-            </div>
-
-
-
     </div>
   );
 }
