@@ -49,6 +49,16 @@ public class ProductController {
         return service.create(dto);
     }
 
+    @PostMapping("/{id}")
+    public ResponseEntity<Void> addProductToCard(@RequestHeader("X-User-Id") long userId, @PathVariable Long id) {
+        boolean added = service.addProductToCard(userId, id);
+        if (added) {
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } else {
+            return ResponseEntity.notFound().build(); // 404 Not Found
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         boolean deleted = service.deleteProductById(id);

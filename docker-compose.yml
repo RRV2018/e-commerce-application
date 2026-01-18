@@ -15,6 +15,8 @@ services:
       env: local
     networks:
       - app-net
+    environment:
+      - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
     depends_on:
       property-config-server:
         condition: service_healthy
@@ -49,6 +51,8 @@ services:
       env: local
     networks:
       - app-net
+    environment:
+      - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8087/actuator/health" ]
       interval: 10s
@@ -83,6 +87,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS}
       - KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
+      - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
     depends_on:
       property-config-server:
         condition: service_healthy
@@ -114,6 +119,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS}
       - KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
+      - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
     depends_on:
       property-config-server:
         condition: service_healthy
@@ -145,6 +151,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS}
       - KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
+      - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
     depends_on:
       property-config-server:
         condition: service_healthy
@@ -176,6 +183,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS}
       - KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
+      - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
     depends_on:
       property-config-server:
         condition: service_healthy
@@ -198,6 +206,8 @@ services:
     depends_on:
       eureka-discovery-server:
         condition: service_healthy
+    environment:
+      - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
       interval: 10s
@@ -227,6 +237,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS}
       - KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
+      - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
     networks:
       - app-net
     depends_on:

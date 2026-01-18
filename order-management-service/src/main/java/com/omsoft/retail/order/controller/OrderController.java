@@ -4,9 +4,11 @@ import com.omsoft.retail.order.dto.CreateOrderRequest;
 import com.omsoft.retail.order.dto.OrderResponse;
 import com.omsoft.retail.order.service.OrderService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -30,5 +32,20 @@ public class OrderController {
     public List<OrderResponse> getOrders(
             @RequestHeader("X-User-Id") String userId) {
         return service.getOrders(userId);
+    }
+
+    @GetMapping("/{id}")
+    public Optional<OrderResponse> getOrders(@RequestHeader("X-User-Id") String userId, @PathVariable Long orderId) {
+        return service.getOrder(userId, orderId);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> cancelOrder(@PathVariable Long id) {
+        boolean deleted = service.cancelOrderById(id);
+        if (deleted) {
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } else {
+            return ResponseEntity.notFound().build(); // 404 Not Found
+        }
     }
 }

@@ -99,6 +99,13 @@ function Products() {
     fetchProducts();
   };
 
+  /* ---------- DELETE ---------- */
+    const addProductToCard = async (id) => {
+      await api.delete(`/products/${id}`);
+      alert("Product deleted");
+      fetchProducts();
+    };
+
   if (loading) return <p style={styles.loading}>Loading products...</p>;
   if (error) return <p style={styles.error}>{error}</p>;
 

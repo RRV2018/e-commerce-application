@@ -4,9 +4,11 @@ package com.omsoft.retail.product.service;
 import com.omsoft.retail.product.dto.*;
 import com.omsoft.retail.product.entity.Category;
 import com.omsoft.retail.product.entity.Product;
+import com.omsoft.retail.product.entity.UserCard;
 import com.omsoft.retail.product.mapper.ProductMapper;
 import com.omsoft.retail.product.repo.CategoryRepository;
 import com.omsoft.retail.product.repo.ProductRepository;
+import com.omsoft.retail.product.repo.UserCardRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,20 +18,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
 public class ProductService {
 
     private final ProductRepository productRepo;
+    private final UserCardRepository cardRepo;
     private final CategoryRepository categoryRepo;
     private final ProductMapper mapper;
     private static final int MAX_PAGE_SIZE = 50;
 
-    public ProductService(ProductRepository productRepo,
+    public ProductService(ProductRepository productRepo, UserCardRepository cardRepo,
                           CategoryRepository categoryRepo,
                           ProductMapper mapper) {
         this.productRepo = productRepo;
+        this.cardRepo = cardRepo;
         this.categoryRepo = categoryRepo;
         this.mapper = mapper;
     }
@@ -101,6 +106,29 @@ public class ProductService {
         }
         return false;
     }
+
+    public boolean addProductToCard(Long userId, Long productId) {
+        UserCard card = cardRepo.findUserOrder(userId, productId);
+        Optional<Product> product = productRepo.findById(productId);
+        if (product.isEmpty()) {
+            return false;
+        }
+        if (card != null) {
+            card.setQuantity(card.getQuantity() + 1);
+            card.setAmount(card.getAmount().add(product.get().getPrice()));
+            cardRepo.save(card);
+            return true;
+        } else {
+            UserCard newCard = new UserCard();
+            newCard.setProductId(productId);
+            newCard.setUserId(userId);
+            newCard.setQuantity(1L);
+            newCard.setAmount(product.get().getPrice());
+            cardRepo.save(newCard);
+            return true;
+        }
+    }
+
     public ProductResponse updateProduct(Long id, ProductRequest dto) {
         Category category = categoryRepo.findById(dto.categoryId())
                 .orElseThrow(() -> new EntityNotFoundException("Category not found"));

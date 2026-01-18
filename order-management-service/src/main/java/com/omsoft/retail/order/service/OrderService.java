@@ -110,6 +110,23 @@ public class OrderService {
                 .toList();
     }
 
+    public Optional<OrderResponse> getOrder(String userId, Long orderId) {
+        List<Order> orders = orderRepository.findByUserId(userId);
+        return Optional.ofNullable(orders).orElse(Collections.emptyList())
+                .stream()
+                .filter(order -> order.getId().equals(orderId))
+                .map(this::mapToResponse)
+                .findFirst();
+    }
+
+    public boolean cancelOrderById(Long id) {
+        if (orderRepository.existsById(id)) {
+            orderRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
     private OrderResponse mapToResponse(Order order) {
         List<OrderItemResponse> itemResponses =
                 order.getItems()
