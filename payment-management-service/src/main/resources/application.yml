@@ -2,7 +2,7 @@ spring:
   application:
     name: payment-management-service
   config:
-    import: configserver:http://property-config-server:8888
+    import: configserver:${CONFIG_SERVER_URL:http://localhost:8888}
 
   cloud:
     config:
