@@ -17,6 +17,7 @@ services:
       - app-net
     environment:
       - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
+      - CONFIG_SERVER_URL=${CONFIG_SERVER_URL}
     depends_on:
       property-config-server:
         condition: service_healthy
@@ -53,6 +54,7 @@ services:
       - app-net
     environment:
       - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
+      - CONFIG_SERVER_URL=${CONFIG_SERVER_URL}
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8087/actuator/health" ]
       interval: 10s
@@ -88,6 +90,7 @@ services:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS}
       - KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
       - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
+      - CONFIG_SERVER_URL=${CONFIG_SERVER_URL}
     depends_on:
       property-config-server:
         condition: service_healthy
@@ -120,6 +123,7 @@ services:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS}
       - KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
       - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
+      - CONFIG_SERVER_URL=${CONFIG_SERVER_URL}
     depends_on:
       property-config-server:
         condition: service_healthy
@@ -152,6 +156,7 @@ services:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS}
       - KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
       - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
+      - CONFIG_SERVER_URL=${CONFIG_SERVER_URL}
     depends_on:
       property-config-server:
         condition: service_healthy
@@ -184,6 +189,7 @@ services:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS}
       - KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
       - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
+      - CONFIG_SERVER_URL=${CONFIG_SERVER_URL}
     depends_on:
       property-config-server:
         condition: service_healthy
@@ -208,6 +214,7 @@ services:
         condition: service_healthy
     environment:
       - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
+      - CONFIG_SERVER_URL=${CONFIG_SERVER_URL}
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
       interval: 10s
@@ -238,6 +245,7 @@ services:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS}
       - KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
       - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
+      - CONFIG_SERVER_URL=${CONFIG_SERVER_URL}
     networks:
       - app-net
     depends_on:
@@ -294,7 +302,7 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - ./db/migration:/flyway/sql
+      - ./platform-common/src/main/resources/db/migration:/flyway/sql
     networks:
       - app-net
   loki:
