@@ -36,7 +36,7 @@ management:
       show-details: always
 
 logging:
-  config: classpath:my-logback-spring.xml
+  config: classpath:logback-spring.xml
 
 resilience4j:
   circuitbreaker:
