@@ -35,6 +35,12 @@ management:
     health:
       show-details: always
 
+  logging:
+    file:
+      path: C:/Users/rava1124/IdeaProjects/BillOps/e-commerce-application-new/log/myapp
+    level:
+      root: INFO
+
 resilience4j:
   circuitbreaker:
     instances:
