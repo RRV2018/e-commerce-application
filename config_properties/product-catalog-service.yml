@@ -5,3 +5,7 @@ server:
 spring:
   application:
     name: product-catalog-service
+
+springdoc:
+  api-docs:
+    path: /api/products/v3/api-docs
