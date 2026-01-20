@@ -51,6 +51,22 @@ spring:
           uri: lb://user-management-service
           predicates:
             - Path=/user/v3/api-docs
+        - id: product-swagger
+          uri: lb://product-catalog-service
+          predicates:
+            - Path=/product/v3/api-docs
+        - id: order-swagger
+          uri: lb://order-management-service
+          predicates:
+            - Path=/order/v3/api-docs
+        - id: payment-swagger
+          uri: lb://payment-management-service
+          predicates:
+            - Path=/payment/v3/api-docs
+        - id: inventory-swagger
+          uri: lb://inventory-management-service
+          predicates:
+            - Path=/inventory/v3/api-docs
 # =========================================================
 # ================= SPRINGDOC CONFIG ======================
 # =========================================================
@@ -60,3 +76,11 @@ springdoc:
     urls:
       - name: User Management Service
         url: /user/v3/api-docs
+      - name: Product Catalog Service
+        url: /product/v3/api-docs
+      - name: Order Management Service
+        url: /order/v3/api-docs
+      - name: Payment Management Service
+        url: /payment/v3/api-docs
+      - name: Inventory Management Service
+        url: /inventory/v3/api-docs
