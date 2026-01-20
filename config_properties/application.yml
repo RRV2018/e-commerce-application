@@ -35,11 +35,8 @@ management:
     health:
       show-details: always
 
-  logging:
-    file:
-      path: C:/Users/rava1124/IdeaProjects/BillOps/e-commerce-application-new/log/myapp
-    level:
-      root: INFO
+logging:
+  config: classpath:logback-spring.xml
 
 resilience4j:
   circuitbreaker:
