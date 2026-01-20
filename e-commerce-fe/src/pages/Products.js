@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
-import { FaTrash, FaEdit, FaCartPlus   } from "react-icons/fa";
+import { FaTrash, FaEdit, FaCartPlus, FaPlus, FaMinus } from "react-icons/fa";
+import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
+import "./Products.css";
 
 function Products() {
   const [products, setProducts] = useState([]);
   const [cardData, setCardData] = useState([]);
-
-  const [search, setSearch] = useState(""); // 🔹 SEARCH STATE
+  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const [form, setForm] = useState({
     name: "",
     description: "",
@@ -18,54 +20,30 @@ function Products() {
   });
   const [editingId, setEditingId] = useState(null);
 
-  /* ---------- FETCH PRODUCTS ---------- */
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
   const fetchProducts = async () => {
     try {
       const res = await api.get("/api/products");
       setProducts(res.data || []);
 
       const cardItem = await api.get("/api/products/book");
-      setCardData(cardItem.data);
-    } catch (err) {
-      console.error(err);
+      setCardData(cardItem.data || []);
+    } catch {
       setError("Failed to load products");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  /* ---------- SEARCH FILTER ---------- */
-  const filteredProducts = products.filter((p) =>
-    (p.name || "").toLowerCase().includes(search.toLowerCase()) ||
-    (p.description || "").toLowerCase().includes(search.toLowerCase()) ||
-    (p.category?.name || "").toLowerCase().includes(search.toLowerCase()) ||
-    String(p.id).includes(search)
-  );
-
-  /* ---------- FORM HANDLING ---------- */
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
   const resetForm = () => {
-    setForm({
-      name: "",
-      description: "",
-      price: "",
-      stock: "",
-      categoryId: ""
-    });
+    setForm({ name: "", description: "", price: "", stock: "", categoryId: "" });
     setEditingId(null);
-  };
-
-  /* ---------- ADD / UPDATE ---------- */
-  const bookOrder = async () => {
-      await api.post("/api/orders/book");
-      alert("Order booked successfully.")
   };
 
   const saveProduct = async () => {
@@ -76,278 +54,159 @@ function Products() {
       categoryId: Number(form.categoryId)
     };
 
-    if (editingId) {
-       // EDIT
-      await api.put(`/api/products/${editingId}`, payload);
-      alert("Product updated successfully");
-    } else {
-       // ADD
-      await api.post("/api/products", payload);
-      alert("Product added successfully");
-    }
+    editingId
+      ? await api.put(`/api/products/${editingId}`, payload)
+      : await api.post("/api/products", payload);
+
     resetForm();
     fetchProducts();
   };
 
-  /* ---------- EDIT ---------- */
-  const editProduct = (product) => {
-    alert("In edit method  " + product.name);
+  const editProduct = (p) => {
     setForm({
-      name: product.name || "",
-      description: product.description || "",
-      price: product.price || "",
-      stock: product.stock || "",
-      categoryId: product.category?.id || ""
+      name: p.name,
+      description: p.description,
+      price: p.price,
+      stock: p.stock,
+      categoryId: p.category?.id || ""
     });
-    setEditingId(product.id);
+    setEditingId(p.id);
   };
 
-  /* ---------- DELETE ---------- */
   const deleteProduct = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) return;
-    await api.delete(`/api/products/${id}`);
-    alert("Product deleted");
+    if (window.confirm("Delete this product?")) {
+      await api.delete(`/api/products/${id}`);
+      fetchProducts();
+    }
+  };
+
+  const addToCart = async (p) => {
+    await api.post(`/api/products/book/${p.id}`);
     fetchProducts();
   };
 
-    const addToCart = async(p) => {
-      await api.post(`/api/products/book/${p.id}`);
-      // example cart logic
-       alert("Product added to card.");
-       fetchProducts();
-    };
-  if (loading) return <p style={styles.loading}>Loading products...</p>;
-  if (error) return <p style={styles.error}>{error}</p>;
+  const bookOrder = async () => {
+    await api.post("/api/orders/book");
+    alert("Order booked successfully");
+  };
+
+  const filteredProducts = products.filter((p) =>
+    `${p.id} ${p.name} ${p.description} ${p.category?.name}`
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
+
+  const totalAmount = cardData.reduce(
+    (sum, item) => sum + Number(item.amount || 0),
+    0
+  );
+
+  const removeCartItem = async (c) => {
+   if (!window.confirm("Remove item from cart?")) return;
+    await api.delete(`/api/products/book/${c.id}`);
+    fetchProducts();
+  };
+
+  const increaseQty = async (c) => {
+    await api.post(`/api/products/book/${c.id}/increase`);
+    fetchProducts();
+  };
+
+  const decreaseQty = async (c) => {
+    await api.post(`/api/products/book/${c.id}/decrease`);
+    fetchProducts();
+  };
+  if (loading) return <p className="loading">Loading...</p>;
+  if (error) return <p className="error">{error}</p>;
 
   return (
-    <div style={styles.container}>
-      <table border="1" cellPadding="8" cellSpacing="0" width="100%">
-         <tr>
-           <td>
-            <h2>{editingId ? "Edit Product" : "Add Product"}</h2>
+    <div className="products-container">
+      {/* FORM + CART */}
+      <div className="top-grid">
+        <div className="card">
+          <h2>{editingId ? "Edit Product" : "Add Product"}</h2>
 
-      {/* ---------- PRODUCT FORM ---------- */}
-      <table>
-        <tbody>
-          <tr>
-            <td>Product Name:</td>
-            <td>
-              <input name="name" value={form.name} onChange={handleChange} />
-            </td>
-          </tr>
-          <tr>
-            <td>Description:</td>
-            <td>
-              <input name="description" value={form.description} onChange={handleChange} />
-            </td>
-          </tr>
-          <tr>
-            <td>Product Price:</td>
-            <td>
-              <input type="number" name="price" value={form.price} onChange={handleChange} />
-            </td>
-          </tr>
-          <tr>
-            <td>Quantity:</td>
-            <td>
-              <input type="number" name="stock" value={form.stock} onChange={handleChange} />
-            </td>
-          </tr>
-          <tr>
-            <td>Product Category:</td>
-            <td>
-              <input type="number" name="categoryId" value={form.categoryId} onChange={handleChange} />
-            </td>
-          </tr>
-          <tr>
-            <td></td>
-            <td>
-              <button onClick={saveProduct}>
-                {editingId ? "Update" : "Add"}
-              </button>
-              {editingId && <button onClick={resetForm}>Cancel</button>}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-           </td>
-           <td>
-             <h2>Card Items</h2>
-             <table  border="1" cellPadding="8" cellSpacing="0" width="100%">
+          <input name="name" placeholder="Name" value={form.name} onChange={handleChange} />
+          <input name="description" placeholder="Description" value={form.description} onChange={handleChange} />
+          <input type="number" name="price" placeholder="Price" value={form.price} onChange={handleChange} />
+          <input type="number" name="stock" placeholder="Stock" value={form.stock} onChange={handleChange} />
+          <input type="number" name="categoryId" placeholder="Category ID" value={form.categoryId} onChange={handleChange} />
 
-                     <thead>
-                       <tr>
-                           <td>Product Name</td>
-                           <td>Quantity</td>
-                           <td>Amount</td>
-                       </tr>
-                     </thead>
-                     <tbody>
-                     {cardData.map((c) => (
-                       <tr key={c.id}>
-                              <td>{c.productName}</td>
-                              <td>{c.quantity}</td>
-                              <td>{c.amount}</td>
-                          </tr>
-                       ))}
-                     </tbody>
-                     <tr>
-                       <td><button onClick={bookOrder}>
-                               Book Order
-                                         </button>
-                       </td>
-                       <td></td>
-                       <td></td>
-                     </tr>
-             </table>
+          <div className="form-actions">
+            <button onClick={saveProduct}>{editingId ? "Update" : "Add"}</button>
+            {editingId && <button className="secondary" onClick={resetForm}>Cancel</button>}
+          </div>
+        </div>
 
-           </td>
-         </tr>
-      </table>
+        <div className="card">
+          <h2>Cart Items</h2>
+          <table>
+            <thead>
+              <tr><th>Name</th><th>Qty</th><th>Amount</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+              {cardData.map(c => (
+                <tr key={c.id}>
+                  <td>{c.productName}</td>
+                  <td className="qty-cell">
+                            <AiOutlineMinus onClick={() => decreaseQty(c)} />
+                            <span>{c.quantity}</span>
+                            <AiOutlinePlus onClick={() => increaseQty(c)} />
+                   </td>
+                  <td>{c.amount}</td>
+                <td className="cart-actions">
+                <FaTrash onClick={() => removeCartItem(c)} /> </td>
+                </tr>
 
+              ))}
+              <tr className="total-row">
+                    <td colSpan="2"><strong>Total Amount</strong></td>
+                    <td><strong>₹ {totalAmount}</strong></td>
+                    <td></td>
+              </tr>
+            </tbody>
+          </table>
+          <button className="primary full" onClick={bookOrder}>Book Order</button>
+        </div>
+      </div>
 
-      <hr />
-
-      <h2 style={styles.title}>Products</h2>
-
-      {/* ---------- SEARCH INPUT ---------- */}
+      {/* PRODUCT LIST */}
+      <h2 className="section-title">Products</h2>
       <input
-        type="text"
-        placeholder="Search by id, name, category, description..."
+        className="search"
+        placeholder="Search products..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        style={{
-          marginBottom: "15px",
-          padding: "8px",
-          width: "300px"
-        }}
       />
-      {/* ---------- PRODUCTS TABLE ---------- */}
-      <div style={styles.card}>
-        <table style={styles.table}  border="1" cellPadding="8" cellSpacing="0" width="100%">
+
+      <div className="card">
+        <table className="product-table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Price (₹)</th>
-              <th>Stock</th>
-              <th>Category</th>
-              <th>Action</th>
+              <th>ID</th><th>Name</th><th>Desc</th><th>₹</th><th>Stock</th><th>Category</th><th>Action</th>
             </tr>
           </thead>
-
           <tbody>
-            {filteredProducts.map((p) => (
+            {filteredProducts.map(p => (
               <tr key={p.id}>
                 <td>{p.id}</td>
-                <td style={styles.name}>{p.name}</td>
+                <td className="bold">{p.name}</td>
                 <td>{p.description}</td>
                 <td>{p.price}</td>
                 <td>{p.stock}</td>
                 <td>{p.category?.name}</td>
-                <td>
-                <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
-                <span
-                     onClick={() => editProduct(p)}
-                      style={{
-                                      cursor: "pointer",
-                                      display: "inline-flex",
-                                      alignItems: "center"
-                                    }}
-                                  >
-                    <FaEdit
-                      title="Edit product"
-                      color="#16a34a"
-                      size={17}
-                    />
-                    </span>
-                  <FaTrash
-                    onClick={() => deleteProduct(p.id)}
-                    title="Delete product"
-                    style={{
-                      cursor: "pointer",
-                      color: "#dc2626",
-                      fontSize: "16px"
-                    }}
-                    onMouseOver={(e) => e.target.style.color = "#b91c1c"}
-                    onMouseOut={(e) => e.target.style.color = "#dc2626"}
-                  />
-                 {/* Add to Cart */}
-                  <span
-                    onClick={() => addToCart(p)}
-                    style={{
-                      cursor: "pointer",
-                      display: "inline-flex",
-                      alignItems: "center"
-                    }}
-                  >
-                    <FaCartPlus
-                      title="Add to cart"
-                      color="#16a34a"
-                      size={17}
-                    />
-                  </span>
-                  </div>
+                <td className="actions">
+                  <FaEdit onClick={() => editProduct(p)} />
+                  <FaTrash onClick={() => deleteProduct(p.id)} />
+                  <FaCartPlus onClick={() => addToCart(p)} />
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-
-        {filteredProducts.length === 0 && (
-          <p style={styles.noData}>No products found</p>
-        )}
       </div>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    padding: "30px",
-    background: "#f5f7fb",
-    minHeight: "100vh",
-  },
-  title: {
-    marginBottom: "20px",
-  },
-  card: {
-    background: "#fff",
-    borderRadius: "12px",
-    boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
-    overflowX: "auto",
-  },
-  table: {
-    width: "100%",
-    borderCollapse: "collapse",
-  },
-  name: {
-    fontWeight: "600",
-  },
-  deleteBtn: {
-    background: "#e63946",
-    color: "#fff",
-    border: "none",
-    padding: "8px 14px",
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontSize: "14px",
-  },
-  loading: {
-    padding: "20px",
-    textAlign: "center",
-  },
-  error: {
-    padding: "20px",
-    color: "red",
-    textAlign: "center",
-  },
-  noData: {
-    padding: "20px",
-    textAlign: "center",
-    color: "#777",
-  },
-};
 
 export default Products;
