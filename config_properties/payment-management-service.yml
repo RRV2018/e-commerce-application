@@ -4,3 +4,7 @@ server:
 spring:
   application:
     name: payment-management-service
+
+springdoc:
+  api-docs:
+    path: /api/payment/v3/api-docs
