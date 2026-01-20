@@ -26,3 +26,29 @@ spring:
             - Path=/api/orders/**,/api/orders
           filters:
             - JwtAuthenticationFilter
+
+springdoc:
+  api-docs:
+    groups:
+      payment-management-service:
+        locations: http://${PAYMENT_SERVICE_HOST:localhost}:${PAYMENT_SERVICE_PORT:8086}/v3/api-docs
+      inventory-management-service:
+        locations: http://${INVENTORY_SERVICE_HOST:localhost}:${INVENTORY_SERVICE_PORT:8085}/v3/api-docs
+      order-management-service:
+        locations: http://${ORDER_SERVICE_HOST:localhost}:${ORDER_SERVICE_PORT:8084}/v3/api-docs
+      user-management-service:
+        locations: http://${USER_SERVICE_HOST:localhost}:${USER_SERVICE_PORT:8082}/v3/api-docs
+      product-catalog-service:
+        locations: http://${PRODUCT_SERVICE_HOST:localhost}:${PRODUCT_SERVICE_PORT:8083}/v3/api-docs
+  swagger-ui:
+    urls:
+      - name: Payment Service
+        url: /api-docs/payment-management-service
+      - name: Product Service
+        url: /api-docs/product-catalog-service
+      - name: Order Service
+        url: /api-docs/order-management-service
+      - name: User Service
+        url: /api-docs/user-management-service
+      - name: Inventory Service
+        url: /api-docs/inventory-management-service

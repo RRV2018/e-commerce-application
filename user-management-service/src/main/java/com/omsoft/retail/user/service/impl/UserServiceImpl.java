@@ -50,6 +50,16 @@ public class UserServiceImpl implements UserService {
         return mapToResponse(user);
     }
 
+    @Override
+    public UserResponse getUserByEmail(String email) {
+        Optional<User> user = Optional.ofNullable(userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found")));
+        if (user.isPresent()) {
+            return mapToResponse(user.get());
+        }
+        return null;
+    }
+
     private UserResponse mapToResponse(User user) {
         return UserResponse.builder()
                 .id(user.getId())

@@ -4,7 +4,8 @@ server:
 spring:
   application:
     name: spring-boot-eureka-server
-
+  main:
+    allow-bean-definition-overriding: true
   cloud:
     config:
       enabled: false
