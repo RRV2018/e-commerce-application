@@ -65,6 +65,36 @@ public class ProductController {
         }
     }
 
+    @DeleteMapping("/book/{cardItemId}")
+    public ResponseEntity<Void> deleteItemFromCard(@PathVariable("cardItemId") Long cardItemId) {
+        boolean added = service.deleteCardItem(cardItemId);
+        if (added) {
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } else {
+            return ResponseEntity.notFound().build(); // 404 Not Found
+        }
+    }
+
+    @PostMapping("/book/{cardItemId}/increase")
+    public ResponseEntity<Void> increaseItemQuantity(@PathVariable("cardItemId") Long cardItemId) {
+        boolean increased = service.increaseCardItemQuantity(cardItemId);
+        if (increased) {
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } else {
+            return ResponseEntity.notFound().build(); // 404 Not Found
+        }
+    }
+
+    @PostMapping("/book/{cardItemId}/decrease")
+    public ResponseEntity<Void> decreaseItemQuantity(@PathVariable("cardItemId") Long cardItemId) {
+        boolean decreased = service.decreaseCardItemQuantity(cardItemId);
+        if (decreased) {
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } else {
+            return ResponseEntity.notFound().build(); // 404 Not Found
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         boolean deleted = service.deleteProductById(id);

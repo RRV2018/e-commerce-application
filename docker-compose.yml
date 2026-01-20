@@ -267,11 +267,6 @@ services:
       env: local
     networks:
       - app-net
-    depends_on:
-      property-config-server:
-        condition: service_healthy
-      eureka-discovery-server:
-        condition: service_healthy
   postgres:
     image: postgres:15
     container_name: postgres
