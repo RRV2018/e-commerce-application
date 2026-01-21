@@ -4,3 +4,7 @@ server:
 spring:
   application:
     name: order-management-service
+
+springdoc:
+  api-docs:
+    path: /api/order/v3/api-docs

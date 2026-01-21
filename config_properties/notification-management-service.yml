@@ -4,3 +4,7 @@ server:
 spring:
   application:
     name: notification-management-service
+
+springdoc:
+  api-docs:
+    path: /api/notification/v3/api-docs

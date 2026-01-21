@@ -111,6 +111,38 @@ public class ProductService {
         return cardRepo.findUserOrders(userId);
     }
 
+    public boolean deleteCardItem(Long cardItemId) {
+        if (cardRepo.existsById(cardItemId)) {
+            cardRepo.deleteById(cardItemId);
+        }
+        return false;
+    }
+
+    public boolean increaseCardItemQuantity(Long cardItemId) {
+        Optional<UserCard> cardItem = cardRepo.findById(cardItemId);
+        if (cardItem.isPresent()) {
+            UserCard card = cardItem.get();
+            card.setQuantity(card.getQuantity()+1);
+            cardRepo.save(card);
+            return true;
+        }
+        return false;
+    }
+    public boolean decreaseCardItemQuantity(Long cardItemId) {
+        Optional<UserCard> cardItem = cardRepo.findById(cardItemId);
+        if (cardItem.isPresent()) {
+            UserCard card = cardItem.get();
+            if (card.getQuantity() == 1) {
+                deleteCardItem(card.getId());
+                return true;
+            }
+            card.setQuantity(card.getQuantity()-1);
+            cardRepo.save(card);
+            return true;
+        }
+        return false;
+    }
+
     public boolean addProductToCard(String userId, Long productId) {
         UserCard card = cardRepo.findUserOrder(userId, productId);
         Optional<Product> product = productRepo.findById(productId);

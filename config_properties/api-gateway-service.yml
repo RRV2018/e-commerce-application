@@ -4,25 +4,18 @@ server:
 spring:
   application:
     name: api-gateway-service
-  cloud:
-    gateway:
-      routes:
-        - id: user-management-service
-          uri: lb://user-management-service
-          predicates:
-            - Path=/api/users/**,/api/auth/**
-          filters:
-            - StripPrefix=1
-            - JwtAuthenticationFilter
-        - id: product-catalog-service
-          uri: lb://product-catalog-service
-          predicates:
-            - Path=/api/products/**
-          filters:
-            - JwtAuthenticationFilter
-        - id: order-management-service
-          uri: lb://order-management-service
-          predicates:
-            - Path=/api/orders/**,/api/orders
-          filters:
-            - JwtAuthenticationFilter
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui/index.html
+    urls:
+      - name: Product Service
+        url: /api/products/v3/api-docs
+      - name: User Service
+        url: /api/users/v3/api-docs
+      - name: Payment Service
+        url: /api/payment/v3/api-docs
+      - name: Inventory Service
+        url: /api/inventory/v3/api-docs
+      - name: Order Service
+        url: /api/order/v3/api-docs

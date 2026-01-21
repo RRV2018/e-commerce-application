@@ -4,3 +4,8 @@ server:
 spring:
   application:
     name: inventory-management-service
+
+
+springdoc:
+  api-docs:
+    path: /api/inventory/v3/api-docs

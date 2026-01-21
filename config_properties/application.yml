@@ -48,6 +48,3 @@ resilience4j:
         waitDurationInOpenState: 20s
         permittedNumberOfCallsInHalfOpenState: 3
         automaticTransitionFromOpenToHalfOpenEnabled: true
-        recordExceptions:
-          - java.io.IOException
-          - java.util.concurrent.TimeoutException

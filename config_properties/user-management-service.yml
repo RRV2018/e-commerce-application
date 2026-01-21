@@ -5,3 +5,6 @@ spring:
   application:
     name: user-management-service
 
+springdoc:
+  api-docs:
+    path: /api/user/v3/api-docs
