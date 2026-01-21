@@ -7,6 +7,7 @@ spring:
 
 springdoc:
   swagger-ui:
+    use-root-path: true
     path: /swagger-ui/index.html
     urls:
       - name: Product Service
