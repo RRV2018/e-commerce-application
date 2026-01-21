@@ -11,5 +11,3 @@ springdoc:
     path: /api/products/v3/api-docs
   swagger-ui:
     use-root-path: true
-  cache:
-    disabled: true
