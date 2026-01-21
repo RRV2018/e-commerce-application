@@ -15,11 +15,11 @@ public class GatewayConfig {
     @Bean
     public RouteLocator customRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route("user-service", r -> r.path("/api/users/**", "/api/auth/**")
+                .route("user-service", r -> r.path("/api/user/**", "/api/auth/**")
                         .filters(f -> f.stripPrefix(1).filter(jwtAuthenticationFilter))
                         .uri("lb://user-management-service"))
-                .route("user-swagger", r -> r.path("/users/v3/api-docs")
-                        .filters(f -> f.stripPrefix(1))
+                .route("user-swagger", r -> r.path("/user/v3/api-docs")
+                        .filters(f -> f.filter(jwtAuthenticationFilter))
                         .uri("lb://user-management-service"))
                 .route("product-service", r -> r.path("/api/products/**")
                         .filters(f -> f.filter(jwtAuthenticationFilter))

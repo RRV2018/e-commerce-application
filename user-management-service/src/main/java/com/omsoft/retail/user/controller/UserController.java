@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user")
 @RequiredArgsConstructor
 @Tag(name = "User APIs", description = "Operations related to users")
 public class UserController {
@@ -55,7 +55,7 @@ public class UserController {
                     )
             }
     )
-    @GetMapping("/users")
+    @GetMapping("/emails")
     public UserResponse getUserByEmail(@RequestParam String email) {
         return userService.getUserByEmail(email);
     }
