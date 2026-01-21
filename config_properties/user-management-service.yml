@@ -7,4 +7,4 @@ spring:
 
 springdoc:
   api-docs:
-    path: /api/user/v3/api-docs
+    path: /user/v3/api-docs
