@@ -10,13 +10,5 @@ springdoc:
     use-root-path: true
     path: /swagger-ui/index.html
     urls:
-      - name: Product Service
-        url: /api/products/v3/api-docs
       - name: User Service
         url: /api/user/v3/api-docs
-      - name: Payment Service
-        url: /api/payment/v3/api-docs
-      - name: Inventory Service
-        url: /api/inventory/v3/api-docs
-      - name: Order Service
-        url: /api/order/v3/api-docs
