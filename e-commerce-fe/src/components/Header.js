@@ -1,70 +1,49 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import "./Header.css";
 
 const Header = () => {
-    const [userMenu, setUserMenu] = useState(false);
-    const [productsMenu, setProductsMenu] = useState(false);
-    const [ordersMenu, setOrdersMenu] = useState(false);
-    const [reportMenu, setReportMenu] = useState(false);
-    const navigate = useNavigate();
-    const toggleMenu = (menu) => {
-        setUserMenu(menu === "user" ? !userMenu : false);
-        setProductsMenu(menu === "products" ? !productsMenu : false);
-        setOrdersMenu(menu === "orders" ? !ordersMenu : false);
-        setReportMenu(menu === "report" ? !reportMenu : false);
-    };
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
-    // ✅ remove token
     sessionStorage.removeItem("token");
-
-    // ✅ redirect to login
     navigate("/login", { replace: true });
   };
-    return (
-    <header className = "bg-gray-800 text-white shadow-md" >
-        <div className = "container mx-auto flex justify-between items-center p-4" >
-        <nav className = "flex space-x-4 relative" >
-        <table width="80%">
-        <tr>
-        <td>
-        <Link to = "/users"
-        className = "block px-4 py-2 hover:bg-gray-100" >
-        Users Management </Link>
-        </td>
 
-        <td >
-            <Link to = "/products" className = "block px-4 py-2 hover:bg-gray-100" >
-                Products Management
-            </Link>
-        </td>
-        <td >
-            <Link to = "/orders" className = "block px-4 py-2 hover:bg-gray-100" >
-         Orders Management
-            </Link>
-        </td>
-        <td >
-            <Link to = "/report" className = "block px-4 py-2 hover:bg-gray-100" >
-                Analysis Report
-            </Link>
-        </td >
-        <td>
-        <button
-              type="button"
-              onClick={handleLogout}
-               className="text-blue-600 hover:underline bg-transparent p-0">
-              Logout
-            </button>
-        </td>
+  const isActive = (path) => location.pathname === path;
 
-        </tr>
+  return (
+    <header className="header">
+      <div className="header-container">
+        <div className="logo">
+          <span>🛒 E-Commerce Admin</span>
+        </div>
 
-        </table>
+        <nav className="nav">
+          <Link className={`nav-link ${isActive("/users") ? "active" : ""}`} to="/users">
+            Users
+          </Link>
 
+          <Link className={`nav-link ${isActive("/products") ? "active" : ""}`} to="/products">
+            Products
+          </Link>
+
+          <Link className={`nav-link ${isActive("/orders") ? "active" : ""}`} to="/orders">
+            Orders
+          </Link>
+
+          <Link className={`nav-link ${isActive("/report") ? "active" : ""}`} to="/report">
+            Reports
+          </Link>
         </nav>
+
+        <button className="logout-btn" onClick={handleLogout}>
+          Logout
+        </button>
       </div>
-      </header>
-    );
+    </header>
+  );
 };
 
 export default Header;
