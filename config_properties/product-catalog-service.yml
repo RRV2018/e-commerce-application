@@ -10,4 +10,4 @@ springdoc:
   api-docs:
     path: /api/products/v3/api-docs
   swagger-ui:
-    use-root-path: true
+    path: /api/products/swagger-ui/index.html

@@ -35,35 +35,4 @@ public class OpenApiConfig {
                         new Server().url("http://localhost:8081")
                 ));
     }
-/*
-    @Bean
-    public OpenAPI customOpenAPI() {
-        return new OpenAPI()
-                .info(new io.swagger.v3.oas.models.info.Info()
-                        .title("User Service API")
-                        .version("1.0")
-                        .description("All User Service endpoints"))
-                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
-                .components(new Components()
-                        .addSecuritySchemes("bearerAuth",
-                                new SecurityScheme()
-                                        .type(SecurityScheme.Type.HTTP)
-                                        .scheme("bearer")
-                                        .bearerFormat("JWT")
-                        )
-                );
-    }
-*/
-
-    @Bean
-    public OpenApiCustomizer addGlobalHeaders() {
-        return openApi -> openApi.getPaths().forEach((path, item) -> {
-            item.readOperations().forEach(op -> {
-                op.addParametersItem(new io.swagger.v3.oas.models.parameters.HeaderParameter()
-                        .name("Accept")
-                        .required(false)
-                        .example("application/json"));
-            });
-        });
-    }
 }

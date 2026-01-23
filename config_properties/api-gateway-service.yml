@@ -12,3 +12,5 @@ springdoc:
     urls:
       - name: User Service
         url: /api/user/v3/api-docs
+      - name: Products Service
+        url: /api/products/v3/api-docs
