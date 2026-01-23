@@ -8,7 +8,7 @@ spring:
 springdoc:
   swagger-ui:
     path: /swagger-ui/index.html
-    persistAuthorization: tru
+    persistAuthorization: true
     urls:
       - name: User Service
         url: /api/user/v3/api-docs
