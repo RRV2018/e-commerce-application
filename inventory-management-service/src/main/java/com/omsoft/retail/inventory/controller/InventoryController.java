@@ -1,7 +1,7 @@
-package com.omsoft.retail.payment.controller;
+package com.omsoft.retail.inventory.controller;
 
-import com.omsoft.retail.payment.dto.InventoryRequest;
-import com.omsoft.retail.payment.service.InventoryService;
+import com.omsoft.retail.inventory.dto.InventoryRequest;
+import com.omsoft.retail.inventory.service.InventoryService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

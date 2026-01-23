@@ -1,6 +1,6 @@
-package com.omsoft.retail.payment.dto;
+package com.omsoft.retail.inventory.dto;
 
-import com.omsoft.retail.payment.type.PaymentStatus;
+import com.omsoft.retail.inventory.type.PaymentStatus;
 
 public record PaymentResponse(
         PaymentStatus status,

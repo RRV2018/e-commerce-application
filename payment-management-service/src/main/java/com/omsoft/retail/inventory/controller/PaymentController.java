@@ -1,8 +1,8 @@
-package com.omsoft.retail.payment.controller;
+package com.omsoft.retail.inventory.controller;
 
-import com.omsoft.retail.payment.dto.PaymentRequest;
-import com.omsoft.retail.payment.dto.PaymentResponse;
-import com.omsoft.retail.payment.type.PaymentStatus;
+import com.omsoft.retail.inventory.dto.PaymentRequest;
+import com.omsoft.retail.inventory.dto.PaymentResponse;
+import com.omsoft.retail.inventory.type.PaymentStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

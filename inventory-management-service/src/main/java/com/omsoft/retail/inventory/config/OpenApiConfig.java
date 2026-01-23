@@ -1,4 +1,4 @@
-package com.omsoft.retail.order.config;
+package com.omsoft.retail.inventory.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @Configuration
 @OpenAPIDefinition(
-        info = @Info(title = "Order Service API", version = "v1"),
+        info = @Info(title = "Inventory Service API", version = "v1"),
         security = @SecurityRequirement(name = "bearerAuth")
 )
 @SecurityScheme(

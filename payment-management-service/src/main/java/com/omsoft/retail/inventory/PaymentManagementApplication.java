@@ -1,4 +1,4 @@
-package com.omsoft.retail.payment;
+package com.omsoft.retail.inventory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;

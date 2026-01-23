@@ -1,7 +1,7 @@
-package com.omsoft.retail.payment.service;
+package com.omsoft.retail.inventory.service;
 
-import com.omsoft.retail.payment.entity.Inventory;
-import com.omsoft.retail.payment.repo.InventoryRepository;
+import com.omsoft.retail.inventory.entity.Inventory;
+import com.omsoft.retail.inventory.repo.InventoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

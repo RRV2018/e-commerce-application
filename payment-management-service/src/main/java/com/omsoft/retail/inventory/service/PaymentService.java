@@ -1,8 +1,8 @@
-package com.omsoft.retail.payment.service;
+package com.omsoft.retail.inventory.service;
 
-import com.omsoft.retail.payment.dto.PaymentRequest;
-import com.omsoft.retail.payment.dto.PaymentResponse;
-import com.omsoft.retail.payment.type.PaymentStatus;
+import com.omsoft.retail.inventory.dto.PaymentRequest;
+import com.omsoft.retail.inventory.dto.PaymentResponse;
+import com.omsoft.retail.inventory.type.PaymentStatus;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

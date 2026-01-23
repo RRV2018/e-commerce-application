@@ -1,4 +1,4 @@
-package com.omsoft.retail.payment.entity;
+package com.omsoft.retail.inventory.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

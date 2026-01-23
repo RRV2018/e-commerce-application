@@ -1,4 +1,4 @@
-package com.omsoft.retail.payment.type;
+package com.omsoft.retail.inventory.type;
 
 public enum PaymentStatus {
     SUCCESS,

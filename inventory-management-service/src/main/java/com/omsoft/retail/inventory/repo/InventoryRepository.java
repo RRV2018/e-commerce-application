@@ -1,6 +1,6 @@
-package com.omsoft.retail.payment.repo;
+package com.omsoft.retail.inventory.repo;
 
-import com.omsoft.retail.payment.entity.Inventory;
+import com.omsoft.retail.inventory.entity.Inventory;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {

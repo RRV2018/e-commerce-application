@@ -14,3 +14,9 @@ springdoc:
         url: /api/user/v3/api-docs
       - name: Products Service
         url: /api/products/v3/api-docs
+      - name: Order Service
+        url: /api/order/v3/api-docs
+      - name: Inventory Service
+        url: /api/inventory/v3/api-docs
+      - name: Payment Service
+        url: /api/payment/v3/api-docs
