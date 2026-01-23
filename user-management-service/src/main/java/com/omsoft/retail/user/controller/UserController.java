@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 @RequiredArgsConstructor
 @Tag(name = "User APIs", description = "Operations related to users")
 public class UserController {
@@ -56,8 +56,8 @@ public class UserController {
             }
     )
     @GetMapping("/emails")
-    public UserResponse getUserByEmail(@RequestParam String email) {
-        return userService.getUserByEmail(email);
+    public ResponseEntity<UserResponse> getUserByEmail(@RequestParam String email) {
+        return ResponseEntity.ok(userService.getUserByEmail(email));
     }
 
     @Operation(
@@ -77,6 +77,10 @@ public class UserController {
                     @ApiResponse(
                             responseCode = "500",
                             description = "Internal server error"
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Access to the resource is prohibited."
                     )
             }
     )

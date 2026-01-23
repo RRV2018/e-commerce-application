@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user/{userId}/addresses")
+@RequestMapping("/api/user/{userId}/addresses")
 @Tag(name = "Address", description = "User Address APIs")
 public class AddressController {
 
