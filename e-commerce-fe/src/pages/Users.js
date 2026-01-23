@@ -16,7 +16,7 @@ const Users = () => {
   /* ---------- FETCH USERS ---------- */
   const fetchUsers = async () => {
     try {
-      const res = await api.get("/api/users/allUsers");
+      const res = await api.get("/api/user/allUsers");
       setUsers(res.data || []);
     } catch (err) {
       console.error(err);
@@ -53,10 +53,10 @@ const Users = () => {
   const saveUser = async () => {
     try {
       if (editingId) {
-        await api.put(`/api/users/${editingId}`, formData);
+        await api.put(`/api/user/${editingId}`, formData);
         alert("User updated successfully");
       } else {
-        await api.post("/api/users/register", formData);
+        await api.post("/api/user/register", formData);
         alert("User added successfully");
       }
 
@@ -81,7 +81,7 @@ const Users = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
-        await api.delete(`/api/users/${id}`);
+        await api.delete(`/api/user/${id}`);
         fetchUsers();
       } catch (err) {
         console.error(err);

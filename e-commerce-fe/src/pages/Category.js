@@ -7,7 +7,7 @@ const [name, setName] = useState("");
 
 
 const addCategory = async () => {
-await api.post("api/products/category", { name });
+await api.post("/api/products/category", { name });
 alert("Category Added");
 };
 

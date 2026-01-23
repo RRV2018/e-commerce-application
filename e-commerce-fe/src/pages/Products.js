@@ -29,7 +29,7 @@ function Products() {
       const res = await api.get("/api/products");
       setProducts(res.data || []);
 
-      const cardItem = await api.get("/api/products/book");
+      const cardItem = await api.get("/api/products/card");
       setCardData(cardItem.data || []);
     } catch {
       setError("Failed to load products");
@@ -81,12 +81,13 @@ function Products() {
   };
 
   const addToCart = async (p) => {
-    await api.post(`/api/products/book/${p.id}`);
+    await api.post(`/api/products/card/${p.id}`);
     fetchProducts();
   };
 
   const bookOrder = async () => {
-    await api.post("/api/orders/book");
+    alert("Do you want to book?");
+    await api.post("/api/order/card");
     alert("Order booked successfully");
   };
 
@@ -103,17 +104,17 @@ function Products() {
 
   const removeCartItem = async (c) => {
    if (!window.confirm("Remove item from cart?")) return;
-    await api.delete(`/api/products/book/${c.id}`);
+    await api.delete(`/api/products/card/${c.id}`);
     fetchProducts();
   };
 
   const increaseQty = async (c) => {
-    await api.post(`/api/products/book/${c.id}/increase`);
+    await api.post(`/api/products/card/${c.id}/increase`);
     fetchProducts();
   };
 
   const decreaseQty = async (c) => {
-    await api.post(`/api/products/book/${c.id}/decrease`);
+    await api.post(`/api/products/card/${c.id}/decrease`);
     fetchProducts();
   };
   if (loading) return <p className="loading">Loading...</p>;

@@ -15,6 +15,7 @@ public class InventoryService {
         this.repo = repo;
     }
     public void reserve(Long productId, int quantity) {
+        System.out.println("Product id = {}"+ productId);
         Inventory inventory = repo.findById(productId)
                 .orElseThrow(() -> new IllegalStateException("Inventory not found"));
         if (inventory.getAvailable() < quantity) {

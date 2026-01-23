@@ -55,11 +55,11 @@ public class OrderController {
 
     // ===================== BOOK ORDER =====================
     @Operation(
-            summary = "Book order from cart",
-            description = "Books all items currently present in the user's cart",
+            summary = "Book order from card",
+            description = "Books all items currently present in the user's card",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Order booked successfully"),
-                    @ApiResponse(responseCode = "404", description = "No cart found for user")
+                    @ApiResponse(responseCode = "404", description = "No card found for user")
             }
     )
     @PostMapping("/card")

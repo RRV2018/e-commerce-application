@@ -22,7 +22,7 @@ function Login() {
     sessionStorage.removeItem("token");
 
     try {
-      const res = await api.post("/auth/login", {
+      const res = await api.post("/api/auth/login", {
         email,
         password,
       });
