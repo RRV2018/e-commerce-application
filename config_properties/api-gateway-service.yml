@@ -10,4 +10,4 @@ springdoc:
     path: /swagger-ui/index.html
     urls:
       - name: User Service
-        url: /v3/api-docs
+        url: /api/user/v3/api-docs
