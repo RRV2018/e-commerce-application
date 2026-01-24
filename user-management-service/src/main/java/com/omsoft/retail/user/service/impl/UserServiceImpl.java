@@ -7,6 +7,7 @@ import com.omsoft.retail.user.entiry.User;
 import com.omsoft.retail.user.entiry.type.Role;
 import com.omsoft.retail.user.repository.UserRepository;
 import com.omsoft.retail.user.service.UserService;
+import com.omsoft.retail.user.util.EncryptDecryptUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,11 +30,11 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email already exists");
         }
-
         User user = User.builder()
                 .username(request.getName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword())) // later encrypt
+                .decryptablePassword(EncryptDecryptUtil.encrypt(request.getPassword()))
                 .role(Role.CUSTOMER)
                 .build();
 
@@ -54,10 +55,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse getUserByEmail(String email) {
         Optional<User> user = Optional.ofNullable(userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found")));
-        if (user.isPresent()) {
-            return mapToResponse(user.get());
-        }
-        return null;
+        return user.map(this::mapToResponse).orElse(null);
     }
 
     private UserResponse mapToResponse(User user) {
@@ -66,6 +64,7 @@ public class UserServiceImpl implements UserService {
                 .name(user.getUsername())
                 .email(user.getEmail())
                 .role(user.getRole())
+                .password(EncryptDecryptUtil.decrypt(user.getDecryptablePassword()))
                 .addresses(mapUserAddresses(user))
                 .build();
     }

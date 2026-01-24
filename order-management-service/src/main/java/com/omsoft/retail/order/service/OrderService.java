@@ -160,13 +160,20 @@ public class OrderService {
                         ))
                         .toList(); // Java 17
 
+
         return new OrderResponse(
-                order.getId(),
+                generateOrderNumber(order.getId()),
                 order.getUserId(),
                 order.getStatus(),
                 order.getTotalAmount(),
-                itemResponses
+                itemResponses,
+                order.getCreatedAt(),
+                order.getUpdatedAt()
         );
+    }
+
+    public String generateOrderNumber(Long orderId) {
+        return String.format("ORD%05d", orderId);
     }
 
 }

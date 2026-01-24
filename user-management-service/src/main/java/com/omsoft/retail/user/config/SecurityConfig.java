@@ -4,7 +4,9 @@ import com.omsoft.retail.user.error.CustomAccessDeniedHandler;
 import com.omsoft.retail.user.error.CustomAuthEntryPoint;
 import com.omsoft.retail.user.filter.JwtFilter;
 import com.omsoft.retail.user.service.impl.CustomUserDetailsService;
+import com.omsoft.retail.user.util.EncryptDecryptUtil;
 import com.omsoft.retail.user.util.JwtUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -22,6 +24,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
+    @Value("${application.secret.key}")
+    private String secret;
 
 
     @Bean
@@ -99,4 +103,5 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }

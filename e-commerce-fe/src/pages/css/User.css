@@ -1,0 +1,20 @@
+.password-box {
+    position: relative;
+    width: 300px;
+}
+
+.password-box input {
+    width: 100%;
+    padding: 10px;
+    padding-right: 40px;
+    font-size: 16px;
+}
+
+.password-box span {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    user-select: none;
+}

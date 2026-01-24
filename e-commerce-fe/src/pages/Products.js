@@ -88,6 +88,7 @@ function Products() {
   const bookOrder = async () => {
     alert("Do you want to book?");
     await api.post("/api/order/card");
+    fetchProducts();
     alert("Order booked successfully");
   };
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/axios";
+import "./css/User.css";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -72,7 +73,7 @@ const Users = () => {
     setForm({
       name: user.name || "",
       email: user.email || "",
-      password: "" // password stays empty
+      password: user.password // password stays empty
     });
     setEditingId(user.id);
   };
@@ -171,6 +172,7 @@ const Users = () => {
             <th>ID</th>
             <th>Name</th>
             <th>Email</th>
+            <th>Password</th>
             <th>Role</th>
             <th>Actions</th>
           </tr>
@@ -182,6 +184,7 @@ const Users = () => {
               <td>{u.id}</td>
               <td>{u.name}</td>
               <td>{u.email}</td>
+              <td>{u.password}         </td>
               <td>{u.role}</td>
               <td>
                 <button onClick={() => editUser(u)}>Edit</button>

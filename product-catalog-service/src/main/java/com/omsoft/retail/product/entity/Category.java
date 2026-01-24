@@ -12,7 +12,7 @@ import java.util.List;
 @Table(name = "categories")
 @Getter
 @Setter
-public class Category {
+public class Category extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

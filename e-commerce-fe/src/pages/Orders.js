@@ -140,6 +140,7 @@ const [searchTerm, setSearchTerm] = useState("");
                 <th>User ID</th>
                 <th>Status</th>
                 <th>Total Amount</th>
+                <th>Created Date</th>
               </tr>
             </thead>
             <tbody>
@@ -149,6 +150,7 @@ const [searchTerm, setSearchTerm] = useState("");
                   <td>{o.userId}</td>
                   <td>{o.status}</td>
                   <td>{o.totalAmount}</td>
+                  <td>{o.createdAt}</td>
                 </tr>
               ))}
             </tbody>
