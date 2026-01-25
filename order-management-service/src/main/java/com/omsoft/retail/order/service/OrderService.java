@@ -33,6 +33,7 @@ public class OrderService {
     private final PaymentClient paymentClient;
     private final UserCardRepository cardRepo;
 
+    @Transactional
     public boolean bookOrderFromCard(String userId) {
         List<UserCard> userCardItems =  cardRepo.findUserOrders(userId);
         if (!CollectionUtils.isEmpty(userCardItems)) {
