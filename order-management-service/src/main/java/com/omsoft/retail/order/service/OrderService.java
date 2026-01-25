@@ -12,6 +12,7 @@ import com.omsoft.retail.order.repo.UserCardRepository;
 import com.omsoft.retail.order.type.OrderStatus;
 import com.omsoft.retail.order.type.PaymentStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -22,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -116,6 +118,7 @@ public class OrderService {
                             )
                     );
                 } catch (Exception ignored) {
+                    log.warn("Error found but which will be ignored : {}", ignored.getMessage());
                 }
             }
             order.setStatus(OrderStatus.CANCELLED);

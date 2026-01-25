@@ -24,6 +24,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EncryptDecryptUtil encryptDecryptUtil;
 
     @Override
     public UserResponse registerUser(UserRequest request) {
@@ -35,7 +36,7 @@ public class UserServiceImpl implements UserService {
                 .username(request.getName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword())) // later encrypt
-                .decryptablePassword(EncryptDecryptUtil.encrypt(request.getPassword()))
+                .decryptablePassword(encryptDecryptUtil.encrypt(request.getPassword()))
                 .role(Role.CUSTOMER)
                 .build();
 
@@ -65,7 +66,7 @@ public class UserServiceImpl implements UserService {
                 .name(user.getUsername())
                 .email(user.getEmail())
                 .role(user.getRole())
-                .password(EncryptDecryptUtil.decrypt(user.getDecryptablePassword()))
+                .password(encryptDecryptUtil.decrypt(user.getDecryptablePassword()))
                 .addresses(mapUserAddresses(user))
                 .build();
     }

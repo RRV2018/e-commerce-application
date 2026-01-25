@@ -24,7 +24,6 @@ public class JwtFilter extends OncePerRequestFilter {
     }
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        //String path = request.getRequestURI();
         String path = request.getServletPath();   // 🔥 MUST be servletPath
         return path.startsWith("/v3/api-docs")
                 || path.startsWith("/swagger-ui")
@@ -38,10 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
-
         String authHeader = request.getHeader("Authorization");
-        String path = request.getRequestURL().toString();
-
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             String username = jwtUtil.extractUsername(token);

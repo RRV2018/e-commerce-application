@@ -10,3 +10,6 @@ springdoc:
     path: /api/user/v3/api-docs
   swagger-ui:
     path: /api/user/swagger-ui/index.html
+
+encryption:
+  secret-key: ${ENCRYPTION_SECRET_KEY:u14kB@(%AEE6kKSh}
