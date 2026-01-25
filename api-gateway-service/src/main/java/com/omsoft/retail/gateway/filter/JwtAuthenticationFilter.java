@@ -14,8 +14,6 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAuthenticationFilter.Config> implements GatewayFilter  {
-
-
     private final JwtUtil jwtUtil;
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
@@ -24,13 +22,11 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     }
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        System.out.println("Here filter...............");
         return validateToken(exchange, chain);
     }
 
     @Override
     public GatewayFilter apply(Config config) {
-        System.out.println("Here filter222...............");
         return this::validateToken;
     }
 
@@ -44,10 +40,13 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
         return exchange.getResponse().setComplete();
     }
 
+    public static class Config {
+
+    }
+
     private Mono<Void> validateToken(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
-        System.out.println("Path ------"+path);
 
         if (path.startsWith("/swagger-ui")
                 || path.startsWith("/v3/api-docs")
