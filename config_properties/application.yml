@@ -4,6 +4,9 @@ server:
     max-http-form-post-size: 200MB
 
 spring:
+  batch:
+    jdbc:
+      initialize-schema: always
   servlet:
     multipart:
       max-file-size: 200MB
