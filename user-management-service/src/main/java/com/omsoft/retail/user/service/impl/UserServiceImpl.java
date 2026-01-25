@@ -9,6 +9,7 @@ import com.omsoft.retail.user.repository.UserRepository;
 import com.omsoft.retail.user.service.UserService;
 import com.omsoft.retail.user.util.EncryptDecryptUtil;
 import lombok.RequiredArgsConstructor;
+import org.omsoft.retail.exception.AlreadyExistsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse registerUser(UserRequest request) {
 
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already exists");
+            throw new AlreadyExistsException("Email :", request.getEmail());
         }
         User user = User.builder()
                 .username(request.getName())
@@ -90,7 +91,7 @@ public class UserServiceImpl implements UserService {
                 .stream()
                 .map(this::mapToResponse
                 )
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
