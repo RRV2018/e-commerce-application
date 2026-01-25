@@ -13,3 +13,4 @@ springdoc:
 
 encryption:
   secret-key: ${ENCRYPTION_SECRET_KEY:u14kB@(%AEE6kKSh}
+  algorithm: AES

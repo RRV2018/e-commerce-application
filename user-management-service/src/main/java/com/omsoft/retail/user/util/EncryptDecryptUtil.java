@@ -14,10 +14,13 @@ public class EncryptDecryptUtil {
     @Value("${encryption.secret-key}")
     private String secretKey; // 16 chars
 
+    @Value("${encryption.algorithm}")
+    private String algorithm; // 16 chars
+
     public String encrypt(String str) {
         try {
-            SecretKeySpec key = new SecretKeySpec(secretKey.getBytes(), "AES");
-            Cipher cipher = Cipher.getInstance("AES");
+            SecretKeySpec key = new SecretKeySpec(secretKey.getBytes(), algorithm);
+            Cipher cipher = Cipher.getInstance(algorithm);
             cipher.init(Cipher.ENCRYPT_MODE, key);
             return Base64.getEncoder().encodeToString(cipher.doFinal(str.getBytes()));
         } catch (Exception e) {
@@ -27,8 +30,8 @@ public class EncryptDecryptUtil {
 
     public String decrypt(String encrypted) {
         try {
-            SecretKeySpec key = new SecretKeySpec(secretKey.getBytes(), "AES");
-            Cipher cipher = Cipher.getInstance("AES");
+            SecretKeySpec key = new SecretKeySpec(secretKey.getBytes(), algorithm);
+            Cipher cipher = Cipher.getInstance(algorithm);
             cipher.init(Cipher.DECRYPT_MODE, key);
             return new String(cipher.doFinal(Base64.getDecoder().decode(encrypted)));
         } catch (Exception e) {
