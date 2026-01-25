@@ -14,7 +14,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@Component
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
@@ -24,6 +23,19 @@ public class JwtFilter extends OncePerRequestFilter {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
     }
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        //String path = request.getRequestURI();
+        String path = request.getServletPath();   // 🔥 MUST be servletPath
+
+        System.out.println("JWT path = " + path);
+
+        return path.startsWith("/v3/api-docs")
+                || path.startsWith("/swagger-ui")
+                || path.startsWith("/swagger-ui.html")
+                || path.startsWith("/actuator")
+                || path.startsWith("/api/user/api/auth");
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -32,6 +44,8 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
+        String path = request.getRequestURL().toString();
+        System.out.println("Path is here -------"+path);
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);

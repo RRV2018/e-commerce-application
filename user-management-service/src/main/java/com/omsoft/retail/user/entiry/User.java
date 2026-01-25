@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @ToString(exclude = "addresses")
-public class User {
+public class User extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,5 +41,9 @@ public class User {
     )
     @JsonManagedReference
     private List<Address> addresses = new ArrayList<>();
+
+    @Column(nullable = false)
+    private String decryptablePassword;
+
 }
 

@@ -37,6 +37,7 @@
         <spring-cloud.version>2025.0.0</spring-cloud.version>
         <de.codecentric.version>3.5.6</de.codecentric.version>
         <spring-boot.version>3.3.1</spring-boot.version>
+        <springdoc-openapi.version>2.7.0</springdoc-openapi.version>
     </properties>
 
 

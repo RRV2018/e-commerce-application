@@ -3,6 +3,7 @@ package com.omsoft.retail.user.controller;
 import com.omsoft.retail.user.dto.AddressRequest;
 import com.omsoft.retail.user.entiry.Address;
 import com.omsoft.retail.user.service.AddressService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users/{userId}/addresses")
+@RequestMapping("/api/user/{userId}/addresses")
+@Tag(name = "Address", description = "User Address APIs")
 public class AddressController {
 
     private final AddressService addressService;

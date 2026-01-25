@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/axios";
+import "./css/User.css";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -16,7 +17,7 @@ const Users = () => {
   /* ---------- FETCH USERS ---------- */
   const fetchUsers = async () => {
     try {
-      const res = await api.get("/api/users/allUsers");
+      const res = await api.get("/api/user/allUsers");
       setUsers(res.data || []);
     } catch (err) {
       console.error(err);
@@ -53,10 +54,10 @@ const Users = () => {
   const saveUser = async () => {
     try {
       if (editingId) {
-        await api.put(`/api/users/${editingId}`, formData);
+        await api.put(`/api/user/${editingId}`, formData);
         alert("User updated successfully");
       } else {
-        await api.post("/api/users/register", formData);
+        await api.post("/api/user/register", formData);
         alert("User added successfully");
       }
 
@@ -72,7 +73,7 @@ const Users = () => {
     setForm({
       name: user.name || "",
       email: user.email || "",
-      password: "" // password stays empty
+      password: user.password // password stays empty
     });
     setEditingId(user.id);
   };
@@ -81,7 +82,7 @@ const Users = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
-        await api.delete(`/api/users/${id}`);
+        await api.delete(`/api/user/${id}`);
         fetchUsers();
       } catch (err) {
         console.error(err);
@@ -171,6 +172,7 @@ const Users = () => {
             <th>ID</th>
             <th>Name</th>
             <th>Email</th>
+            <th>Password</th>
             <th>Role</th>
             <th>Actions</th>
           </tr>
@@ -182,6 +184,7 @@ const Users = () => {
               <td>{u.id}</td>
               <td>{u.name}</td>
               <td>{u.email}</td>
+              <td>{u.password}         </td>
               <td>{u.role}</td>
               <td>
                 <button onClick={() => editUser(u)}>Edit</button>

@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @Table(name = "user_card")
 @Getter
 @Setter
-public class UserCard {
+public class UserCard extends Auditable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

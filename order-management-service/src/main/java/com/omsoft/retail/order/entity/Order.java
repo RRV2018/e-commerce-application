@@ -14,7 +14,7 @@ import java.util.List;
 @Table(name = "orders")
 @Setter
 @Getter
-public class Order {
+public class Order extends Auditable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

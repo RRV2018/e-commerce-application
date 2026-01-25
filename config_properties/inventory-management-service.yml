@@ -4,3 +4,10 @@ server:
 spring:
   application:
     name: inventory-management-service
+
+
+springdoc:
+  api-docs:
+    path: /api/inventory/v3/api-docs
+  swagger-ui:
+    path: /api/inventory/swagger-ui/index.html

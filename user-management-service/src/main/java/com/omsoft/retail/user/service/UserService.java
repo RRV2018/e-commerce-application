@@ -10,4 +10,5 @@ public interface UserService {
     UserResponse getUserById(Long id);
     List<UserResponse> getAllUsers();
     boolean deleteUserById(Long id);
+    UserResponse getUserByEmail(String email);
 }

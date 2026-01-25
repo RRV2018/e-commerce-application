@@ -28,7 +28,7 @@ const [searchTerm, setSearchTerm] = useState("");
         items: [{ productId: 1, quantity: 1, price: 55999 }],
       };
 
-      const res = await api.post("/api/orders", payload);
+      const res = await api.post("/api/order", payload);
       setOrders([res.data]); // show created order
     } catch (err) {
       console.error(err);
@@ -41,7 +41,7 @@ const [searchTerm, setSearchTerm] = useState("");
   const getOrders = async () => {
     try {
       setLoading(true);
-      const res = await api.get("/api/orders");
+      const res = await api.get("/api/order");
       setOrders(res.data);
     } catch (err) {
       console.error(err);
@@ -74,7 +74,7 @@ const [searchTerm, setSearchTerm] = useState("");
     if (!orderId) return;
     try {
       setLoading(true);
-      const res = await api.get(`/api/orders/${orderId}`);
+      const res = await api.get(`/api/order/${orderId}`);
       setOrders([res.data]); // ✅ wrap in array
     } catch (err) {
       console.error(err);
@@ -140,6 +140,7 @@ const [searchTerm, setSearchTerm] = useState("");
                 <th>User ID</th>
                 <th>Status</th>
                 <th>Total Amount</th>
+                <th>Created Date</th>
               </tr>
             </thead>
             <tbody>
@@ -149,6 +150,7 @@ const [searchTerm, setSearchTerm] = useState("");
                   <td>{o.userId}</td>
                   <td>{o.status}</td>
                   <td>{o.totalAmount}</td>
+                  <td>{o.createdAt}</td>
                 </tr>
               ))}
             </tbody>
