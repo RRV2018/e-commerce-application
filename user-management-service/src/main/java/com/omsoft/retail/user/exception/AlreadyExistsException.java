@@ -1,4 +1,4 @@
-package org.omsoft.retail.exception;
+package com.omsoft.retail.user.exception;
 
 public class AlreadyExistsException  extends RuntimeException {
     public AlreadyExistsException(String key, String value) {

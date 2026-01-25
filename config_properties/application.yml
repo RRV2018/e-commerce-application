@@ -36,6 +36,10 @@ management:
       show-details: always
 
 logging:
+  level:
+    com.omsoft.retail: INFO
+  file:
+    name: logs/ecommerce-api.log
   config: classpath:logback-spring.xml
 
 resilience4j:

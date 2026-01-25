@@ -1,4 +1,4 @@
-package org.omsoft.retail.exception;
+package com.omsoft.retail.user.exception;
 
 public class InvalidTokenException  extends RuntimeException {
     public InvalidTokenException(String errorMessage) {

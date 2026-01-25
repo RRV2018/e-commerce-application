@@ -1,6 +1,6 @@
 package com.omsoft.retail.user.util;
 
-import org.omsoft.retail.exception.BusinessException;
+import com.omsoft.retail.user.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

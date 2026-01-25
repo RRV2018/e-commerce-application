@@ -5,11 +5,11 @@ import com.omsoft.retail.user.dto.UserRequest;
 import com.omsoft.retail.user.dto.UserResponse;
 import com.omsoft.retail.user.entiry.User;
 import com.omsoft.retail.user.entiry.type.Role;
+import com.omsoft.retail.user.exception.AlreadyExistsException;
 import com.omsoft.retail.user.repository.UserRepository;
 import com.omsoft.retail.user.service.UserService;
 import com.omsoft.retail.user.util.EncryptDecryptUtil;
 import lombok.RequiredArgsConstructor;
-import org.omsoft.retail.exception.AlreadyExistsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
