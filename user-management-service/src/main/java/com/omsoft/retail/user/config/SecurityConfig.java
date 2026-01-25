@@ -4,7 +4,6 @@ import com.omsoft.retail.user.error.CustomAccessDeniedHandler;
 import com.omsoft.retail.user.error.CustomAuthEntryPoint;
 import com.omsoft.retail.user.filter.JwtFilter;
 import com.omsoft.retail.user.service.impl.CustomUserDetailsService;
-import com.omsoft.retail.user.util.EncryptDecryptUtil;
 import com.omsoft.retail.user.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

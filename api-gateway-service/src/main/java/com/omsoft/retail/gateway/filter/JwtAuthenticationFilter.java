@@ -44,10 +44,6 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
         return exchange.getResponse().setComplete();
     }
 
-    public static class Config {
-        // future config if needed
-    }
-
     private Mono<Void> validateToken(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();

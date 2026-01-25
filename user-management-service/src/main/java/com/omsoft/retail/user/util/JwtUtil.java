@@ -13,21 +13,21 @@ import java.util.Date;
 @Slf4j
 public class JwtUtil {
     @Value("${application.secret.key}")
-    private String SECRET_KEY;
+    private String secretKey;
 
     public String generateToken(String username) {
-        log.info("generateToken :: {} , key: {}", username, SECRET_KEY );
+        log.info("generateToken :: {} , key: {}", username, secretKey);
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
-                .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()), SignatureAlgorithm.HS256)
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), SignatureAlgorithm.HS256)
                 .compact();
     }
 
     public String extractUsername(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY.getBytes())
+                .setSigningKey(secretKey.getBytes())
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
