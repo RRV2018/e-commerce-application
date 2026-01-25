@@ -1,6 +1,7 @@
 package com.omsoft.retail.product.controller;
 
 import com.omsoft.retail.product.dto.*;
+import com.omsoft.retail.product.entity.Product;
 import com.omsoft.retail.product.entity.UserCard;
 import com.omsoft.retail.product.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -123,6 +125,12 @@ public class ProductController {
         return service.getProducts(page, size, sort, dir);
     }
 
+    @GetMapping("/search")
+    public Page<Product> searchProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return service.searchProducts(page, size);
+    }
     // ===================== CREATE PRODUCT =====================
     @Operation(
             summary = "Create product",

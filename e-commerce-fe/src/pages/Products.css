@@ -148,3 +148,9 @@ th {
 .delete-btn:hover {
   color: #dc2626;
 }
+
+
+.product-table td.right,
+.product-table th.right {
+  text-align: right;
+}

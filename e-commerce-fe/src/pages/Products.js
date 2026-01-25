@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef  } from "react";
 import api from "../api/axios";
 import { FaTrash, FaEdit, FaCartPlus, FaPlus, FaMinus } from "react-icons/fa";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
@@ -10,6 +10,10 @@ function Products() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(1); // backend page (0-indexed)
+  const [totalPages, setTotalPages] = useState(0);
+  const didFetch = useRef(false);
+  const pageSize = 20;
 
   const [form, setForm] = useState({
     name: "",
@@ -21,14 +25,16 @@ function Products() {
   const [editingId, setEditingId] = useState(null);
 
   useEffect(() => {
-    fetchProducts();
+    if (didFetch.current) return;
+    didFetch.current = true;
+    fetchProducts(0);
   }, []);
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (pageNumber) => {
     try {
-      const res = await api.get("/api/products");
-      setProducts(res.data || []);
-
+       const res = await api.get(`/api/products/search?page=${pageNumber}&size=${pageSize}`);
+       setProducts(res.data.content || []);
+       setTotalPages(res.data.totalPages || 1);
       const cardItem = await api.get("/api/products/card");
       setCardData(cardItem.data || []);
     } catch {
@@ -37,6 +43,16 @@ function Products() {
       setLoading(false);
     }
   };
+
+  const nextPage = () => {
+      if (page < totalPages - 1) setPage(page + 1);
+      fetchProducts(page);
+    };
+
+    const prevPage = () => {
+      if (page > 0) setPage(page - 1);
+       fetchProducts(page);
+    };
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -59,7 +75,7 @@ function Products() {
       : await api.post("/api/products", payload);
 
     resetForm();
-    fetchProducts();
+    fetchProducts(page);
   };
 
   const editProduct = (p) => {
@@ -76,24 +92,24 @@ function Products() {
   const deleteProduct = async (id) => {
     if (window.confirm("Delete this product?")) {
       await api.delete(`/api/products/${id}`);
-      fetchProducts();
+      fetchProducts(page);
     }
   };
 
   const addToCart = async (p) => {
     await api.post(`/api/products/card/${p.id}`);
-    fetchProducts();
+    fetchProducts(page);
   };
 
   const bookOrder = async () => {
     alert("Do you want to book?");
     await api.post("/api/order/card");
-    fetchProducts();
+    fetchProducts(page);
     alert("Order booked successfully");
   };
 
   const filteredProducts = products.filter((p) =>
-    `${p.id} ${p.name} ${p.description} ${p.category?.name}`
+    `${p.id} ${p.name} ${p.description} `
       .toLowerCase()
       .includes(search.toLowerCase())
   );
@@ -106,17 +122,17 @@ function Products() {
   const removeCartItem = async (c) => {
    if (!window.confirm("Remove item from cart?")) return;
     await api.delete(`/api/products/card/${c.id}`);
-    fetchProducts();
+    fetchProducts(page);
   };
 
   const increaseQty = async (c) => {
     await api.post(`/api/products/card/${c.id}/increase`);
-    fetchProducts();
+    fetchProducts(page);
   };
 
   const decreaseQty = async (c) => {
     await api.post(`/api/products/card/${c.id}/decrease`);
-    fetchProducts();
+    fetchProducts(page);
   };
   if (loading) return <p className="loading">Loading...</p>;
   if (error) return <p className="error">{error}</p>;
@@ -185,7 +201,15 @@ function Products() {
         <table className="product-table">
           <thead>
             <tr>
-              <th>ID</th><th>Name</th><th>Desc</th><th>₹</th><th>Stock</th><th>Category</th><th>Action</th>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Version</th>
+              <th>Desc</th>
+              <th>Product Details</th>
+              <th className="right">Price₹</th>
+              <th className="right">Available Stock</th>
+              <th>Action</th>
+
             </tr>
           </thead>
           <tbody>
@@ -193,10 +217,11 @@ function Products() {
               <tr key={p.id}>
                 <td>{p.id}</td>
                 <td className="bold">{p.name}</td>
+                <td>{p.version}</td>
                 <td>{p.description}</td>
-                <td>{p.price}</td>
-                <td>{p.stock}</td>
-                <td>{p.category?.name}</td>
+                <td>RAM:{p.ramSize},Storage: {p.hardDiskSize},Size:{p.screenSize},Color:{p.color}</td>
+                <td className="right">{Number(p.price).toFixed(2)}</td>
+                <td className="right">{p.stock}</td>
                 <td className="actions">
                   <FaEdit onClick={() => editProduct(p)} />
                   <FaTrash onClick={() => deleteProduct(p.id)} />
@@ -207,6 +232,17 @@ function Products() {
           </tbody>
         </table>
       </div>
+        <div className="pagination">
+            <button onClick={prevPage} disabled={page === 0}>
+              Previous
+            </button>
+            <span>
+              Page {page} of {totalPages}
+            </span>
+            <button onClick={nextPage} disabled={page >= totalPages - 1}>
+              Next
+            </button>
+          </div>
     </div>
   );
 }
