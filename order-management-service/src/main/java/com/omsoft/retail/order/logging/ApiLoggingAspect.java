@@ -1,4 +1,4 @@
-package com.omsoft.retail.common.logging;
+package com.omsoft.retail.order.logging;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ public class ApiLoggingAspect {
 
         long start = System.currentTimeMillis();
 
-        log.info("➡️ REQUEST [{}] {}", method, url);
+        log.info("REQUEST [{}] {}", method, url);
 
         Object response;
         try {
@@ -37,7 +37,7 @@ public class ApiLoggingAspect {
             return response;
         } finally {
             long time = System.currentTimeMillis() - start;
-            log.info("⬅️ RESPONSE [{}] {} took {} ms", method, url, time);
+            log.info("RESPONSE [{}] {} took {} ms", method, url, time);
         }
     }
 
