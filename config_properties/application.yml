@@ -1,4 +1,16 @@
+server:
+  tomcat:
+    max-swallow-size: 200MB
+    max-http-form-post-size: 200MB
+
 spring:
+  batch:
+    jdbc:
+      initialize-schema: always
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 200MB
   boot:
     admin:
       client:
@@ -36,6 +48,10 @@ management:
       show-details: always
 
 logging:
+  level:
+    com.omsoft.retail: INFO
+  file:
+    name: logs/ecommerce-api.log
   config: classpath:logback-spring.xml
 
 resilience4j:

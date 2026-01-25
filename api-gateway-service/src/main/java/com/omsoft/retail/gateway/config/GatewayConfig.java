@@ -23,7 +23,7 @@ public class GatewayConfig {
                 .route("user-swagger", r -> r.path("/api/auth/login","/api/user/v3/api-docs/**", "/api/user/swagger-ui/**")
                         .filters(f ->  f.stripPrefix(2).filter(jwtAuthenticationFilter))
                         .uri("lb://user-management-service"))
-                .route("product-service", r -> r.path("/api/products/**")
+                .route("product-service", r -> r.path("/api/products/**", "/api/products/file/**")
                         .filters(f -> f.filter(jwtAuthenticationFilter))
                         .uri("lb://product-catalog-service"))
                 .route("product-swagger", r -> r.path("/api/products/v3/api-docs/**", "/api/products/swagger-ui/**")

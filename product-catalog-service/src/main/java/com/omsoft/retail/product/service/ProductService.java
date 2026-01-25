@@ -3,10 +3,12 @@ package com.omsoft.retail.product.service;
 
 import com.omsoft.retail.product.dto.*;
 import com.omsoft.retail.product.entity.Category;
+import com.omsoft.retail.product.entity.FileDetails;
 import com.omsoft.retail.product.entity.Product;
 import com.omsoft.retail.product.entity.UserCard;
 import com.omsoft.retail.product.mapper.ProductMapper;
 import com.omsoft.retail.product.repo.CategoryRepository;
+import com.omsoft.retail.product.repo.FileDetailRepository;
 import com.omsoft.retail.product.repo.ProductRepository;
 import com.omsoft.retail.product.repo.UserCardRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -27,15 +29,17 @@ public class ProductService {
     private final ProductRepository productRepo;
     private final UserCardRepository cardRepo;
     private final CategoryRepository categoryRepo;
+    private final FileDetailRepository fileDetailRepo;
     private final ProductMapper mapper;
     private static final int MAX_PAGE_SIZE = 50;
 
     public ProductService(ProductRepository productRepo, UserCardRepository cardRepo,
-                          CategoryRepository categoryRepo,
+                          CategoryRepository categoryRepo, FileDetailRepository fileDetailRepo,
                           ProductMapper mapper) {
         this.productRepo = productRepo;
         this.cardRepo = cardRepo;
         this.categoryRepo = categoryRepo;
+        this.fileDetailRepo = fileDetailRepo;
         this.mapper = mapper;
     }
 
@@ -61,6 +65,11 @@ public class ProductService {
         Product product = mapper.toEntity(dto, category);
 
         return mapper.toDto(productRepo.save(product));
+    }
+
+    public Page<Product> searchProducts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        return productRepo.findAll(pageable);
     }
 
     public PageResponse<ProductResponse> getProducts(
@@ -183,5 +192,9 @@ public class ProductService {
         assert response != null;
         return mapper.toDto(response);
 
+    }
+
+    public List<FileDetails> getFileRecords() {
+        return fileDetailRepo.findAll();
     }
 }

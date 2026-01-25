@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Users from "./pages/Users";
 import Products from "./pages/Products";
 import Orders from "./pages/Orders";
+import FileOperation from "./pages/FileOperation";
 import Report from "./pages/Report";
 import Login from "./pages/Login";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -25,6 +26,7 @@ const App = () => {
               <Route path="/dashboard" element={ <ProtectedRoute> <Dashboard /></ProtectedRoute>} />
               <Route path="/users" element={ <ProtectedRoute> <Users /></ProtectedRoute>} />
               <Route path="/orders" element={ <ProtectedRoute><Orders /></ProtectedRoute>} />
+              <Route path="/fileOperation" element={ <ProtectedRoute><FileOperation /></ProtectedRoute>} />
               <Route path="/report" element={ <ProtectedRoute> <Report /></ProtectedRoute>} />
             </Routes>
         </HeaderWrapper>
