@@ -22,11 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Authentication", description = "Authentication Manager APIs")
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
-    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
-        this.authenticationManager = authenticationManager;
+    public AuthController(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
 

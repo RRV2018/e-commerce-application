@@ -4,6 +4,9 @@ import java.util.random.RandomGenerator;
 
 public class RandomStringGenerator {
     private static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-/*@#$%^()!";
+    private RandomStringGenerator() {
+
+    }
     public static String generateString(Integer numberOfChars) {
         return RandomGenerator.getDefault()
                 .ints(numberOfChars, 0, CHARS.length())

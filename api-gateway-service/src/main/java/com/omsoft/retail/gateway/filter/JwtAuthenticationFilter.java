@@ -2,6 +2,7 @@ package com.omsoft.retail.gateway.filter;
 
 import com.omsoft.retail.gateway.component.JwtUtil;
 import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Component
 public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAuthenticationFilter.Config> implements GatewayFilter  {
     private final JwtUtil jwtUtil;
@@ -41,7 +43,9 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     }
 
     public static class Config {
-
+        public void configuration() {
+            log.info("Configuration for future usage");
+        }
     }
 
     private Mono<Void> validateToken(ServerWebExchange exchange, GatewayFilterChain chain) {
