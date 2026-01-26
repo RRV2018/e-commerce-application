@@ -97,6 +97,7 @@ export default function FileOperation() {
                         <th>File</th>
                         <th>Type</th>
                         <th>Status</th>
+                        <th>Details</th>
                         <th>Uploaded On</th>
                         <th>Uploaded By</th>
                         <th>Action</th>
@@ -109,6 +110,7 @@ export default function FileOperation() {
                             <td>{f.fileName}</td>
                             <td>{f.fileType}</td>
                             <td>{f.status}</td>
+                            <td>{f.detail}</td>
                             <td>{f.uploadedOn}</td>
                             <td>{f.uploadedBy}</td>
                             <td>

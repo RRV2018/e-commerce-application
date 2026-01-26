@@ -1,0 +1,8 @@
+Log to container pod
+--------------------
+docker compose exec -it <service_name> sh
+
+To check docker network and all services added to this network
+-----------------------------------------------------
+docker network ls
+docker network inspect app-net

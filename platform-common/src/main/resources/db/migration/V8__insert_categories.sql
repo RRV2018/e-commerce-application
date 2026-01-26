@@ -1,1 +1,0 @@
-insert into categories(id,name) values(1, 'Mobile');

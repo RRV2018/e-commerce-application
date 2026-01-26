@@ -31,4 +31,8 @@ public class FileDetails extends Auditable{
 
     @Column(nullable = false)
     private String status;
+
+    @Column
+    private String detail;
+
 }

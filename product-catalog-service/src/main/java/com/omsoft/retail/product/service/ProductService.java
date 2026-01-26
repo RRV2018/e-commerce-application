@@ -12,6 +12,7 @@ import com.omsoft.retail.product.repo.FileDetailRepository;
 import com.omsoft.retail.product.repo.ProductRepository;
 import com.omsoft.retail.product.repo.UserCardRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -196,5 +197,47 @@ public class ProductService {
 
     public List<FileDetails> getFileRecords() {
         return fileDetailRepo.findAll();
+    }
+
+    public FileDetails saveFileDetails(String fineName, String type, String status) {
+        FileDetails details = new FileDetails();
+        details.setFileName(fineName);
+        details.setFileType(type);
+        details.setFileExtension(getFileExtension(fineName));
+        details.setStatus(status);
+        return fileDetailRepo.save(details);
+    }
+
+    public void updateFileDetails(FileDetails details) {
+        fileDetailRepo.save(details);
+    }
+
+    public boolean runValidation(FileDetails details) {
+        if (StringUtils.isEmpty(details.getFileName())) {
+            details.setStatus("INVALID");
+            details.setDetail("Invalid: File name is empty/null.");
+            updateFileDetails(details);
+            return false;
+        }
+        if (StringUtils.isEmpty(details.getFileExtension()) || !StringUtils.equalsIgnoreCase(details.getFileExtension(), "CSV")) {
+            details.setStatus("INVALID");
+            details.setDetail("Invalid: The requested file extension does not support to load. allowed only CSV file. actual "+ details.getFileExtension());
+            updateFileDetails(details);
+            return false;
+        }
+        if (StringUtils.isEmpty(details.getFileType()) || !StringUtils.equalsIgnoreCase(details.getFileType(), "PRODUCT")) {
+            details.setStatus("INVALID");
+            details.setDetail("Invalid: Request must be for product type, seems to be invalid type. Type : "+details.getFileType());
+            updateFileDetails(details);
+            return false;
+        }
+        return true;
+    }
+
+    private static String getFileExtension(String fileName) {
+        if (fileName == null || fileName.lastIndexOf('.') == -1) {
+            return "";
+        }
+        return fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
     }
 }

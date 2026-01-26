@@ -29,19 +29,19 @@ public class Product extends Auditable {
     @Column(nullable = false)
     private BigDecimal price;
 
-    @Column(nullable = false)
+    @Column
     private Integer stock;
 
-    @Column(nullable = false)
+    @Column
     private Integer ramSize;
 
-    @Column(nullable = false)
+    @Column
     private Integer hardDiskSize;
 
-    @Column(nullable = false)
+    @Column
     private Float screenSize;
 
-    @Column(nullable = false)
+    @Column
     private String color;
 
     @ManyToOne
