@@ -214,7 +214,6 @@ services:
         condition: service_healthy
     environment:
       - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
-      - CONFIG_SERVER_URL=${CONFIG_SERVER_URL}
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
       interval: 10s
@@ -300,7 +299,7 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - ./platform-common/src/main/resources/db/migration:/flyway/sql
+      - ./flywaydb-scripts/src/main/resources/db/migration:/flyway/sql
     networks:
       - app-net
   nginx:
@@ -336,6 +335,35 @@ services:
     command: -config.file=/etc/promtail/config.yml
     networks:
       - app-net
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    ports:
+      - "2181:2181"
+    networks:
+      - app-net
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    networks:
+      - app-net
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
 
 volumes:
   pgdata:

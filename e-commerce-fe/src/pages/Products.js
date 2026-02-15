@@ -171,7 +171,7 @@ function Products() {
                             <span>{c.quantity}</span>
                             <AiOutlinePlus onClick={() => increaseQty(c)} />
                    </td>
-                  <td>{c.amount}</td>
+                  <td>{Number(c.amount).toFixed(2)}</td>
                 <td className="cart-actions">
                 <FaTrash onClick={() => removeCartItem(c)} /> </td>
                 </tr>
@@ -179,7 +179,7 @@ function Products() {
               ))}
               <tr className="total-row">
                     <td colSpan="2"><strong>Total Amount</strong></td>
-                    <td><strong>₹ {totalAmount}</strong></td>
+                    <td><strong>₹ {Number(totalAmount).toFixed(2)}</strong></td>
                     <td></td>
               </tr>
             </tbody>

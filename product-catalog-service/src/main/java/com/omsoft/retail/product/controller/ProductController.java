@@ -1,5 +1,6 @@
 package com.omsoft.retail.product.controller;
 
+import com.omsoft.retail.controller.BaseController;
 import com.omsoft.retail.product.dto.*;
 import com.omsoft.retail.product.entity.Product;
 import com.omsoft.retail.product.entity.UserCard;
@@ -23,7 +24,7 @@ import java.util.List;
 )
 @RestController
 @RequestMapping("/api/products")
-public class ProductController {
+public class ProductController extends BaseController {
 
     private final ProductService service;
 

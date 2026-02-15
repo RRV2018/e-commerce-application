@@ -1,5 +1,6 @@
 import api from "../api/axios.js";
 import { useEffect, useState } from "react";
+import "./css/FileOperation.css";
 
 
 export const uploadFile = (formData) => {
@@ -27,6 +28,7 @@ export default function FileOperation() {
     const [files, setFiles] = useState([]);
     const [file, setFile] = useState(null);
     const [fileType, setFileType] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const loadFiles = async () => {
         const res = await getFiles();
@@ -38,6 +40,8 @@ export default function FileOperation() {
     }, []);
 
     const handleUpload = async () => {
+        setLoading(true);
+        try {
         const formData = new FormData();
         formData.append("file", file);
         formData.append("fileType", fileType);
@@ -46,6 +50,11 @@ export default function FileOperation() {
         setFile(null);
         setFileType("");
         loadFiles();
+         } catch (error) {
+            console.error(error);
+         } finally {
+            setLoading(false);
+         }
     };
 
     const handleDelete = async (id) => {
@@ -84,7 +93,11 @@ export default function FileOperation() {
               <tr>
                 <td></td>
                 <td>
-                                        <button onClick={handleUpload}>Upload</button>
+                <button onClick={handleUpload} disabled={loading}>
+                        {loading ? "Processing..." : "Upload"}
+                      </button>
+                      {loading && <div className="spinner"></div>}
+
                                     </td>
                </tr>
             </table>

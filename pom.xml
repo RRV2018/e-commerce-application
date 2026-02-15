@@ -28,6 +28,7 @@
         <module>app-monitoring-admin-server</module>
         <module>notification-management-service</module>
         <module>platform-common</module>
+        <module>flywaydb-scripts</module>
     </modules>
 
     <properties>
@@ -122,6 +123,10 @@
         <dependency>
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-rxjava3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
         </dependency>
     </dependencies>
 

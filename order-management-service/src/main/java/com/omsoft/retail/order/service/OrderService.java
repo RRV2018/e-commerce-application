@@ -7,12 +7,15 @@ import com.omsoft.retail.order.dto.*;
 import com.omsoft.retail.order.entity.Order;
 import com.omsoft.retail.order.entity.OrderItem;
 import com.omsoft.retail.order.entity.UserCard;
+import com.omsoft.retail.order.event.OrderEvent;
+import com.omsoft.retail.order.event.ProductEvent;
 import com.omsoft.retail.order.repo.OrderRepository;
 import com.omsoft.retail.order.repo.UserCardRepository;
 import com.omsoft.retail.order.type.OrderStatus;
 import com.omsoft.retail.order.type.PaymentStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -32,6 +35,7 @@ public class OrderService {
     private final InventoryClient inventoryClient;
     private final PaymentClient paymentClient;
     private final UserCardRepository cardRepo;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Transactional
     public boolean bookOrderFromCard(String userId) {
@@ -57,7 +61,10 @@ public class OrderService {
         order.setUserId(userId);
         order.setStatus(OrderStatus.CREATED);
         BigDecimal totalAmount = BigDecimal.ZERO;
+        OrderEvent orderEvent = new OrderEvent();
+        List<ProductEvent> productEvents = new ArrayList<>();
         for (OrderItemRequest itemDto : dto.items()) {
+            ProductEvent productEvent = new ProductEvent();
             OrderItem item = new OrderItem();
             item.setProductId(itemDto.productId());
             item.setQuantity(itemDto.quantity());
@@ -69,10 +76,17 @@ public class OrderService {
                             BigDecimal.valueOf(itemDto.quantity())
                     )
             );
+            productEvent.setProductId(itemDto.productId());
+            productEvent.setQuantity(itemDto.quantity());
+            productEvents.add(productEvent);
         }
         order.setTotalAmount(totalAmount);
         // 2 Save order to generate orderId
         orderRepository.save(order);
+        orderEvent.setOrderId(order.getId());
+        orderEvent.setType(OrderStatus.CREATED);
+        orderEvent.setProducts(productEvents);
+        publishEvent(orderEvent);
         try {
             // 3️ Reserve inventory
             for (OrderItem item : order.getItems()) {
@@ -108,6 +122,10 @@ public class OrderService {
                 );
             }
             order.setStatus(OrderStatus.PAID);
+            orderEvent.setOrderId(order.getId());
+            orderEvent.setType(OrderStatus.PAID);
+            orderEvent.setProducts(productEvents);
+            publishEvent(orderEvent);
         } catch (Exception ex) {
             // 6️ Release inventory on failure
             for (OrderItem item : order.getItems()) {
@@ -123,6 +141,10 @@ public class OrderService {
                 }
             }
             order.setStatus(OrderStatus.CANCELLED);
+            orderEvent.setOrderId(order.getId());
+            orderEvent.setType(OrderStatus.CREATED);
+            orderEvent.setProducts(productEvents);
+            publishEvent(orderEvent);
             throw ex;
         }
         return mapToResponse(orderRepository.save(order));
@@ -178,6 +200,10 @@ public class OrderService {
 
     public String generateOrderNumber(Long orderId) {
         return String.format("ORD%05d", orderId);
+    }
+
+    private void publishEvent(OrderEvent event) {
+        kafkaTemplate.send("order-event", event);
     }
 
 }
