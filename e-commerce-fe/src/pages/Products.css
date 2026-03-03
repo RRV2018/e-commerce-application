@@ -1,156 +1,162 @@
-.products-container {
-  padding: 30px;
-  background: #f4f6fb;
-  min-height: 100vh;
+/* Products page - extends PagesCommon */
+
+.products-wrap {
+  min-height: calc(100vh - 60px);
+  padding: 28px 24px;
+  background: linear-gradient(180deg, #f0f4ff 0%, #e8eef9 100%);
+  box-sizing: border-box;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.top-grid {
+.products-top-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
-  margin-bottom: 30px;
+  margin-bottom: 28px;
 }
 
-.card {
-  background: #fff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+@media (max-width: 900px) {
+  .products-top-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
-.card h2 {
-  margin-bottom: 15px;
+.products-form-card .form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
 }
 
-input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 12px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+.products-form-card .form-grid .full-width {
+  grid-column: 1 / -1;
 }
 
-.form-actions {
+.products-form-card .form-actions {
   display: flex;
   gap: 10px;
+  margin-top: 16px;
 }
 
-button {
-  padding: 10px 16px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  background: #2563eb;
-  color: #fff;
-  font-weight: 600;
+.cart-card .data-table {
+  font-size: 0.8125rem;
 }
 
-button.secondary {
-  background: #9ca3af;
+.cart-card .data-table th,
+.cart-card .data-table td {
+  padding: 10px 12px;
 }
 
-button.full {
-  width: 100%;
-  margin-top: 12px;
-}
-
-.section-title {
-  margin-bottom: 10px;
-}
-
-.search {
-  width: 300px;
-  padding: 10px;
-  margin-bottom: 15px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 10px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-th {
-  background: #f1f5f9;
-  text-align: left;
-}
-
-.bold {
-  font-weight: 600;
-}
-
-.actions {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-}
-
-.actions svg {
-  cursor: pointer;
-  color: #374151;
-}
-
-.actions svg:hover {
-  color: #2563eb;
-}
-
-.loading, .error {
-  text-align: center;
-  padding: 30px;
-}
-
-.total-row {
-  background-color: #f1f5f9;
-  font-size: 16px;
-}
-
-.total-row td {
-  border-top: 2px solid #cbd5e1;
-}
-
-.qty-cell {
+.cart-qty-cell {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
 }
 
-.qty-btn {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  border: none;
-  background: #2563eb;
-  color: #fff;
+.cart-qty-cell svg {
   cursor: pointer;
-  font-weight: bold;
+  color: #6366f1;
+  font-size: 1rem;
 }
 
-.qty-btn:hover {
-  background: #1d4ed8;
+.cart-qty-cell svg:hover {
+  color: #4f46e5;
 }
 
-.cart-actions {
+.cart-qty-cell span {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.cart-actions-cell {
   text-align: center;
 }
 
-.delete-btn {
-  background: none;
-  border: none;
-  font-size: 18px;
+.cart-actions-cell svg {
   cursor: pointer;
+  color: #64748b;
 }
 
-.delete-btn:hover {
+.cart-actions-cell svg:hover {
   color: #dc2626;
 }
 
+.cart-total-row {
+  background: #f8fafc;
+  font-weight: 600;
+  font-size: 1rem;
+}
 
-.product-table td.right,
-.product-table th.right {
-  text-align: right;
+.cart-total-row td {
+  border-top: 2px solid #e2e8f0;
+  padding: 14px;
+}
+
+.cart-book-btn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+}
+
+.products-section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 16px 0;
+}
+
+.products-list-card {
+  overflow-x: auto;
+}
+
+.products-list-card .data-table .product-details {
+  max-width: 220px;
+  font-size: 0.8125rem;
+  color: #64748b;
+}
+
+.products-list-card .data-table .actions-cell {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.products-list-card .data-table .actions-cell svg {
+  cursor: pointer;
+  color: #64748b;
+  font-size: 1.1rem;
+  transition: color 0.2s;
+}
+
+.products-list-card .data-table .actions-cell svg:hover {
+  color: #6366f1;
+}
+
+.products-list-card .data-table .actions-cell svg[data-action="delete"]:hover {
+  color: #dc2626;
+}
+
+.products-list-card .data-table .actions-cell svg[data-action="cart"]:hover {
+  color: #059669;
+}
+
+.products-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.products-pagination .btn {
+  min-width: 100px;
+}
+
+.products-pagination span {
+  font-size: 0.875rem;
+  color: #64748b;
 }

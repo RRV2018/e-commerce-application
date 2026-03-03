@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
+import "./css/Login.css";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
- // ✅ ADD THIS BLOCK HERE (TOP OF COMPONENT)
   useEffect(() => {
     const token = sessionStorage.getItem("token");
     if (token) {
@@ -17,9 +18,8 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
-    // remove old/expired token
     sessionStorage.removeItem("token");
+    setIsSubmitting(true);
 
     try {
       const res = await api.post("/api/auth/login", {
@@ -28,83 +28,69 @@ function Login() {
       });
 
       sessionStorage.setItem("token", res.data.token);
-
-      // ✅ redirect AFTER success
       navigate("/dashboard", { replace: true });
-
     } catch (err) {
       console.error("Login error:", err.response || err);
       alert("Invalid email or password");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div style={styles.container}>
-      <form style={styles.form} onSubmit={handleLogin}>
-        <h2 style={styles.title}>Login</h2>
+    <div className="login-page">
+      <div className="login-card">
+        <header className="login-header">
+          <h1 className="login-title">Welcome back</h1>
+          <p className="login-subtitle">Sign in to your account to continue</p>
+        </header>
 
-        <input
-          style={styles.input}
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+        <form className="login-form" onSubmit={handleLogin}>
+          <div className="login-field">
+            <label htmlFor="login-email">Email</label>
+            <input
+              id="login-email"
+              className="login-input"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+              disabled={isSubmitting}
+            />
+          </div>
 
-        <input
-          style={styles.input}
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+          <div className="login-field">
+            <label htmlFor="login-password">Password</label>
+            <input
+              id="login-password"
+              className="login-input"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              autoComplete="current-password"
+              disabled={isSubmitting}
+            />
+          </div>
 
-        <button style={styles.button} type="submit">
-          Login
-        </button>
-      </form>
+          <button
+            className="login-submit"
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Signing in…" : "Sign in"}
+          </button>
+        </form>
+
+        <footer className="login-footer">
+          {/* Reserve for "Forgot password?" link if needed */}
+        </footer>
+      </div>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-    background: "linear-gradient(135deg, #6a11cb, #2575fc)",
-  },
-  form: {
-    background: "#fff",
-    padding: "40px",
-    borderRadius: "12px",
-    width: "320px",
-    boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
-  },
-  title: {
-    textAlign: "center",
-    marginBottom: "20px",
-  },
-  input: {
-    width: "100%",
-    padding: "12px",
-    marginBottom: "15px",
-    borderRadius: "6px",
-    border: "1px solid #ccc",
-  },
-  button: {
-    width: "100%",
-    padding: "12px",
-    background: "#2575fc",
-    color: "#fff",
-    border: "none",
-    borderRadius: "6px",
-    fontSize: "16px",
-    cursor: "pointer",
-  },
-};
 
 export default Login;
