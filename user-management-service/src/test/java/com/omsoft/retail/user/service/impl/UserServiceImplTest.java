@@ -74,7 +74,6 @@ class UserServiceImplTest {
                 .addresses(Collections.emptyList())
                 .build();
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
-        when(encryptDecryptUtil.decrypt("encrypted")).thenReturn("pass123");
 
         UserResponse response = userService.registerUser(request);
 
