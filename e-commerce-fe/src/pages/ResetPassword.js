@@ -144,7 +144,7 @@ function ResetPassword() {
 
         <footer className="login-footer">
           <Link to="/forgot-password">Request new link</Link>
-          <span style={{ margin: "0 8px" }}|</span>
+          <span style={{ margin: "0 8px" }}>{" | "}</span>
           <Link to="/login">Back to sign in</Link>
         </footer>
       </div>
