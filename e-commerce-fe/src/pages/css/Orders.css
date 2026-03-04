@@ -1,0 +1,47 @@
+/* Orders page - extends PagesCommon */
+
+.orders-wrap {
+  min-height: calc(100vh - 60px);
+  padding: 28px 24px;
+  background: linear-gradient(180deg, #f0f4ff 0%, #e8eef9 100%);
+  box-sizing: border-box;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.orders-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.orders-action-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(30, 41, 59, 0.08);
+  padding: 20px;
+}
+
+.orders-action-card h3 {
+  margin: 0 0 14px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.orders-action-card .page-input {
+  margin-bottom: 12px;
+}
+
+.orders-action-card .btn {
+  width: 100%;
+}
+
+.orders-table-wrap {
+  overflow-x: auto;
+}
+
+.orders-table-wrap .search-bar {
+  margin-bottom: 16px;
+}

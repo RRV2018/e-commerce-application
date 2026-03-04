@@ -1,20 +1,75 @@
+/* Users page - extends PagesCommon */
+
+.users-wrap {
+  min-height: calc(100vh - 60px);
+  padding: 28px 24px;
+  background: linear-gradient(180deg, #f0f4ff 0%, #e8eef9 100%);
+  box-sizing: border-box;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.users-form-card {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  align-items: end;
+  margin-bottom: 24px;
+}
+
+.users-form-card .form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.users-form-card .form-field label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #475569;
+}
+
+.users-form-card .form-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.users-table-card {
+  overflow-x: auto;
+}
+
+.users-table-card .data-table td .cell-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.users-table-card .data-table .btn-sm {
+  padding: 6px 10px;
+}
+
 .password-box {
-    position: relative;
-    width: 300px;
+  position: relative;
+  width: 100%;
 }
 
 .password-box input {
-    width: 100%;
-    padding: 10px;
-    padding-right: 40px;
-    font-size: 16px;
+  padding-right: 40px;
 }
 
 .password-box span {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    user-select: none;
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  user-select: none;
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.password-box span:hover {
+  color: #1e293b;
 }

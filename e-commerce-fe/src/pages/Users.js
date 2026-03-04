@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/axios";
+import "./css/PagesCommon.css";
 import "./css/User.css";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [editingId, setEditingId] = useState(null);
-
-  // Form is EMPTY on page load
   const [formData, setForm] = useState({
     name: "",
     email: "",
-    password: ""
+    password: "",
   });
 
-  /* ---------- FETCH USERS ---------- */
   const fetchUsers = async () => {
     try {
       const res = await api.get("/api/user/allUsers");
@@ -28,29 +26,22 @@ const Users = () => {
     fetchUsers();
   }, []);
 
-  /* ---------- SEARCH ---------- */
-  const filteredUsers = users.filter((u) =>
-    (u.name || "").toLowerCase().includes(search.toLowerCase()) ||
-    (u.email || "").toLowerCase().includes(search.toLowerCase()) ||
-    String(u.id) === search
+  const filteredUsers = users.filter(
+    (u) =>
+      (u.name || "").toLowerCase().includes(search.toLowerCase()) ||
+      (u.email || "").toLowerCase().includes(search.toLowerCase()) ||
+      String(u.id) === search
   );
 
-  /* ---------- FORM HANDLING ---------- */
-    const handleChange = (e) => {
-        setForm({ ...formData, [e.target.name]: e.target.value });
-      };
-
+  const handleChange = (e) => {
+    setForm({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const resetForm = () => {
-    setForm({
-      name: "",
-      email: "",
-      password: ""
-    });
+    setForm({ name: "", email: "", password: "" });
     setEditingId(null);
   };
 
-  /* ---------- ADD / UPDATE ---------- */
   const saveUser = async () => {
     try {
       if (editingId) {
@@ -60,7 +51,6 @@ const Users = () => {
         await api.post("/api/user/register", formData);
         alert("User added successfully");
       }
-
       resetForm();
       fetchUsers();
     } catch (err) {
@@ -68,17 +58,15 @@ const Users = () => {
     }
   };
 
-  /* ---------- EDIT ---------- */
   const editUser = (user) => {
     setForm({
       name: user.name || "",
       email: user.email || "",
-      password: user.password // password stays empty
+      password: user.password || "",
     });
     setEditingId(user.id);
   };
 
-  /* ---------- DELETE ---------- */
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
@@ -91,114 +79,112 @@ const Users = () => {
   };
 
   return (
-    <div style={{ width: "80%", margin: "20px auto" }}>
-      <h2>Users</h2>
+    <div className="users-wrap">
+      <h1 className="page-title">Users</h1>
 
-      {/* ---------- USER FORM ---------- */}
-      <table>
-        <tbody>
-          <tr>
-            <td>User Name:</td>
-            <td>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-            </td>
-          </tr>
+      <div className="page-card users-form-card">
+        <div className="form-field">
+          <label htmlFor="user-name">Name</label>
+          <input
+            id="user-name"
+            className="page-input"
+            type="text"
+            name="name"
+            placeholder="Full name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-field">
+          <label htmlFor="user-email">Email</label>
+          <input
+            id="user-email"
+            className="page-input"
+            type="email"
+            name="email"
+            placeholder="email@example.com"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-field">
+          <label htmlFor="user-password">Password</label>
+          <input
+            id="user-password"
+            className="page-input"
+            type="password"
+            name="password"
+            placeholder="••••••••"
+            value={formData.password}
+            onChange={handleChange}
+            required={!editingId}
+          />
+        </div>
+        <div className="form-actions">
+          <button type="button" className="btn btn-primary" onClick={saveUser}>
+            {editingId ? "Update" : "Add user"}
+          </button>
+          {editingId && (
+            <button type="button" className="btn btn-secondary" onClick={resetForm}>
+              Cancel
+            </button>
+          )}
+        </div>
+      </div>
 
-          <tr>
-            <td>Email:</td>
-            <td>
-              <input
-                type="email"
-                name="email"
-                value={formData.emailId}
-                onChange={handleChange}
-              />
-            </td>
-          </tr>
-
-          <tr>
-            <td>Password:</td>
-            <td>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required={!editingId}
-              />
-            </td>
-          </tr>
-
-          <tr>
-            <td></td>
-            <td>
-              <button onClick={saveUser}>
-                {editingId ? "Update" : "Add"}
-              </button>
-
-              {editingId && (
-                <button onClick={resetForm} style={{ marginLeft: "10px" }}>
-                  Cancel
-                </button>
-              )}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      {/* ---------- SEARCH ---------- */}
       <input
         type="text"
+        className="search-bar"
         placeholder="Search by ID, name, or email"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        style={{
-          margin: "10px 0",
-          padding: "5px",
-          width: "300px"
-        }}
       />
 
-      {/* ---------- USERS TABLE ---------- */}
-      <table style={{ width: "70%", borderCollapse: "collapse" }}>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Password</th>
-            <th>Role</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {filteredUsers.map((u) => (
-            <tr key={u.id}>
-              <td>{u.id}</td>
-              <td>{u.name}</td>
-              <td>{u.email}</td>
-              <td>{u.password}         </td>
-              <td>{u.role}</td>
-              <td>
-                <button onClick={() => editUser(u)}>Edit</button>
-                <button
-                  onClick={() => handleDelete(u.id)}
-                  style={{ marginLeft: "5px" }}
-                >
-                  Delete
-                </button>
-              </td>
+      <div className="page-card users-table-card">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Password</th>
+              <th>Role</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredUsers.map((u) => (
+              <tr key={u.id}>
+                <td>{u.id}</td>
+                <td>{u.name}</td>
+                <td>{u.email}</td>
+                <td>{u.password}</td>
+                <td>{u.role}</td>
+                <td>
+                  <div className="cell-actions">
+                    <button
+                      type="button"
+                      className="btn btn-secondary btn-sm"
+                      onClick={() => editUser(u)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-danger btn-sm"
+                      onClick={() => handleDelete(u.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

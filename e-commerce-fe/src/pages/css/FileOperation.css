@@ -1,15 +1,75 @@
+/* File Operation page - extends PagesCommon */
+
+.fileop-wrap {
+  min-height: calc(100vh - 60px);
+  padding: 28px 24px;
+  background: linear-gradient(180deg, #f0f4ff 0%, #e8eef9 100%);
+  box-sizing: border-box;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.fileop-upload-card {
+  margin-bottom: 28px;
+  max-width: 480px;
+}
+
+.fileop-upload-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px 20px;
+  align-items: center;
+}
+
+.fileop-upload-grid label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #475569;
+}
+
+.fileop-upload-grid .row-actions {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fileop-upload-grid .page-input[type="file"] {
+  padding: 8px;
+  font-size: 0.875rem;
+}
+
+.fileop-upload-grid select.page-input {
+  cursor: pointer;
+  min-width: 160px;
+}
+
 .spinner {
   width: 20px;
   height: 20px;
-  border: 3px solid #ccc;
-  border-top: 3px solid #1976d2;
+  border: 3px solid #e2e8f0;
+  border-top-color: #6366f1;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-top: 10px;
+  animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
+}
+
+.fileop-table-card {
+  overflow-x: auto;
+}
+
+.fileop-table-card .data-table .cell-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.fileop-table-card .data-table .btn-sm {
+  padding: 6px 10px;
+  font-size: 0.8125rem;
 }
