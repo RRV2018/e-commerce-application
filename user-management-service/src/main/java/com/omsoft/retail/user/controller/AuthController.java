@@ -1,8 +1,12 @@
 package com.omsoft.retail.user.controller;
 
+import com.omsoft.retail.user.dto.ForgotPasswordRequest;
+import com.omsoft.retail.user.dto.ForgotPasswordResponse;
 import com.omsoft.retail.user.dto.LoginRequest;
 import com.omsoft.retail.user.dto.LoginResponse;
+import com.omsoft.retail.user.dto.ResetPasswordRequest;
 import com.omsoft.retail.user.entiry.User;
+import com.omsoft.retail.user.service.ForgotPasswordService;
 import com.omsoft.retail.user.repository.UserRepository;
 import com.omsoft.retail.user.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,12 +35,14 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
+    private final ForgotPasswordService forgotPasswordService;
 
     public AuthController(JwtUtil jwtUtil, AuthenticationManager authenticationManager,
-                          UserRepository userRepository) {
+                          UserRepository userRepository, ForgotPasswordService forgotPasswordService) {
         this.jwtUtil = jwtUtil;
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
+        this.forgotPasswordService = forgotPasswordService;
     }
 
     @Operation(
@@ -76,5 +82,25 @@ public class AuthController {
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+    }
+
+    @Operation(
+            summary = "Forgot password",
+            description = "Request a password reset link for the given email. Always returns success to avoid email enumeration."
+    )
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ForgotPasswordResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        ForgotPasswordResponse response = forgotPasswordService.requestPasswordReset(request.getEmail());
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "Reset password",
+            description = "Reset password using the token received via email (or dev link)."
+    )
+    @PostMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        forgotPasswordService.resetPassword(request);
+        return ResponseEntity.ok().build();
     }
 }

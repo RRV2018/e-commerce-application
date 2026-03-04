@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
 import "./css/Login.css";
 
@@ -96,7 +96,7 @@ function Login() {
         </form>
 
         <footer className="login-footer">
-          {/* Reserve for "Forgot password?" link if needed */}
+          <Link to="/forgot-password">Forgot password?</Link>
         </footer>
       </div>
     </div>

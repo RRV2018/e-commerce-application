@@ -5,6 +5,7 @@ import com.omsoft.retail.user.dto.LoginResponse;
 import com.omsoft.retail.user.entiry.User;
 import com.omsoft.retail.user.entiry.type.Role;
 import com.omsoft.retail.user.repository.UserRepository;
+import com.omsoft.retail.user.service.ForgotPasswordService;
 import com.omsoft.retail.user.util.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,11 +39,14 @@ class AuthControllerTest {
     @Mock
     private Authentication authentication;
 
+    @Mock
+    private ForgotPasswordService forgotPasswordService;
+
     private AuthController authController;
 
     @BeforeEach
     void setUp() {
-        authController = new AuthController(jwtUtil, authenticationManager, userRepository);
+        authController = new AuthController(jwtUtil, authenticationManager, userRepository, forgotPasswordService);
     }
 
     @Test
