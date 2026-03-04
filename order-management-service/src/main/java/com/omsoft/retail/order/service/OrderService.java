@@ -15,6 +15,8 @@ import com.omsoft.retail.order.type.OrderStatus;
 import com.omsoft.retail.order.type.PaymentStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -156,6 +158,10 @@ public class OrderService {
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
+    }
+
+    public Page<OrderResponse> getOrdersPage(String userId, Pageable pageable) {
+        return orderRepository.findByUserId(userId, pageable).map(this::mapToResponse);
     }
 
     public Optional<OrderResponse> getOrder(String userId, Long orderId) {

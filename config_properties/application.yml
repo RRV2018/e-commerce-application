@@ -48,7 +48,8 @@ eureka:
 
 application:
   secret:
-    key: mySecretKeyForJwtTokenGeneration123
+    # Use JWT_SECRET env var in production; no default in prod
+    key: ${JWT_SECRET:mySecretKeyForJwtTokenGeneration123}
 
 management:
   endpoints:

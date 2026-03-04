@@ -12,5 +12,6 @@ springdoc:
     path: /api/user/swagger-ui/index.html
 
 encryption:
+  # Prefer ENCRYPTION_SECRET_KEY from environment in production
   secret-key: ${ENCRYPTION_SECRET_KEY:u14kB@(%AEE6kKSh}
   algorithm: AES

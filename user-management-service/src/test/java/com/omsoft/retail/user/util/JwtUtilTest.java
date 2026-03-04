@@ -20,7 +20,7 @@ class JwtUtilTest {
 
     @Test
     void generateToken_returnsNonEmptyToken() {
-        String token = jwtUtil.generateToken("user@example.com");
+        String token = jwtUtil.generateToken("user@example.com", "CUSTOMER");
         assertNotNull(token);
         assertFalse(token.isEmpty());
     }
@@ -28,20 +28,20 @@ class JwtUtilTest {
     @Test
     void extractUsername_returnsSubjectFromToken() {
         String email = "test@example.com";
-        String token = jwtUtil.generateToken(email);
+        String token = jwtUtil.generateToken(email, "CUSTOMER");
         assertEquals(email, jwtUtil.extractUsername(token));
     }
 
     @Test
     void isTokenValid_returnsTrueWhenUsernameMatches() {
         String email = "user@test.com";
-        String token = jwtUtil.generateToken(email);
+        String token = jwtUtil.generateToken(email, "CUSTOMER");
         assertTrue(jwtUtil.isTokenValid(token, email));
     }
 
     @Test
     void isTokenValid_returnsFalseWhenUsernameDoesNotMatch() {
-        String token = jwtUtil.generateToken("user@test.com");
+        String token = jwtUtil.generateToken("user@test.com", "CUSTOMER");
         assertFalse(jwtUtil.isTokenValid(token, "other@test.com"));
     }
 }

@@ -5,6 +5,7 @@ import com.omsoft.retail.user.dto.UserResponse;
 import com.omsoft.retail.user.entiry.User;
 import com.omsoft.retail.user.entiry.type.Role;
 import com.omsoft.retail.user.exception.AlreadyExistsException;
+import com.omsoft.retail.user.exception.UserNotFoundException;
 import com.omsoft.retail.user.repository.UserRepository;
 import com.omsoft.retail.user.util.EncryptDecryptUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -88,7 +89,7 @@ class UserServiceImplTest {
     void getUserById_whenNotFound_throws() {
         when(userRepository.findById(999L)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> userService.getUserById(999L));
+        assertThrows(UserNotFoundException.class, () -> userService.getUserById(999L));
     }
 
     @Test
@@ -118,10 +119,10 @@ class UserServiceImplTest {
                 .username("U")
                 .email("u@e.com")
                 .decryptablePassword("enc")
+                .role(Role.CUSTOMER)
                 .addresses(Collections.emptyList())
                 .build();
         when(userRepository.findAll()).thenReturn(List.of(user));
-        when(encryptDecryptUtil.decrypt("enc")).thenReturn("dec");
 
         List<UserResponse> result = userService.getAllUsers();
 

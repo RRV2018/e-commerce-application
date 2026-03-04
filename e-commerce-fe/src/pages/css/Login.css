@@ -182,3 +182,13 @@
 .login-footer a:hover {
   color: rgba(255, 255, 255, 0.85);
 }
+
+.login-error {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  font-size: 0.875rem;
+  color: #fecaca;
+  background: rgba(220, 38, 38, 0.2);
+  border: 1px solid rgba(220, 38, 38, 0.4);
+  border-radius: 10px;
+}

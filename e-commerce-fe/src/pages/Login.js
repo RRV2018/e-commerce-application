@@ -7,6 +7,7 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,6 +20,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     sessionStorage.removeItem("token");
+    setError("");
     setIsSubmitting(true);
 
     try {
@@ -30,8 +32,11 @@ function Login() {
       sessionStorage.setItem("token", res.data.token);
       navigate("/dashboard", { replace: true });
     } catch (err) {
-      console.error("Login error:", err.response || err);
-      alert("Invalid email or password");
+      const msg =
+        err.response?.data?.message ||
+        (err.response?.data?.errors && Object.values(err.response.data.errors).join(" ")) ||
+        (err.response?.status === 401 ? "Invalid email or password." : "Something went wrong. Please try again.");
+      setError(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -76,6 +81,11 @@ function Login() {
             />
           </div>
 
+          {error && (
+            <div className="login-error" role="alert">
+              {error}
+            </div>
+          )}
           <button
             className="login-submit"
             type="submit"

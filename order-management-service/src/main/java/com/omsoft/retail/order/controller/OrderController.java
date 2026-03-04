@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -92,6 +94,17 @@ public class OrderController {
     public List<OrderResponse> getOrders(
             @RequestHeader("X-User-Id") String userId) {
         return service.getOrders(userId);
+    }
+
+    @Operation(
+            summary = "Get orders (paginated)",
+            description = "Returns a paginated list of orders for the user"
+    )
+    @GetMapping("/list")
+    public ResponseEntity<Page<OrderResponse>> getOrdersPage(
+            @RequestHeader("X-User-Id") String userId,
+            Pageable pageable) {
+        return ResponseEntity.ok(service.getOrdersPage(userId, pageable));
     }
 
     // ===================== GET ORDER BY ID =====================

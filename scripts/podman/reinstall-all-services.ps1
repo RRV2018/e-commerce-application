@@ -1,5 +1,16 @@
 $ErrorActionPreference = "Stop"
 
+# Run from project root (parent of scripts/)
+$ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
+Set-Location $ProjectRoot
+Write-Host "Project root: $ProjectRoot" -ForegroundColor Cyan
+
+Write-Host ""
+Write-Host "==============================="
+Write-Host "Maven clean package (all modules)"
+Write-Host "==============================="
+mvn clean package -DskipTests
+
 Write-Host ""
 Write-Host "==============================="
 Write-Host "Stopping existing containers..."
@@ -28,12 +39,17 @@ podman build -f docker/payment-management-service/Dockerfile -t payment-manageme
 podman build -f docker/eureka-discovery-server/Dockerfile -t eureka-discovery-server .
 podman build -f docker/app-monitoring-admin-server/Dockerfile -t app-monitoring-admin-server .
 
-Write-Host "FE Application==============================="
+Write-Host ""
+Write-Host "==============================="
+Write-Host "Building frontend (e-commerce-fe)..."
+Write-Host "==============================="
 podman build --no-cache -f docker/e-commerce-fe/Dockerfile -t e-commerce-fe ./e-commerce-fe
 
 Write-Host ""
 Write-Host "==============================="
 Write-Host "Starting all containers..."
 Write-Host "==============================="
-podman-compose pull
 podman compose up -d
+
+Write-Host ""
+Write-Host "Done. Containers are starting. Use 'podman compose ps' to check status." -ForegroundColor Green
