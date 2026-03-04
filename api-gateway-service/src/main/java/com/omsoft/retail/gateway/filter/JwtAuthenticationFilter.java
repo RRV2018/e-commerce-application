@@ -34,6 +34,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
     private boolean isPublicEndpoint(String path) {
         return path.startsWith("/api/auth/")
+                || path.startsWith("/api/user/register")
                 || path.startsWith("/actuator/");
     }
 

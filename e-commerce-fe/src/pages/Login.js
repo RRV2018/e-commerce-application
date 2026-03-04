@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import api from "../api/axios";
 import "./css/Login.css";
 
@@ -8,14 +8,19 @@ function Login() {
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const token = sessionStorage.getItem("token");
     if (token) {
       navigate("/dashboard", { replace: true });
     }
-  }, [navigate]);
+    if (location.state?.message) {
+      setSuccessMessage(location.state.message);
+    }
+  }, [navigate, location.state]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -81,6 +86,11 @@ function Login() {
             />
           </div>
 
+          {successMessage && (
+            <div className="login-success" role="status">
+              {successMessage}
+            </div>
+          )}
           {error && (
             <div className="login-error" role="alert">
               {error}
@@ -97,6 +107,8 @@ function Login() {
 
         <footer className="login-footer">
           <Link to="/forgot-password">Forgot password?</Link>
+          <br />
+          Don&apos;t have an account? <Link to="/register">Sign up</Link>
         </footer>
       </div>
     </div>
