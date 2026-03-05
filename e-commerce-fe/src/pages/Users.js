@@ -20,7 +20,7 @@ const Users = () => {
       const res = await api.get("/api/user/allUsers");
       setUsers(res.data || []);
     } catch (err) {
-      const msg = err.response?.data?.message || "Failed to load users.";
+      const msg = err.response?.data?.error || err.response?.data?.message || "Failed to load users.";
       setError(msg);
     }
   };
