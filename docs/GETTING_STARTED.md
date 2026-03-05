@@ -72,6 +72,30 @@ Note: These scripts build images from service directories and then run `docker c
    # ... then remaining services
    ```
 
+### Running product-catalog-service from your IDE (with Kafka in Docker/Podman)
+
+When you run **product-catalog-service** from your IDE, it runs on your machine (host), while Kafka runs inside Docker or Podman. The hostname `kafka` only works inside the container network, so the app must use **localhost** to reach Kafka.
+
+1. **Start Kafka (and Zookeeper) in Docker or Podman** so that port **9092** is exposed on the host:
+   ```bash
+   docker compose up -d zookeeper kafka
+   # or: podman compose up -d zookeeper kafka
+   ```
+   Ensure `docker-compose.yml` (or your compose file) maps Kafka port `9092:9092`.
+
+2. **Run product-catalog-service from your IDE** using one of these:
+
+   - **Option A – Spring profile `local`** (recommended):
+     - In your run configuration, set **Active profiles** to: `local`
+     - product-catalog-service has `application-local.yml` with `spring.kafka.bootstrap-servers: localhost:9092`.
+
+   - **Option B – Environment variable:**
+     - In your run configuration, add an **Environment variable**:
+       - Name: `SPRING_KAFKA_BOOTSTRAP_SERVERS`
+       - Value: `localhost:9092`
+
+After this, product-catalog-service started from the IDE will connect to Kafka running in Docker/Podman at `localhost:9092`.
+
 ## Option 3: Run Frontend Locally (Development)
 
 1. **Backend must be running** – at least API Gateway (8081) and User Management (8082) for login and API calls.
@@ -105,6 +129,6 @@ Adjust host/port/user/password to match your environment.
 - **Services not registering in Eureka:** Ensure Eureka and Config Server (if used) start first and are reachable; check `EUREKA_DEFAULT_ZONE` and `CONFIG_SERVER_URL`.
 - **502 / connection refused from frontend:** Confirm API Gateway (8081) and, for login, User Management (8082) are up; check proxy target in `e-commerce-fe/src/setupProxy.js`.
 - **Database errors:** Verify PostgreSQL is running and URL/credentials match config; run Flyway if schema is missing.
-- **Kafka errors:** Ensure Zookeeper and Kafka containers are running and `SPRING_KAFKA_BOOTSTRAP_SERVERS` is correct (e.g. `kafka:9092` in Docker, `localhost:9092` locally).
+- **Kafka errors in product-catalog-service (e.g. "No resolvable bootstrap urls" when running from IDE):** Start Kafka in Docker/Podman (`docker compose up -d zookeeper kafka`), then run product-catalog-service with profile `local` or set `SPRING_KAFKA_BOOTSTRAP_SERVERS=localhost:9092`. See [Running product-catalog-service from your IDE](#running-product-catalog-service-from-your-ide-with-kafka-in-dockerpodman) above.
 
 For more detail on ports and service roles, see [Architecture](ARCHITECTURE.md).
