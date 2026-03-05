@@ -23,6 +23,7 @@ eureka:
     fetchRegistry: false
 
 logging:
+  config: classpath:logback-spring.xml
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n"
 
