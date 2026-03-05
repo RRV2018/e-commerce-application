@@ -2,9 +2,11 @@ package com.omsoft.retail.order.service;
 
 import com.omsoft.retail.order.dto.OrderResponse;
 import com.omsoft.retail.order.repo.OrderRepository;
+import com.omsoft.retail.order.repo.ShippingOptionRepository;
 import com.omsoft.retail.order.repo.UserCardRepository;
 import com.omsoft.retail.order.client.InventoryClient;
 import com.omsoft.retail.order.client.PaymentClient;
+import com.omsoft.retail.order.service.CouponService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,6 +37,12 @@ class OrderServiceTest {
     private UserCardRepository cardRepo;
 
     @Mock
+    private CouponService couponService;
+
+    @Mock
+    private ShippingOptionRepository shippingOptionRepository;
+
+    @Mock
     private KafkaTemplate<String, Object> kafkaTemplate;
 
     private OrderService orderService;
@@ -46,6 +54,8 @@ class OrderServiceTest {
                 inventoryClient,
                 paymentClient,
                 cardRepo,
+                couponService,
+                shippingOptionRepository,
                 kafkaTemplate
         );
     }

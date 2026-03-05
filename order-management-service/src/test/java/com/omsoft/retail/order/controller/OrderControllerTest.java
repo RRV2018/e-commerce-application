@@ -3,7 +3,9 @@ package com.omsoft.retail.order.controller;
 import com.omsoft.retail.order.dto.CreateOrderRequest;
 import com.omsoft.retail.order.dto.OrderItemRequest;
 import com.omsoft.retail.order.dto.OrderResponse;
+import com.omsoft.retail.order.service.CouponService;
 import com.omsoft.retail.order.service.OrderService;
+import com.omsoft.retail.order.service.ShippingOptionService;
 import com.omsoft.retail.order.type.OrderStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,11 +31,17 @@ class OrderControllerTest {
     @Mock
     private OrderService orderService;
 
+    @Mock
+    private ShippingOptionService shippingOptionService;
+
+    @Mock
+    private CouponService couponService;
+
     private OrderController orderController;
 
     @BeforeEach
     void setUp() {
-        orderController = new OrderController(orderService);
+        orderController = new OrderController(orderService, shippingOptionService, couponService);
     }
 
     @Test

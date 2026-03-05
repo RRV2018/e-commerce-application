@@ -1,8 +1,10 @@
 package com.omsoft.retail.order.controller;
 
-import com.omsoft.retail.order.dto.CreateOrderRequest;
-import com.omsoft.retail.order.dto.OrderResponse;
+import com.omsoft.retail.order.dto.*;
+import com.omsoft.retail.order.service.CouponService;
 import com.omsoft.retail.order.service.OrderService;
+import com.omsoft.retail.order.service.ShippingOptionService;
+import com.omsoft.retail.order.type.OrderStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.math.BigDecimal;
 
 @Tag(
         name = "Order APIs",
@@ -26,9 +29,13 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService service;
+    private final ShippingOptionService shippingOptionService;
+    private final CouponService couponService;
 
-    public OrderController(OrderService service) {
+    public OrderController(OrderService service, ShippingOptionService shippingOptionService, CouponService couponService) {
         this.service = service;
+        this.shippingOptionService = shippingOptionService;
+        this.couponService = couponService;
     }
 
     // ===================== PLACE ORDER =====================
@@ -148,5 +155,29 @@ public class OrderController {
         return deleted
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.notFound().build();
+    }
+
+    @Operation(summary = "Get shipping options")
+    @GetMapping("/shipping-options")
+    public List<ShippingOptionResponse> getShippingOptions() {
+        return shippingOptionService.getAll();
+    }
+
+    @Operation(summary = "Validate coupon code")
+    @GetMapping("/coupons/validate")
+    public CouponValidationResponse validateCoupon(
+            @RequestParam String code,
+            @RequestParam BigDecimal amount) {
+        return couponService.validate(code, amount);
+    }
+
+    @Operation(summary = "Update order status (e.g. SHIPPED, DELIVERED)")
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<OrderResponse> updateOrderStatus(
+            @PathVariable Long id,
+            @RequestBody @Valid UpdateOrderStatusRequest request) {
+        return service.updateOrderStatus(id, request.status())
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

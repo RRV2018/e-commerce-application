@@ -11,8 +11,16 @@ public record OrderResponse(
         String userId,
         OrderStatus status,
         BigDecimal totalAmount,
+        BigDecimal discountAmount,
+        BigDecimal shippingAmount,
+        String couponCode,
         List<OrderItemResponse> items,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
-) {}
+) {
+    public OrderResponse(String orderId, String userId, OrderStatus status, BigDecimal totalAmount,
+                         List<OrderItemResponse> items, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this(orderId, userId, status, totalAmount, null, null, null, items, createdAt, updatedAt);
+    }
+}
 
