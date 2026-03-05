@@ -12,6 +12,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @Slf4j
 public class PaymentManagementApplication {
     public static void main(String[] args) {
+        java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("Asia/Kolkata"));
         SpringApplication.run(PaymentManagementApplication.class, args);
         log.info("Payment management service is up.......");
     }
