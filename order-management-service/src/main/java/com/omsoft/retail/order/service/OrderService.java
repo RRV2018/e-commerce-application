@@ -9,7 +9,10 @@ import com.omsoft.retail.order.entity.OrderItem;
 import com.omsoft.retail.order.entity.UserCard;
 import com.omsoft.retail.order.event.OrderEvent;
 import com.omsoft.retail.order.event.ProductEvent;
+import com.omsoft.retail.order.entity.Coupon;
+import com.omsoft.retail.order.entity.ShippingOption;
 import com.omsoft.retail.order.repo.OrderRepository;
+import com.omsoft.retail.order.repo.ShippingOptionRepository;
 import com.omsoft.retail.order.repo.UserCardRepository;
 import com.omsoft.retail.order.type.OrderStatus;
 import com.omsoft.retail.order.type.PaymentStatus;
@@ -37,6 +40,8 @@ public class OrderService {
     private final InventoryClient inventoryClient;
     private final PaymentClient paymentClient;
     private final UserCardRepository cardRepo;
+    private final CouponService couponService;
+    private final ShippingOptionRepository shippingOptionRepository;
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Transactional
@@ -82,7 +87,30 @@ public class OrderService {
             productEvent.setQuantity(itemDto.quantity());
             productEvents.add(productEvent);
         }
-        order.setTotalAmount(totalAmount);
+        BigDecimal discountAmount = BigDecimal.ZERO;
+        if (dto.couponCode() != null && !dto.couponCode().isBlank()) {
+            var validation = couponService.validate(dto.couponCode(), totalAmount);
+            if (validation.valid()) {
+                discountAmount = validation.discountAmount();
+                order.setCouponCode(dto.couponCode());
+                order.setDiscountAmount(discountAmount);
+            }
+        }
+        BigDecimal shippingAmount = BigDecimal.ZERO;
+        Long shippingOptionId = dto.shippingOptionId();
+        if (shippingOptionId != null) {
+            shippingOptionRepository.findById(shippingOptionId).ifPresent(opt -> {
+                order.setShippingOptionId(opt.getId());
+                order.setShippingAmount(opt.getCost());
+            });
+        } else {
+            shippingOptionRepository.findByIsDefaultTrue().ifPresent(opt -> {
+                order.setShippingOptionId(opt.getId());
+                order.setShippingAmount(opt.getCost());
+            });
+        }
+        shippingAmount = order.getShippingAmount() != null ? order.getShippingAmount() : BigDecimal.ZERO;
+        order.setTotalAmount(totalAmount.subtract(discountAmount).add(shippingAmount));
         // 2 Save order to generate orderId
         orderRepository.save(order);
         orderEvent.setOrderId(order.getId());
@@ -124,6 +152,9 @@ public class OrderService {
                 );
             }
             order.setStatus(OrderStatus.PAID);
+            if (order.getCouponCode() != null) {
+                couponService.findByCode(order.getCouponCode()).ifPresent(couponService::incrementUsedCount);
+            }
             orderEvent.setOrderId(order.getId());
             orderEvent.setType(OrderStatus.PAID);
             orderEvent.setProducts(productEvents);
@@ -181,6 +212,15 @@ public class OrderService {
         return false;
     }
 
+    @Transactional
+    public Optional<OrderResponse> updateOrderStatus(Long orderId, OrderStatus status) {
+        return orderRepository.findById(orderId)
+                .map(order -> {
+                    order.setStatus(status);
+                    return mapToResponse(orderRepository.save(order));
+                });
+    }
+
     private OrderResponse mapToResponse(Order order) {
         List<OrderItemResponse> itemResponses =
                 order.getItems()
@@ -198,6 +238,9 @@ public class OrderService {
                 order.getUserId(),
                 order.getStatus(),
                 order.getTotalAmount(),
+                order.getDiscountAmount(),
+                order.getShippingAmount(),
+                order.getCouponCode(),
                 itemResponses,
                 order.getCreatedAt(),
                 order.getUpdatedAt()

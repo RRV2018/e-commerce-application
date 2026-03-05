@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -126,11 +125,14 @@ public class ProductController extends BaseController {
         return service.getProducts(page, size, sort, dir);
     }
 
+    @Operation(summary = "Search products by name/description and optional category")
     @GetMapping("/search")
-    public Page<Product> searchProducts(
+    public PageResponse<ProductResponse> searchProducts(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) String category,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        return service.searchProducts(page, size);
+        return service.searchProducts(q, category, page, size);
     }
     // ===================== CREATE PRODUCT =====================
     @Operation(

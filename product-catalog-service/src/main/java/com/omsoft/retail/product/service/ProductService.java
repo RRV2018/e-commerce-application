@@ -73,6 +73,23 @@ public class ProductService {
         return productRepo.findAll(pageable);
     }
 
+    public PageResponse<ProductResponse> searchProducts(String query, String categoryName, int page, int size) {
+        size = Math.min(size, MAX_PAGE_SIZE);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        Page<Product> productPage = StringUtils.isNotBlank(categoryName)
+                ? productRepo.searchByNameAndCategory(StringUtils.defaultString(query, ""), categoryName, pageable)
+                : productRepo.searchByNameOrDescription(StringUtils.defaultString(query, ""), pageable);
+        List<ProductResponse> content = productPage.getContent().stream().map(mapper::toDto).toList();
+        return new PageResponse<>(
+                content,
+                productPage.getNumber(),
+                productPage.getSize(),
+                productPage.getTotalElements(),
+                productPage.getTotalPages(),
+                productPage.isLast()
+        );
+    }
+
     public PageResponse<ProductResponse> getProducts(
             int page, int size, String sortBy, String direction) {
 

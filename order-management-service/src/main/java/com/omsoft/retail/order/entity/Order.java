@@ -27,6 +27,11 @@ public class Order extends Auditable{
 
     private BigDecimal totalAmount;
 
+    private String couponCode;
+    private BigDecimal discountAmount = BigDecimal.ZERO;
+    private BigDecimal shippingAmount = BigDecimal.ZERO;
+    private Long shippingOptionId;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<OrderItem> items = new ArrayList<>();
