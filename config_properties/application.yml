@@ -5,7 +5,8 @@ server:
 
 spring:
   kafka:
-    bootstrap-servers: kafka:9092
+    # Use localhost:9092 when running app from IDE; kafka:9092 when running in Docker (set SPRING_KAFKA_BOOTSTRAP_SERVERS or use profile)
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:kafka:9092}
     consumer:
       group-id: ecommerce-group
       auto-offset-reset: earliest
