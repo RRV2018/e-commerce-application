@@ -1,0 +1,37 @@
+2026-03-05 10:59:16.364 INFO  [main] o.o.r.admin.AdminServerApplication - Starting AdminServerApplication using Java 17.0.13 with PID 19192 (C:\Users\rava1124\IdeaProjects\BillOps\e-commerce-application-new\app-monitoring-admin-server\target\classes started by rava1124 in C:\Users\rava1124\IdeaProjects\BillOps\e-commerce-application-new\app-monitoring-admin-server)
+2026-03-05 10:59:16.371 INFO  [main] o.o.r.admin.AdminServerApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-05 10:59:26.174 INFO  [main] o.s.cloud.context.scope.GenericScope - BeanFactory id=dfce1aaf-5b3b-36ab-b616-806271c51380
+2026-03-05 10:59:27.895 INFO  [main] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8087 (http)
+2026-03-05 10:59:27.916 INFO  [main] o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8087"]
+2026-03-05 10:59:27.920 INFO  [main] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-05 10:59:27.920 INFO  [main] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.49]
+2026-03-05 10:59:28.064 INFO  [main] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-05 10:59:28.065 INFO  [main] o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 10961 ms
+2026-03-05 10:59:29.491 INFO  [main] o.s.v.b.OptionalValidatorFactoryBean - Failed to set up a Bean Validation provider: jakarta.validation.NoProviderFoundException: Unable to create a Configuration, because no Jakarta Bean Validation provider could be found. Add a provider like Hibernate Validator (RI) to your classpath.
+2026-03-05 10:59:31.002 WARN  [main] o.s.b.a.t.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration - Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2026-03-05 10:59:36.397 INFO  [main] o.s.c.n.e.c.DiscoveryClientOptionalArgsConfiguration - Eureka HTTP Client uses RestTemplate.
+2026-03-05 10:59:38.119 WARN  [main] o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-03-05 10:59:38.267 INFO  [main] o.s.b.a.e.web.EndpointLinksResolver - Exposing 28 endpoints beneath base path '/actuator'
+2026-03-05 10:59:38.594 INFO  [main] o.s.c.n.eureka.InstanceInfoFactory - Setting initial instance status as: STARTING
+2026-03-05 10:59:38.698 INFO  [main] c.netflix.discovery.DiscoveryClient - Initializing Eureka in region us-east-1
+2026-03-05 10:59:38.714 INFO  [main] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-03-05 10:59:38.766 INFO  [main] c.netflix.discovery.DiscoveryClient - Disable delta property : false
+2026-03-05 10:59:38.766 INFO  [main] c.netflix.discovery.DiscoveryClient - Single vip registry refresh property : null
+2026-03-05 10:59:38.766 INFO  [main] c.netflix.discovery.DiscoveryClient - Force full registry fetch : false
+2026-03-05 10:59:38.767 INFO  [main] c.netflix.discovery.DiscoveryClient - Application is null : false
+2026-03-05 10:59:38.767 INFO  [main] c.netflix.discovery.DiscoveryClient - Registered Applications size is zero : true
+2026-03-05 10:59:38.767 INFO  [main] c.netflix.discovery.DiscoveryClient - Application version is -1: true
+2026-03-05 10:59:38.767 INFO  [main] c.netflix.discovery.DiscoveryClient - Getting all instance registry info from the eureka server
+2026-03-05 10:59:40.360 INFO  [main] c.netflix.discovery.DiscoveryClient - The response status is 200
+2026-03-05 10:59:40.385 INFO  [main] c.netflix.discovery.DiscoveryClient - Starting heartbeat executor: renew interval is: 30
+2026-03-05 10:59:40.395 INFO  [main] c.n.discovery.InstanceInfoReplicator - InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-03-05 10:59:40.400 INFO  [main] c.netflix.discovery.DiscoveryClient - Discovery Client initialized at timestamp 1772688580398 with initial instances count: 2
+2026-03-05 10:59:40.453 INFO  [main] o.s.c.n.e.s.EurekaServiceRegistry - Registering application APP-MONITORING-ADMIN-SERVER with eureka with status UP
+2026-03-05 10:59:40.455 INFO  [main] c.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1772688580455, current=UP, previous=STARTING]
+2026-03-05 10:59:40.460 INFO  [DiscoveryClient-InstanceInfoReplicator-%d] c.netflix.discovery.DiscoveryClient - DiscoveryClient_APP-MONITORING-ADMIN-SERVER/WS-19572.netcracker.com:app-monitoring-admin-server:8087: registering service...
+2026-03-05 10:59:40.594 INFO  [DiscoveryClient-InstanceInfoReplicator-%d] c.netflix.discovery.DiscoveryClient - DiscoveryClient_APP-MONITORING-ADMIN-SERVER/WS-19572.netcracker.com:app-monitoring-admin-server:8087 - registration status: 204
+2026-03-05 10:59:41.147 INFO  [main] o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8087"]
+2026-03-05 10:59:41.178 INFO  [main] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8087 (http) with context path '/'
+2026-03-05 10:59:41.180 INFO  [main] o.s.c.n.e.s.EurekaAutoServiceRegistration - Updating port to 8087
+2026-03-05 10:59:42.892 INFO  [main] o.o.r.admin.AdminServerApplication - Started AdminServerApplication in 35.739 seconds (process running for 42.315)
+2026-03-05 10:59:43.050 INFO  [main] o.o.r.admin.AdminServerApplication - Spring boot admin server is up ...
