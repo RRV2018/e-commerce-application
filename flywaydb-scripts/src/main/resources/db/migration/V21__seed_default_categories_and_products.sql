@@ -19,9 +19,10 @@ WITH numbered_cats AS (
 cat_count AS (
   SELECT count(*) AS cnt FROM public.categories
 )
-INSERT INTO public.products (name, description, price, stock, category_id)
+INSERT INTO public.products (name, version, description, price, stock, category_id)
 SELECT
   'Product ' || i,
+  '1',
   'Default product item ' || i || ' for catalog.',
   (10 + (random() * 490))::numeric(38,2),
   (1 + (random() * 99))::integer,
