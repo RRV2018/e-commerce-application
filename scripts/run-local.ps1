@@ -25,14 +25,16 @@ $env:SPRING_PROFILES_ACTIVE = "docker"
 if (-not $env:ENCRYPTION_SECRET_KEY) { $env:ENCRYPTION_SECRET_KEY = "encryption-key-16" }
 if (-not $env:JWT_SECRET) { $env:JWT_SECRET = "mySecretKeyForJwtTokenGeneration123" }
 
-Write-Host "=== Starting infrastructure (Postgres, Zookeeper, Kafka, Eureka, Config Server, Flyway) ===" -ForegroundColor Cyan
-docker compose up -d postgres zookeeper kafka eureka-discovery-server property-config-server flyway
+Write-Host "=== Starting infrastructure in Docker (Postgres, Zookeeper, Kafka, Flyway only) ===" -ForegroundColor Cyan
+docker compose up -d postgres zookeeper kafka flyway
 
-Write-Host "Waiting 45s for infra and config to be ready..." -ForegroundColor Yellow
-Start-Sleep -Seconds 45
+Write-Host "Waiting 25s for infra to be ready..." -ForegroundColor Yellow
+Start-Sleep -Seconds 25
 
 $mvnRun = "mvn -q -pl `"MODULE`" spring-boot:run"
 $services = @(
+    @{ Name = "eureka-discovery-server"; Module = "eureka-discovery-server" },
+    @{ Name = "property-config-server"; Module = "property-config-server" },
     @{ Name = "user-management-service"; Module = "user-management-service" },
     @{ Name = "product-catalog-service"; Module = "product-catalog-service"; ExtraEnv = "SPRING_PROFILES_ACTIVE=local,docker" },
     @{ Name = "order-management-service"; Module = "order-management-service" },

@@ -1,9 +1,9 @@
-# Stop locally running microservices and frontend (processes on ports 8081-8087 and 3000).
-# Does not stop Docker infrastructure (postgres, kafka, eureka, config-server).
+# Stop locally running Eureka, Config Server, microservices, and frontend (ports 8761, 8888, 8081-8087, 3000).
+# Does not stop Docker infrastructure (postgres, zookeeper, kafka, flyway).
 # Usage: .\scripts\stop-local.ps1
 
 $ErrorActionPreference = "SilentlyContinue"
-$ports = @(8081, 8082, 8083, 8084, 8085, 8086, 8087, 3000)
+$ports = @(8761, 8888, 8081, 8082, 8083, 8084, 8085, 8086, 8087, 3000)
 $pidsToStop = @{}
 
 foreach ($port in $ports) {
