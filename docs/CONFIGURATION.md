@@ -15,7 +15,7 @@ These are referenced in `docker-compose.yml` and should be set in a `.env` file 
 | `EUREKA_DEFAULT_ZONE` | `http://eureka-discovery-server:8761/eureka` | Eureka server URL |
 | `CONFIG_SERVER_URL` | `http://property-config-server:8888` | Config Server URL |
 | `ENCRYPTION_SECRET_KEY` | *(secret)* | Used by user-management-service for encryption |
-| `TIME_ZONE` | `Asia/Calcutta` | Optional time zone |
+| `TIME_ZONE` | `Asia/Kolkata` | Optional time zone (IST) |
 
 ### Example `.env`
 
@@ -28,7 +28,7 @@ SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
 KEYCLOAK_AUTH_SERVER_URL=http://keycloak:9080
 EUREKA_DEFAULT_ZONE=http://eureka-discovery-server:8761/eureka
 CONFIG_SERVER_URL=http://property-config-server:8888
-TIME_ZONE=Asia/Calcutta
+TIME_ZONE=Asia/Kolkata
 ENCRYPTION_SECRET_KEY=your-secret-key-here
 ```
 

@@ -15,10 +15,12 @@ public class JwtUtil {
     @Value("${application.secret.key}")
     private String secretKey;
 
-    public String generateToken(String username) {
-        log.info("generateToken :: {} , key: {}", username, secretKey);
+    /** Generates JWT with subject (email) and role claim for gateway. */
+    public String generateToken(String username, String role) {
+        log.debug("Token generated for subject: {}", username);
         return Jwts.builder()
                 .setSubject(username)
+                .claim("role", role != null ? role : "CUSTOMER")
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), SignatureAlgorithm.HS256)

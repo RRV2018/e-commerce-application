@@ -12,5 +12,14 @@ springdoc:
     path: /api/user/swagger-ui/index.html
 
 encryption:
+  # Prefer ENCRYPTION_SECRET_KEY from environment in production
   secret-key: ${ENCRYPTION_SECRET_KEY:u14kB@(%AEE6kKSh}
   algorithm: AES
+
+# Forgot password
+app:
+  password-reset:
+    token-validity-minutes: 60
+    base-url: ${FRONTEND_BASE_URL:http://localhost:3000}
+    return-link-in-response: true   # Set false in production; use email to send link instead
+    cleanup-cron: "0 0 * * * *"    # Expired tokens cleanup every hour

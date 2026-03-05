@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import api from "../api/axios";
 import "./css/Login.css";
 
@@ -7,18 +7,25 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const token = sessionStorage.getItem("token");
     if (token) {
       navigate("/dashboard", { replace: true });
     }
-  }, [navigate]);
+    if (location.state?.message) {
+      setSuccessMessage(location.state.message);
+    }
+  }, [navigate, location.state]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     sessionStorage.removeItem("token");
+    setError("");
     setIsSubmitting(true);
 
     try {
@@ -30,8 +37,11 @@ function Login() {
       sessionStorage.setItem("token", res.data.token);
       navigate("/dashboard", { replace: true });
     } catch (err) {
-      console.error("Login error:", err.response || err);
-      alert("Invalid email or password");
+      const msg =
+        err.response?.data?.message ||
+        (err.response?.data?.errors && Object.values(err.response.data.errors).join(" ")) ||
+        (err.response?.status === 401 ? "Invalid email or password." : "Something went wrong. Please try again.");
+      setError(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -76,6 +86,16 @@ function Login() {
             />
           </div>
 
+          {successMessage && (
+            <div className="login-success" role="status">
+              {successMessage}
+            </div>
+          )}
+          {error && (
+            <div className="login-error" role="alert">
+              {error}
+            </div>
+          )}
           <button
             className="login-submit"
             type="submit"
@@ -86,7 +106,9 @@ function Login() {
         </form>
 
         <footer className="login-footer">
-          {/* Reserve for "Forgot password?" link if needed */}
+          <Link to="/forgot-password">Forgot password?</Link>
+          <br />
+          Don&apos;t have an account? <Link to="/register">Sign up</Link>
         </footer>
       </div>
     </div>

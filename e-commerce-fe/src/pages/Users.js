@@ -7,6 +7,7 @@ const Users = () => {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [editingId, setEditingId] = useState(null);
+  const [error, setError] = useState("");
   const [formData, setForm] = useState({
     name: "",
     email: "",
@@ -15,10 +16,12 @@ const Users = () => {
 
   const fetchUsers = async () => {
     try {
+      setError("");
       const res = await api.get("/api/user/allUsers");
       setUsers(res.data || []);
     } catch (err) {
-      console.error(err);
+      const msg = err.response?.data?.error || err.response?.data?.message || "Failed to load users.";
+      setError(msg);
     }
   };
 
@@ -44,8 +47,13 @@ const Users = () => {
 
   const saveUser = async () => {
     try {
+      setError("");
+      const payload = { name: formData.name, email: formData.email };
+      if (formData.password && formData.password.trim()) {
+        payload.password = formData.password;
+      }
       if (editingId) {
-        await api.put(`/api/user/${editingId}`, formData);
+        await api.put(`/api/user/${editingId}`, payload);
         alert("User updated successfully");
       } else {
         await api.post("/api/user/register", formData);
@@ -54,7 +62,8 @@ const Users = () => {
       resetForm();
       fetchUsers();
     } catch (err) {
-      console.error(err);
+      const msg = err.response?.data?.message || err.response?.data?.errors?.email || "Failed to save user.";
+      setError(msg);
     }
   };
 
@@ -62,7 +71,7 @@ const Users = () => {
     setForm({
       name: user.name || "",
       email: user.email || "",
-      password: user.password || "",
+      password: "", // Leave blank to keep current; API does not return password
     });
     setEditingId(user.id);
   };
@@ -70,10 +79,11 @@ const Users = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
+        setError("");
         await api.delete(`/api/user/${id}`);
         fetchUsers();
       } catch (err) {
-        console.error(err);
+        setError(err.response?.data?.message || "Failed to delete user.");
       }
     }
   };
@@ -81,6 +91,11 @@ const Users = () => {
   return (
     <div className="users-wrap">
       <h1 className="page-title">Users</h1>
+      {error && (
+        <div className="page-card form-error" role="alert">
+          {error}
+        </div>
+      )}
 
       <div className="page-card users-form-card">
         <div className="form-field">
@@ -116,7 +131,7 @@ const Users = () => {
             className="page-input"
             type="password"
             name="password"
-            placeholder="••••••••"
+            placeholder={editingId ? "Leave blank to keep current" : "••••••••"}
             value={formData.password}
             onChange={handleChange}
             required={!editingId}
@@ -149,7 +164,6 @@ const Users = () => {
               <th>ID</th>
               <th>Name</th>
               <th>Email</th>
-              <th>Password</th>
               <th>Role</th>
               <th>Actions</th>
             </tr>
@@ -160,7 +174,6 @@ const Users = () => {
                 <td>{u.id}</td>
                 <td>{u.name}</td>
                 <td>{u.email}</td>
-                <td>{u.password}</td>
                 <td>{u.role}</td>
                 <td>
                   <div className="cell-actions">

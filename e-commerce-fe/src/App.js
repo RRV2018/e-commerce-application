@@ -8,6 +8,9 @@ import Orders from "./pages/Orders";
 import FileOperation from "./pages/FileOperation";
 import Report from "./pages/Report";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import HeaderWrapper from "./components/HeaderWrapper";
 
@@ -20,6 +23,9 @@ const App = () => {
         <HeaderWrapper>
             <Routes>
               <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/" element={<Navigate to="/dashboard" replace />} />  {/* redirect / to dashboard */}
               <Route path="/dashboard" element={ <ProtectedRoute> <Dashboard /></ProtectedRoute>} />
               <Route path="/products" element={ <ProtectedRoute> <Products /></ProtectedRoute>} />

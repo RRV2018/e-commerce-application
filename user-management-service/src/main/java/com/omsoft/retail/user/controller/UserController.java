@@ -12,7 +12,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,6 +44,16 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    @Operation(
+            summary = "Update user",
+            description = "Updates an existing user by ID"
+    )
+    @PutMapping("/{id}")
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id,
+                                                   @Valid @RequestBody UserRequest request) {
+        return ResponseEntity.ok(userService.updateUser(id, request));
     }
 
     @Operation(
@@ -84,11 +97,21 @@ public class UserController {
                     )
             }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/allUsers")
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+            summary = "Get users (paginated)",
+            description = "Returns a paginated list of users"
+    )
+    @GetMapping("/list")
+    public ResponseEntity<Page<UserResponse>> getUsersPage(Pageable pageable) {
+        return ResponseEntity.ok(userService.getUsersPage(pageable));
+    }
 
     @Operation(
             summary = "Delete user",
@@ -104,6 +127,7 @@ public class UserController {
                     )
             }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserById(@PathVariable Long id) {
         boolean deleted = userService.deleteUserById(id);

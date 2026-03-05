@@ -34,10 +34,28 @@ public class ProductDataFileController {
         return service.getFileRecords();
     }
 
+    private static final List<String> ALLOWED_EXTENSIONS = List.of("csv", "xlsx", "xls");
+    private static final long MAX_FILE_SIZE_MB = 50;
+    private static final long MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String upload(
             @RequestParam("file") MultipartFile file,
             @RequestParam("fileType") String fileType) throws Exception {
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("Uploaded file must not be empty.");
+        }
+        if (file.getSize() > MAX_FILE_SIZE_BYTES) {
+            throw new IllegalArgumentException("File size must not exceed " + MAX_FILE_SIZE_MB + " MB.");
+        }
+        String name = file.getOriginalFilename();
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("File must have a name.");
+        }
+        String ext = name.contains(".") ? name.substring(name.lastIndexOf('.') + 1).toLowerCase() : "";
+        if (!ALLOWED_EXTENSIONS.contains(ext)) {
+            throw new IllegalArgumentException("Allowed file types: " + String.join(", ", ALLOWED_EXTENSIONS));
+        }
         FileDetails details = service.saveFileDetails(file.getOriginalFilename(), fileType, "START");
         if (!service.runValidation(details)) {
             return "Upload file validation failed check file_details table for more details.";

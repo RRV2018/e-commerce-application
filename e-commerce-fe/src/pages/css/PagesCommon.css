@@ -214,3 +214,12 @@
   font-size: 0.875rem;
   color: var(--text-secondary);
 }
+
+.form-error {
+  padding: 12px 14px;
+  font-size: 0.875rem;
+  color: var(--danger);
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  border-radius: var(--input-radius);
+}

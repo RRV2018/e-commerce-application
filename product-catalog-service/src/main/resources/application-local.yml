@@ -1,0 +1,4 @@
+# Use when running this service from IDE (outside Docker). Kafka is then reachable at localhost:9092.
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092

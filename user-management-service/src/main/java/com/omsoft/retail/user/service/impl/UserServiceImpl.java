@@ -6,12 +6,16 @@ import com.omsoft.retail.user.dto.UserResponse;
 import com.omsoft.retail.user.entiry.User;
 import com.omsoft.retail.user.entiry.type.Role;
 import com.omsoft.retail.user.exception.AlreadyExistsException;
+import com.omsoft.retail.user.exception.UserNotFoundException;
 import com.omsoft.retail.user.repository.UserRepository;
 import com.omsoft.retail.user.service.UserService;
 import com.omsoft.retail.user.util.EncryptDecryptUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collections;
 import java.util.List;
@@ -48,16 +52,34 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
+                .orElseThrow(() -> new UserNotFoundException(id));
         return mapToResponse(user);
     }
 
     @Override
     public UserResponse getUserByEmail(String email) {
-        Optional<User> user = Optional.ofNullable(userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found")));
-        return user.map(this::mapToResponse).orElse(null);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found for email: " + email));
+        return mapToResponse(user);
+    }
+
+    @Override
+    public UserResponse updateUser(Long id, UserRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+        userRepository.findByEmail(request.getEmail()).ifPresent(existing -> {
+            if (!existing.getId().equals(id)) {
+                throw new AlreadyExistsException("Email", request.getEmail());
+            }
+        });
+        user.setUsername(request.getName());
+        user.setEmail(request.getEmail());
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            user.setDecryptablePassword(encryptDecryptUtil.encrypt(request.getPassword()));
+        }
+        User saved = userRepository.save(user);
+        return mapToResponse(saved);
     }
 
     private UserResponse mapToResponse(User user) {
@@ -66,7 +88,6 @@ public class UserServiceImpl implements UserService {
                 .name(user.getUsername())
                 .email(user.getEmail())
                 .role(user.getRole())
-                .password(encryptDecryptUtil.decrypt(user.getDecryptablePassword()))
                 .addresses(mapUserAddresses(user))
                 .build();
     }
@@ -90,9 +111,13 @@ public class UserServiceImpl implements UserService {
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll()
                 .stream()
-                .map(this::mapToResponse
-                )
+                .map(this::mapToResponse)
                 .toList();
+    }
+
+    @Override
+    public Page<UserResponse> getUsersPage(Pageable pageable) {
+        return userRepository.findAll(pageable).map(this::mapToResponse);
     }
 
     @Override
