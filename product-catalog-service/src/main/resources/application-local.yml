@@ -1,4 +1,4 @@
-# Use when running this service from IDE (outside Docker). Kafka is then reachable at localhost:9092.
+# Use when running this service from IDE or host (outside Docker). Use port 9093 so broker advertises localhost and connection stays stable.
 spring:
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:9093

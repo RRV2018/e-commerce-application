@@ -7,6 +7,7 @@ const Users = () => {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [editingId, setEditingId] = useState(null);
+  const [visiblePasswordId, setVisiblePasswordId] = useState(null);
   const [error, setError] = useState("");
   const [formData, setForm] = useState({
     name: "",
@@ -165,6 +166,7 @@ const Users = () => {
               <th>Name</th>
               <th>Email</th>
               <th>Role</th>
+              <th>Password</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -175,6 +177,18 @@ const Users = () => {
                 <td>{u.name}</td>
                 <td>{u.email}</td>
                 <td>{u.role}</td>
+                <td>
+                  <span
+                    className="password-cell"
+                    onClick={() => setVisiblePasswordId((prev) => (prev === u.id ? null : u.id))}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => e.key === "Enter" && setVisiblePasswordId((prev) => (prev === u.id ? null : u.id))}
+                    title={visiblePasswordId === u.id ? "Click to hide" : "Click to show"}
+                  >
+                    {visiblePasswordId === u.id ? (u.password ?? "—") : "********"}
+                  </span>
+                </td>
                 <td>
                   <div className="cell-actions">
                     <button

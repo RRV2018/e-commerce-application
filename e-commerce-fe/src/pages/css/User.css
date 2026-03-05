@@ -73,3 +73,14 @@
 .password-box span:hover {
   color: #1e293b;
 }
+
+.password-cell {
+  cursor: pointer;
+  user-select: none;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.password-cell:hover {
+  background: rgba(0, 0, 0, 0.06);
+}

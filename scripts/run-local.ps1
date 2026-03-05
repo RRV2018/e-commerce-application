@@ -19,7 +19,7 @@ if (Test-Path ".env") {
 $env:SPRING_DATASOURCE_URL = "jdbc:postgresql://localhost:5433/postgres"
 $env:EUREKA_DEFAULT_ZONE = "http://localhost:8761/eureka"
 $env:CONFIG_SERVER_URL = "http://localhost:8888"
-$env:SPRING_KAFKA_BOOTSTRAP_SERVERS = "localhost:9092"
+$env:SPRING_KAFKA_BOOTSTRAP_SERVERS = "localhost:9093"
 $env:SPRING_PROFILES_ACTIVE = "docker"
 
 if (-not $env:ENCRYPTION_SECRET_KEY) { $env:ENCRYPTION_SECRET_KEY = "encryption-key-16" }

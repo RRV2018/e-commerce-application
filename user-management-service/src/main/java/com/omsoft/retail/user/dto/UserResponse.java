@@ -16,4 +16,6 @@ public class UserResponse {
     private String email;
     private Role role;
     private List<AddressResponse> addresses;
+    /** Decrypted password for admin list only; null when not included */
+    private String password;
 }

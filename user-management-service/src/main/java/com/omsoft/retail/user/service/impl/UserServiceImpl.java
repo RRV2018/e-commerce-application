@@ -91,6 +91,26 @@ public class UserServiceImpl implements UserService {
                 .addresses(mapUserAddresses(user))
                 .build();
     }
+
+    /** Used for admin list only: includes decrypted password for display. */
+    private UserResponse mapToResponseWithPassword(User user) {
+        String decrypted = null;
+        if (user.getDecryptablePassword() != null && !user.getDecryptablePassword().isBlank()) {
+            try {
+                decrypted = encryptDecryptUtil.decrypt(user.getDecryptablePassword());
+            } catch (Exception ignored) {
+                // leave null on decrypt failure
+            }
+        }
+        return UserResponse.builder()
+                .id(user.getId())
+                .name(user.getUsername())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .addresses(mapUserAddresses(user))
+                .password(decrypted)
+                .build();
+    }
     private List<AddressResponse> mapUserAddresses(User user) {
        return Optional.ofNullable(user)
                .map(User::getAddresses)
@@ -111,7 +131,7 @@ public class UserServiceImpl implements UserService {
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll()
                 .stream()
-                .map(this::mapToResponse)
+                .map(this::mapToResponseWithPassword)
                 .toList();
     }
 

@@ -1,5 +1,5 @@
 # Served by config server when client runs with profile "local" (e.g. IDE run).
-# Use localhost for Kafka so the app can reach Kafka running in Docker/Podman on the host.
+# Use localhost:9093 (Kafka EXTERNAL listener) so broker advertises localhost and connection stays stable.
 spring:
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:9093
