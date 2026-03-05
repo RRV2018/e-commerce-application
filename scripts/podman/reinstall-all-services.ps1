@@ -1,16 +1,5 @@
 $ErrorActionPreference = "Stop"
 
-# Run from project root (parent of scripts/)
-$ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
-Set-Location $ProjectRoot
-Write-Host "Project root: $ProjectRoot" -ForegroundColor Cyan
-
-Write-Host ""
-Write-Host "==============================="
-Write-Host "Maven clean package (all modules)"
-Write-Host "==============================="
-mvn clean package -DskipTests
-
 Write-Host ""
 Write-Host "==============================="
 Write-Host "Stopping existing containers..."
