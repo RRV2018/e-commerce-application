@@ -1,0 +1,5 @@
+# Served by config server when client runs with profile "local" (e.g. IDE run).
+# Use localhost for Kafka so the app can reach Kafka running in Docker/Podman on the host.
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
