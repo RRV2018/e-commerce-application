@@ -98,8 +98,10 @@ function Products() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [sortBy, setSortBy] = useState("name");
+  const [sortOrder, setSortOrder] = useState("asc");
   const [wishlistIds, setWishlistIds] = useState(new Set());
   const [reviewsModal, setReviewsModal] = useState(null);
   const didFetch = useRef(false);
@@ -170,6 +172,32 @@ function Products() {
     }
   };
 
+  const sortOptions = [
+    { value: "name_asc", label: "Name A–Z", by: "name", order: "asc" },
+    { value: "name_desc", label: "Name Z–A", by: "name", order: "desc" },
+    { value: "price_asc", label: "Price low to high", by: "price", order: "asc" },
+    { value: "price_desc", label: "Price high to low", by: "price", order: "desc" },
+    { value: "id_asc", label: "ID ascending", by: "id", order: "asc" },
+    { value: "id_desc", label: "ID descending", by: "id", order: "desc" },
+  ];
+
+  const sortProducts = (list) => {
+    if (!list.length) return list;
+    const order = sortOrder === "asc" ? 1 : -1;
+    return [...list].sort((a, b) => {
+      let va = a[sortBy];
+      let vb = b[sortBy];
+      if (sortBy === "name" || sortBy === "description") {
+        va = (va || "").toString().toLowerCase();
+        vb = (vb || "").toString().toLowerCase();
+        return order * (va < vb ? -1 : va > vb ? 1 : 0);
+      }
+      va = Number(va) ?? 0;
+      vb = Number(vb) ?? 0;
+      return order * (va - vb);
+    });
+  };
+
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -231,6 +259,7 @@ function Products() {
   const filteredProducts = products.filter((p) =>
     `${p.id} ${p.name} ${p.description} `.toLowerCase().includes(search.toLowerCase())
   );
+  const sortedProducts = sortProducts(filteredProducts);
 
   const totalAmount = cardData.reduce(
     (sum, item) => sum + Number(item.amount || 0),
@@ -361,60 +390,80 @@ function Products() {
       </div>
 
       <h2 className="products-section-title">Product list</h2>
-      <input
-        className="search-bar"
-        placeholder="Search products..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-
-      <div className="page-card products-list-card">
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Version</th>
-              <th>Desc</th>
-              <th>Details</th>
-              <th className="num">Price ₹</th>
-              <th className="num">Stock</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredProducts.map((p) => (
-              <tr key={p.id}>
-                <td>{p.id}</td>
-                <td style={{ fontWeight: 600 }}>{p.name}</td>
-                <td>{p.version}</td>
-                <td>{p.description}</td>
-                <td className="product-details">
-                  RAM: {p.ramSize}, Storage: {p.hardDiskSize}, Size: {p.screenSize}, Color: {p.color}
-                </td>
-                <td className="num">{Number(p.price).toFixed(2)}</td>
-                <td className="num">{p.stock}</td>
-                <td>
-                  <div className="actions-cell">
-                    <FaEdit onClick={() => editProduct(p)} data-action="edit" />
-                    <FaTrash onClick={() => deleteProduct(p.id)} data-action="delete" />
-                    <FaCartPlus onClick={() => addToCart(p)} data-action="cart" />
-                    <FaHeart
-                      className={wishlistIds.has(p.id) ? "wishlist-on" : "wishlist-off"}
-                      onClick={() => toggleWishlist(p.id)}
-                      title={wishlistIds.has(p.id) ? "Remove from wishlist" : "Add to wishlist"}
-                      data-action="wishlist"
-                    />
-                    <button type="button" className="btn btn-secondary btn-sm" onClick={() => setReviewsModal(p.id)}>
-                      Reviews
-                    </button>
-                  </div>
-                </td>
-              </tr>
+      <div className="products-toolbar">
+        <input
+          className="search-bar"
+          placeholder="Search products..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <label className="sort-label">
+          Sort:
+          <select
+            className="sort-select"
+            value={`${sortBy}_${sortOrder}`}
+            onChange={(e) => {
+              const opt = sortOptions.find((o) => o.value === e.target.value);
+              if (opt) {
+                setSortBy(opt.by);
+                setSortOrder(opt.order);
+              }
+            }}
+          >
+            {sortOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
-          </tbody>
-        </table>
+          </select>
+        </label>
       </div>
+
+      <div className="products-grid">
+        {sortedProducts.map((p) => (
+          <div key={p.id} className="product-card">
+            <div className="product-card-header">
+              <span className="product-card-id">#{p.id}</span>
+              <span className="product-card-version">{p.version || "—"}</span>
+            </div>
+            <h3 className="product-card-name">{p.name}</h3>
+            <p className="product-card-desc">{p.description || "—"}</p>
+            <dl className="product-card-details">
+              <dt>RAM</dt><dd>{p.ramSize ?? "—"}</dd>
+              <dt>Storage</dt><dd>{p.hardDiskSize ?? "—"}</dd>
+              <dt>Screen</dt><dd>{p.screenSize ?? "—"}</dd>
+              <dt>Color</dt><dd>{p.color ?? "—"}</dd>
+            </dl>
+            <div className="product-card-price-row">
+              <span className="product-card-price">₹ {Number(p.price).toFixed(2)}</span>
+              <span className="product-card-stock">Stock: {p.stock ?? 0}</span>
+            </div>
+            <div className="product-card-actions">
+              <button type="button" className="btn btn-primary btn-sm" onClick={() => addToCart(p)} title="Add to cart">
+                <FaCartPlus /> Cart
+              </button>
+              <button
+                type="button"
+                className={`btn btn-sm ${wishlistIds.has(p.id) ? "wishlist-btn on" : "wishlist-btn"}`}
+                onClick={() => toggleWishlist(p.id)}
+                title={wishlistIds.has(p.id) ? "Remove from wishlist" : "Add to wishlist"}
+              >
+                <FaHeart />
+              </button>
+              <button type="button" className="btn btn-secondary btn-sm" onClick={() => setReviewsModal(p.id)}>
+                Reviews
+              </button>
+              <button type="button" className="btn btn-secondary btn-sm" onClick={() => editProduct(p)} title="Edit">
+                <FaEdit />
+              </button>
+              <button type="button" className="btn btn-danger btn-sm" onClick={() => deleteProduct(p.id)} title="Delete">
+                <FaTrash />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      {sortedProducts.length === 0 && (
+        <p className="page-empty">No products match your search.</p>
+      )}
 
       {reviewsModal != null && (
         <ProductReviewsModal
