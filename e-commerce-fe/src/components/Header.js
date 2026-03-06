@@ -32,6 +32,12 @@ const Header = () => {
           <Link className={`nav-link ${isActive("/orders") ? "active" : ""}`} to="/orders">
             Orders
           </Link>
+          <Link className={`nav-link ${isActive("/wishlist") ? "active" : ""}`} to="/wishlist">
+            Wishlist
+          </Link>
+          <Link className={`nav-link ${isActive("/notifications") ? "active" : ""}`} to="/notifications">
+            Notifications
+          </Link>
           <Link className={`nav-link ${isActive("/fileOperation") ? "active" : ""}`} to="/fileOperation">
             File Operation
           </Link>

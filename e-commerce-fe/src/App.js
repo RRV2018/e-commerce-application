@@ -7,6 +7,8 @@ import Products from "./pages/Products";
 import Orders from "./pages/Orders";
 import FileOperation from "./pages/FileOperation";
 import Report from "./pages/Report";
+import Wishlist from "./pages/Wishlist";
+import Notifications from "./pages/Notifications";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -34,6 +36,8 @@ const App = () => {
               <Route path="/orders" element={ <ProtectedRoute><Orders /></ProtectedRoute>} />
               <Route path="/fileOperation" element={ <ProtectedRoute><FileOperation /></ProtectedRoute>} />
               <Route path="/report" element={ <ProtectedRoute> <Report /></ProtectedRoute>} />
+              <Route path="/wishlist" element={ <ProtectedRoute> <Wishlist /></ProtectedRoute>} />
+              <Route path="/notifications" element={ <ProtectedRoute> <Notifications /></ProtectedRoute>} />
             </Routes>
         </HeaderWrapper>
       </div>

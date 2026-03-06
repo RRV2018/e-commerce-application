@@ -8,6 +8,11 @@ export default function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [shippingOptions, setShippingOptions] = useState([]);
+  const [couponCode, setCouponCode] = useState("");
+  const [couponAmount, setCouponAmount] = useState("100");
+  const [couponResult, setCouponResult] = useState(null);
+  const [couponLoading, setCouponLoading] = useState(false);
 
   const bookOrder = async () => {
     try {
@@ -39,6 +44,26 @@ export default function Orders() {
   useEffect(() => {
     getOrders();
   }, []);
+
+  useEffect(() => {
+    api.get("/api/order/shipping-options").then((res) => setShippingOptions(res.data || [])).catch(() => setShippingOptions([]));
+  }, []);
+
+  const validateCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true);
+    setCouponResult(null);
+    try {
+      const res = await api.get("/api/order/coupons/validate", {
+        params: { code: couponCode.trim(), amount: Number(couponAmount) || 0 },
+      });
+      setCouponResult(res.data);
+    } catch (err) {
+      setCouponResult({ valid: false, message: err.response?.data?.message || "Validation failed", discountAmount: 0, couponCode: couponCode });
+    } finally {
+      setCouponLoading(false);
+    }
+  };
 
   const filteredOrders = orders.filter((o) => {
     const search = searchTerm.toLowerCase();
@@ -111,6 +136,47 @@ export default function Orders() {
           >
             Search
           </button>
+        </div>
+      </div>
+
+      <div className="orders-actions-grid orders-extras">
+        <div className="page-card">
+          <h3>Shipping options</h3>
+          {shippingOptions.length === 0 ? (
+            <p className="page-empty">No shipping options configured.</p>
+          ) : (
+            <ul className="shipping-options-list">
+              {shippingOptions.map((opt) => (
+                <li key={opt.id}>
+                  <strong>{opt.name}</strong> — ₹{Number(opt.cost).toFixed(2)} {opt.estimatedDays != null ? `(${opt.estimatedDays} days)` : ""} {opt.isDefault ? "(default)" : ""}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <div className="page-card">
+          <h3>Coupon validation</h3>
+          <input
+            className="page-input"
+            placeholder="Coupon code"
+            value={couponCode}
+            onChange={(e) => setCouponCode(e.target.value)}
+          />
+          <input
+            className="page-input"
+            type="number"
+            placeholder="Order amount"
+            value={couponAmount}
+            onChange={(e) => setCouponAmount(e.target.value)}
+          />
+          <button type="button" className="btn btn-secondary" onClick={validateCoupon} disabled={couponLoading}>
+            {couponLoading ? "Checking..." : "Validate"}
+          </button>
+          {couponResult && (
+            <div className={`coupon-result ${couponResult.valid ? "valid" : "invalid"}`}>
+              {couponResult.valid ? `Valid — Discount: ₹${Number(couponResult.discountAmount).toFixed(2)}` : couponResult.message}
+            </div>
+          )}
         </div>
       </div>
 

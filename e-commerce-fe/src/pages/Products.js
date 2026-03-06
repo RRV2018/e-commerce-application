@@ -1,9 +1,96 @@
 import { useEffect, useState, useRef } from "react";
 import api from "../api/axios";
-import { FaTrash, FaEdit, FaCartPlus } from "react-icons/fa";
+import { FaTrash, FaEdit, FaCartPlus, FaHeart } from "react-icons/fa";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 import "./css/PagesCommon.css";
 import "./Products.css";
+
+function ProductReviewsModal({ productId, onClose, onSaved }) {
+  const [reviews, setReviews] = useState([]);
+  const [rating, setRating] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [form, setForm] = useState({ rating: 5, comment: "" });
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      try {
+        const [revRes, ratRes] = await Promise.all([
+          api.get(`/api/products/${productId}/reviews`),
+          api.get(`/api/products/${productId}/rating`),
+        ]);
+        if (!cancelled) {
+          setReviews(revRes.data || []);
+          setRating(ratRes.data?.averageRating ?? 0);
+        }
+      } catch {
+        if (!cancelled) setReviews([]);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [productId]);
+
+  const submitReview = async (e) => {
+    e.preventDefault();
+    setSubmitLoading(true);
+    try {
+      await api.post(`/api/products/${productId}/reviews`, { rating: form.rating, comment: form.comment || null });
+      const [revRes, ratRes] = await Promise.all([
+        api.get(`/api/products/${productId}/reviews`),
+        api.get(`/api/products/${productId}/rating`),
+      ]);
+      setReviews(revRes.data || []);
+      setRating(ratRes.data?.averageRating ?? 0);
+      setForm({ rating: 5, comment: "" });
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to save review");
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content reviews-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h3>Reviews — Product #{productId}</h3>
+          <button type="button" className="modal-close" onClick={onClose} aria-label="Close">&times;</button>
+        </div>
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          <>
+            <p className="reviews-average">Average rating: <strong>{Number(rating).toFixed(1)}</strong> / 5</p>
+            <ul className="reviews-list">
+              {reviews.length === 0 ? <li className="page-empty">No reviews yet.</li> : reviews.map((r) => (
+                <li key={r.id}>
+                  <span className="review-rating">{r.rating}/5</span> — {r.comment || "(no comment)"}
+                  <span className="review-date">{r.createdAt ? new Date(r.createdAt).toLocaleDateString() : ""}</span>
+                </li>
+              ))}
+            </ul>
+            <form onSubmit={submitReview} className="reviews-form">
+              <label>Your rating (1–5)</label>
+              <select value={form.rating} onChange={(e) => setForm((f) => ({ ...f, rating: Number(e.target.value) }))}>
+                {[1, 2, 3, 4, 5].map((n) => <option key={n} value={n}>{n}</option>)}
+              </select>
+              <label>Comment (optional)</label>
+              <input type="text" className="page-input" value={form.comment} onChange={(e) => setForm((f) => ({ ...f, comment: e.target.value }))} placeholder="Your review" />
+              <div className="form-actions">
+                <button type="submit" className="btn btn-primary" disabled={submitLoading}>{submitLoading ? "Saving..." : "Submit review"}</button>
+                <button type="button" className="btn btn-secondary" onClick={onClose}>Close</button>
+              </div>
+            </form>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -13,6 +100,8 @@ function Products() {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const [wishlistIds, setWishlistIds] = useState(new Set());
+  const [reviewsModal, setReviewsModal] = useState(null);
   const didFetch = useRef(false);
   const pageSize = 20;
 
@@ -40,10 +129,28 @@ function Products() {
       setTotalPages(res.data.totalPages || 1);
       const cardItem = await api.get("/api/products/card");
       setCardData(cardItem.data || []);
+      const wishRes = await api.get("/api/products/wishlist").catch(() => ({ data: [] }));
+      setWishlistIds(new Set((wishRes.data || []).map((i) => i.productId)));
     } catch {
       setError("Failed to load products");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const toggleWishlist = async (productId) => {
+    const inList = wishlistIds.has(productId);
+    try {
+      if (inList) await api.delete(`/api/products/wishlist/${productId}`);
+      else await api.post(`/api/products/wishlist/${productId}`);
+      setWishlistIds((prev) => {
+        const next = new Set(prev);
+        if (inList) next.delete(productId);
+        else next.add(productId);
+        return next;
+      });
+    } catch (e) {
+      setError(e.response?.data?.message || "Wishlist update failed");
     }
   };
 
@@ -292,6 +399,15 @@ function Products() {
                     <FaEdit onClick={() => editProduct(p)} data-action="edit" />
                     <FaTrash onClick={() => deleteProduct(p.id)} data-action="delete" />
                     <FaCartPlus onClick={() => addToCart(p)} data-action="cart" />
+                    <FaHeart
+                      className={wishlistIds.has(p.id) ? "wishlist-on" : "wishlist-off"}
+                      onClick={() => toggleWishlist(p.id)}
+                      title={wishlistIds.has(p.id) ? "Remove from wishlist" : "Add to wishlist"}
+                      data-action="wishlist"
+                    />
+                    <button type="button" className="btn btn-secondary btn-sm" onClick={() => setReviewsModal(p.id)}>
+                      Reviews
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -299,6 +415,14 @@ function Products() {
           </tbody>
         </table>
       </div>
+
+      {reviewsModal != null && (
+        <ProductReviewsModal
+          productId={reviewsModal}
+          onClose={() => setReviewsModal(null)}
+          onSaved={() => setReviewsModal(null)}
+        />
+      )}
 
       <div className="products-pagination">
         <button

@@ -45,3 +45,29 @@
 .orders-table-wrap .search-bar {
   margin-bottom: 16px;
 }
+
+.orders-extras {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.orders-extras .page-card h3 { margin: 0 0 12px 0; }
+.orders-extras .page-input { margin-bottom: 10px; }
+.orders-extras .btn { margin-top: 8px; }
+
+.shipping-options-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.9375rem;
+}
+.shipping-options-list li { padding: 6px 0; border-bottom: 1px solid #e2e8f0; }
+.shipping-options-list li:last-child { border-bottom: none; }
+
+.coupon-result {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+}
+.coupon-result.valid { background: rgba(5, 150, 105, 0.12); color: #047857; }
+.coupon-result.invalid { background: rgba(220, 38, 38, 0.1); color: #b91c1c; }
