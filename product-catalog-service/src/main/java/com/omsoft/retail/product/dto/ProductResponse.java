@@ -7,5 +7,9 @@ public record ProductResponse(Long id,
                               String description,
                               BigDecimal price,
                               Integer stock,
-                              CategoryResponse category) {
+                              CategoryResponse category,
+                              Integer ramSize,
+                              Integer hardDiskSize,
+                              Float screenSize,
+                              String color) {
 }

@@ -427,9 +427,9 @@ function Products() {
             <h3 className="product-card-name">{p.name}</h3>
             <p className="product-card-desc">{p.description || "—"}</p>
             <dl className="product-card-details">
-              <dt>RAM</dt><dd>{p.ramSize ?? "—"}</dd>
-              <dt>Storage</dt><dd>{p.hardDiskSize ?? "—"}</dd>
-              <dt>Screen</dt><dd>{p.screenSize ?? "—"}</dd>
+              <dt>RAM</dt><dd>{p.ramSize ?? "—"} GB</dd>
+              <dt>Storage</dt><dd>{p.hardDiskSize ?? "—"} GB</dd>
+              <dt>Screen</dt><dd>{p.screenSize ?? "—"} inch</dd>
               <dt>Color</dt><dd>{p.color ?? "—"}</dd>
             </dl>
             <div className="product-card-price-row">
