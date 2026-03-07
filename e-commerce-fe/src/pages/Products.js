@@ -1,9 +1,75 @@
 import { useEffect, useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import api from "../api/axios";
 import { FaTrash, FaEdit, FaCartPlus, FaHeart } from "react-icons/fa";
-import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 import "./css/PagesCommon.css";
 import "./Products.css";
+
+function AddEditProductModal({ editingId, initialForm, onClose, onSaved }) {
+  const defaultForm = { name: "", description: "", price: "", stock: "", categoryId: "" };
+  const [form, setForm] = useState(initialForm || defaultForm);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setForm(initialForm || defaultForm);
+  }, [editingId, initialForm]);
+
+  const handleChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const payload = {
+        ...form,
+        price: Number(form.price),
+        stock: Number(form.stock),
+        categoryId: form.categoryId ? Number(form.categoryId) : null,
+      };
+      if (editingId) await api.put(`/api/products/${editingId}`, payload);
+      else await api.post("/api/products", payload);
+      onSaved();
+      onClose();
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to save product");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content add-product-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h3>{editingId ? "Edit Product" : "Add Product"}</h3>
+          <button type="button" className="modal-close" onClick={onClose} aria-label="Close">&times;</button>
+        </div>
+        <form onSubmit={handleSubmit} className="add-product-form">
+          <label>Name</label>
+          <input className="page-input" name="name" placeholder="Name" value={form.name} onChange={handleChange} required />
+          <label>Description</label>
+          <input className="page-input" name="description" placeholder="Description" value={form.description} onChange={handleChange} />
+          <div className="form-row">
+            <div>
+              <label>Price</label>
+              <input className="page-input" type="number" name="price" placeholder="Price" value={form.price} onChange={handleChange} required />
+            </div>
+            <div>
+              <label>Stock</label>
+              <input className="page-input" type="number" name="stock" placeholder="Stock" value={form.stock} onChange={handleChange} />
+            </div>
+          </div>
+          <label>Category ID</label>
+          <input className="page-input" type="number" name="categoryId" placeholder="Category ID" value={form.categoryId} onChange={handleChange} />
+          <div className="form-actions">
+            <button type="submit" className="btn btn-primary" disabled={saving}>{saving ? "Saving..." : editingId ? "Update" : "Add"}</button>
+            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
 
 function ProductReviewsModal({ productId, onClose, onSaved }) {
   const [reviews, setReviews] = useState([]);
@@ -94,7 +160,6 @@ function ProductReviewsModal({ productId, onClose, onSaved }) {
 
 function Products() {
   const [products, setProducts] = useState([]);
-  const [cardData, setCardData] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -104,17 +169,9 @@ function Products() {
   const [sortOrder, setSortOrder] = useState("asc");
   const [wishlistIds, setWishlistIds] = useState(new Set());
   const [reviewsModal, setReviewsModal] = useState(null);
+  const [productModal, setProductModal] = useState(null);
   const didFetch = useRef(false);
   const pageSize = 20;
-
-  const [form, setForm] = useState({
-    name: "",
-    description: "",
-    price: "",
-    stock: "",
-    categoryId: "",
-  });
-  const [editingId, setEditingId] = useState(null);
 
   useEffect(() => {
     if (didFetch.current) return;
@@ -129,8 +186,6 @@ function Products() {
       );
       setProducts(res.data.content || []);
       setTotalPages(res.data.totalPages || 1);
-      const cardItem = await api.get("/api/products/card");
-      setCardData(cardItem.data || []);
       const wishRes = await api.get("/api/products/wishlist").catch(() => ({ data: [] }));
       setWishlistIds(new Set((wishRes.data || []).map((i) => i.productId)));
     } catch {
@@ -198,44 +253,19 @@ function Products() {
     });
   };
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
-
-  const resetForm = () => {
-    setForm({
-      name: "",
-      description: "",
-      price: "",
-      stock: "",
-      categoryId: "",
-    });
-    setEditingId(null);
-  };
-
-  const saveProduct = async () => {
-    const payload = {
-      ...form,
-      price: Number(form.price),
-      stock: Number(form.stock),
-      categoryId: Number(form.categoryId),
-    };
-    editingId
-      ? await api.put(`/api/products/${editingId}`, payload)
-      : await api.post("/api/products", payload);
-    resetForm();
-    fetchProducts(page);
-  };
-
-  const editProduct = (p) => {
-    setForm({
-      name: p.name,
-      description: p.description,
-      price: p.price,
-      stock: p.stock,
+  const openAddProductModal = () => setProductModal({ editingId: null, initialForm: null });
+  const openEditProductModal = (p) => setProductModal({
+    editingId: p.id,
+    initialForm: {
+      name: p.name || "",
+      description: p.description || "",
+      price: p.price ?? "",
+      stock: p.stock ?? "",
       categoryId: p.category?.id || "",
-    });
-    setEditingId(p.id);
-  };
+    },
+  });
+  const closeProductModal = () => setProductModal(null);
+  const onProductSaved = () => fetchProducts(page);
 
   const deleteProduct = async (id) => {
     if (window.confirm("Delete this product?")) {
@@ -245,42 +275,17 @@ function Products() {
   };
 
   const addToCart = async (p) => {
-    await api.post(`/api/products/card/${p.id}`);
-    fetchProducts(page);
-  };
-
-  const bookOrder = async () => {
-    alert("Do you want to book?");
-    await api.post("/api/order/card");
-    fetchProducts(page);
-    alert("Order booked successfully");
+    try {
+      await api.post(`/api/products/card/${p.id}`);
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to add to cart");
+    }
   };
 
   const filteredProducts = products.filter((p) =>
     `${p.id} ${p.name} ${p.description} `.toLowerCase().includes(search.toLowerCase())
   );
   const sortedProducts = sortProducts(filteredProducts);
-
-  const totalAmount = cardData.reduce(
-    (sum, item) => sum + Number(item.amount || 0),
-    0
-  );
-
-  const removeCartItem = async (c) => {
-    if (!window.confirm("Remove item from cart?")) return;
-    await api.delete(`/api/products/card/${c.id}`);
-    fetchProducts(page);
-  };
-
-  const increaseQty = async (c) => {
-    await api.post(`/api/products/card/${c.id}/increase`);
-    fetchProducts(page);
-  };
-
-  const decreaseQty = async (c) => {
-    await api.post(`/api/products/card/${c.id}/decrease`);
-    fetchProducts(page);
-  };
 
   if (loading) return <p className="page-loading">Loading...</p>;
   if (error) return <p className="page-error">{error}</p>;
@@ -289,108 +294,12 @@ function Products() {
     <div className="products-wrap">
       <h1 className="page-title">Products</h1>
 
-      <div className="products-top-grid">
-        <div className="page-card products-form-card">
-          <h2>{editingId ? "Edit Product" : "Add Product"}</h2>
-          <div className="form-grid">
-            <input
-              className="page-input full-width"
-              name="name"
-              placeholder="Name"
-              value={form.name}
-              onChange={handleChange}
-            />
-            <input
-              className="page-input full-width"
-              name="description"
-              placeholder="Description"
-              value={form.description}
-              onChange={handleChange}
-            />
-            <input
-              className="page-input"
-              type="number"
-              name="price"
-              placeholder="Price"
-              value={form.price}
-              onChange={handleChange}
-            />
-            <input
-              className="page-input"
-              type="number"
-              name="stock"
-              placeholder="Stock"
-              value={form.stock}
-              onChange={handleChange}
-            />
-            <input
-              className="page-input full-width"
-              type="number"
-              name="categoryId"
-              placeholder="Category ID"
-              value={form.categoryId}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-actions">
-            <button type="button" className="btn btn-primary" onClick={saveProduct}>
-              {editingId ? "Update" : "Add"}
-            </button>
-            {editingId && (
-              <button type="button" className="btn btn-secondary" onClick={resetForm}>
-                Cancel
-              </button>
-            )}
-          </div>
-        </div>
-
-        <div className="page-card cart-card">
-          <h2>Cart</h2>
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Qty</th>
-                <th>Amount</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cardData.map((c) => (
-                <tr key={c.id}>
-                  <td>{c.productName}</td>
-                  <td>
-                    <div className="cart-qty-cell">
-                      <AiOutlineMinus onClick={() => decreaseQty(c)} />
-                      <span>{c.quantity}</span>
-                      <AiOutlinePlus onClick={() => increaseQty(c)} />
-                    </div>
-                  </td>
-                  <td className="num">{Number(c.amount).toFixed(2)}</td>
-                  <td className="cart-actions-cell">
-                    <FaTrash onClick={() => removeCartItem(c)} />
-                  </td>
-                </tr>
-              ))}
-              <tr className="cart-total-row">
-                <td colSpan="2"><strong>Total</strong></td>
-                <td className="num"><strong>₹ {Number(totalAmount).toFixed(2)}</strong></td>
-                <td></td>
-              </tr>
-            </tbody>
-          </table>
-          <button
-            type="button"
-            className="btn btn-primary full-width cart-book-btn"
-            onClick={bookOrder}
-          >
-            Book Order
-          </button>
-        </div>
-      </div>
-
       <h2 className="products-section-title">Product list</h2>
       <div className="products-toolbar">
+        <button type="button" className="btn btn-primary" onClick={openAddProductModal}>
+          Add Product
+        </button>
+        <Link to="/cart" className="btn btn-secondary">Cart & Checkout</Link>
         <input
           className="search-bar"
           placeholder="Search products..."
@@ -451,7 +360,7 @@ function Products() {
               <button type="button" className="btn btn-secondary btn-sm" onClick={() => setReviewsModal(p.id)}>
                 Reviews
               </button>
-              <button type="button" className="btn btn-secondary btn-sm" onClick={() => editProduct(p)} title="Edit">
+              <button type="button" className="btn btn-secondary btn-sm" onClick={() => openEditProductModal(p)} title="Edit">
                 <FaEdit />
               </button>
               <button type="button" className="btn btn-danger btn-sm" onClick={() => deleteProduct(p.id)} title="Delete">
@@ -470,6 +379,15 @@ function Products() {
           productId={reviewsModal}
           onClose={() => setReviewsModal(null)}
           onSaved={() => setReviewsModal(null)}
+        />
+      )}
+
+      {productModal != null && (
+        <AddEditProductModal
+          editingId={productModal.editingId}
+          initialForm={productModal.initialForm}
+          onClose={closeProductModal}
+          onSaved={onProductSaved}
         />
       )}
 

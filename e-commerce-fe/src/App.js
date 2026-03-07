@@ -9,6 +9,7 @@ import FileOperation from "./pages/FileOperation";
 import Report from "./pages/Report";
 import Wishlist from "./pages/Wishlist";
 import Notifications from "./pages/Notifications";
+import Cart from "./pages/Cart";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -38,6 +39,7 @@ const App = () => {
               <Route path="/report" element={ <ProtectedRoute> <Report /></ProtectedRoute>} />
               <Route path="/wishlist" element={ <ProtectedRoute> <Wishlist /></ProtectedRoute>} />
               <Route path="/notifications" element={ <ProtectedRoute> <Notifications /></ProtectedRoute>} />
+              <Route path="/cart" element={ <ProtectedRoute> <Cart /></ProtectedRoute>} />
             </Routes>
         </HeaderWrapper>
       </div>

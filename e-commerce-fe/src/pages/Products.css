@@ -111,7 +111,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   margin-bottom: 20px;
 }
 
@@ -396,3 +396,12 @@
 .reviews-form label { display: block; font-size: 0.8125rem; margin-bottom: 4px; color: #475569; }
 .reviews-form select { margin-bottom: 12px; padding: 8px; }
 .reviews-form .form-actions { margin-top: 12px; gap: 10px; }
+
+/* Add/Edit Product modal */
+.add-product-modal { max-width: 420px; }
+.add-product-form label { display: block; font-size: 0.8125rem; margin-bottom: 4px; color: #475569; }
+.add-product-form .page-input { margin-bottom: 12px; }
+.add-product-form .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.add-product-form .form-row > div { margin-bottom: 0; }
+.add-product-form .form-row .page-input { margin-bottom: 0; }
+.add-product-form .form-actions { margin-top: 16px; gap: 10px; }

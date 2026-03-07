@@ -28,7 +28,9 @@ const Header = () => {
           <Link className={`nav-link ${isActive("/products") ? "active" : ""}`} to="/products">
             Products
           </Link>
-
+          <Link className={`nav-link ${isActive("/cart") ? "active" : ""}`} to="/cart">
+            Cart
+          </Link>
           <Link className={`nav-link ${isActive("/orders") ? "active" : ""}`} to="/orders">
             Orders
           </Link>
