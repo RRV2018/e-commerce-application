@@ -42,7 +42,7 @@ class ProductControllerTest {
     @Test
     void getProductById_returnsProductFromService() {
         ProductResponse response = new ProductResponse(
-                1L, "Product A", "desc", BigDecimal.TEN, 10, null
+                1L, "Product A", "desc", BigDecimal.TEN, 10, null, 1, 1,2.2F, "Red"
         );
         when(productService.getProduct(1L)).thenReturn(response);
 

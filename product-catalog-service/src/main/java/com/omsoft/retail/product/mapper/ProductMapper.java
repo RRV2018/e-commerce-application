@@ -27,7 +27,11 @@ public class ProductMapper {
                 product.getDescription(),
                 product.getPrice(),
                 product.getStock(),
-                toCategoryDto(product.getCategory())
+                toCategoryDto(product.getCategory()),
+                product.getRamSize(),
+                product.getHardDiskSize(),
+                product.getScreenSize(),
+                product.getColor()
         );
     }
 

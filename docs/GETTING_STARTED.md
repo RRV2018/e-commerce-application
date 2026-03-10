@@ -35,7 +35,7 @@ This guide walks you through setting up and running the E-Commerce application.
    - **API Gateway:** http://localhost:8081
    - **Swagger UI (aggregated):** http://localhost:8081/swagger-ui/index.html
    - **Eureka Dashboard:** http://localhost:8761
-   - **Grafana:** http://localhost:3000
+   - **Grafana:** http://localhost:3000 (login: admin / admin; Loki datasource is pre-configured for log queries)
 
 ### Using the build scripts
 

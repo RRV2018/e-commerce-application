@@ -22,7 +22,7 @@ A full-stack e-commerce platform built with a **microservices architecture**: Re
    - Eureka: http://localhost:8761  
    - Config Server: http://localhost:8888  
    - Frontend (via Nginx): http://localhost:80  
-   - Grafana: http://localhost:3000  
+   - Grafana: http://localhost:3000 (default login: admin / admin; Loki datasource pre-configured)  
 
 3. **Run frontend locally (dev):**
    ```bash

@@ -319,13 +319,24 @@ services:
     image: grafana/loki:2.9.6
     ports:
       - "3100:3100"
+    volumes:
+      - ./loki-config.yml:/etc/loki/local-config.yml:ro
+      - loki-data:/loki
     networks:
       - app-net
-    command: -config.file=/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yml
   grafana:
     image: grafana/grafana:10.2.3
     ports:
       - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_DATASOURCES_DEFAULT_NAME=Loki
+      - GF_DATASOURCES_DEFAULT_TYPE=loki
+      - GF_DATASOURCES_DEFAULT_URL=http://loki:3100
+      - GF_DATASOURCES_DEFAULT_ACCESS=proxy
     networks:
       - app-net
     depends_on:
@@ -340,6 +351,8 @@ services:
     command: -config.file=/etc/promtail/config.yml
     networks:
       - app-net
+    depends_on:
+      - loki
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     environment:
@@ -372,3 +385,4 @@ services:
 
 volumes:
   pgdata:
+  loki-data:

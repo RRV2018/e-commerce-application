@@ -2,12 +2,8 @@ package com.omsoft.retail.product.event;
 
 import com.omsoft.retail.product.entity.Product;
 import com.omsoft.retail.product.repo.ProductRepository;
-import com.omsoft.retail.product.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
@@ -21,7 +17,7 @@ public class OrderEventConsumer {
         this.productRepo = productRepo;
     }
 
-    @KafkaListener(topics = "order-event", groupId = "ecommerce-group")
+   // @KafkaListener(topics = "order-event", groupId = "ecommerce-group")
     public void getOrderEvent(OrderEvent event) {
         log.info("Received order event... Detail {}", event);
         event.getProducts().forEach( prod -> {
