@@ -31,7 +31,7 @@ This guide walks you through setting up and running the E-Commerce application.
    ```
 
 4. **Wait for services to become healthy** (Eureka, Config Server, then others). Access:
-   - **Web app:** http://localhost (Nginx) or http://localhost:3001 (e-commerce-fe container)
+   - **Web app:** http://localhost:8181 (Nginx in Compose) or http://localhost:3001 (e-commerce-fe container)
    - **API Gateway:** http://localhost:8081
    - **Swagger UI (aggregated):** http://localhost:8081/swagger-ui/index.html
    - **Eureka Dashboard:** http://localhost:8761

@@ -26,7 +26,7 @@ The application is a **microservices-based e-commerce platform**:
 | **app-monitoring-admin-server** | 8087 | Spring Boot Admin UI |
 | **notification-management-service** | — | Notifications (Kafka, etc.) |
 | **e-commerce-fe** | 3001 | React app (when run in Docker) |
-| **nginx** | 80 | Reverse proxy for frontend |
+| **nginx** | 8181→80 | Reverse proxy for frontend (host port in Docker Compose) |
 | **postgres** | 5433→5432 | PostgreSQL 15 |
 | **grafana** | 3000 | Dashboards / Loki datasource |
 | **loki** | 3100 | Log aggregation |
