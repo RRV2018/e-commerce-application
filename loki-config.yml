@@ -8,6 +8,9 @@ ingester:
   chunk_idle_period: 5m
   chunk_retain_period: 30s
   max_chunk_age: 1h
+  # Default WAL dir is /wal (root); non-root Loki user gets "permission denied". Keep WAL on the mounted volume.
+  wal:
+    dir: /loki/wal
 
 
 schema_config:
