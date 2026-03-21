@@ -82,36 +82,26 @@ public class OrderController {
 
     // ===================== GET ALL ORDERS =====================
     @Operation(
-            summary = "Get all orders for a user",
-            description = "Returns all orders placed by the given user",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Orders fetched successfully",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    array = @ArraySchema(
-                                            schema = @Schema(implementation = OrderResponse.class)
-                                    )
-                            )
-                    )
-            }
+            summary = "Get orders for the current user or all orders (admin)",
+            description = "Returns orders for the authenticated user. When X-User-Role is ADMIN (set by the API Gateway from JWT), returns all orders."
     )
     @GetMapping
     public List<OrderResponse> getOrders(
-            @RequestHeader("X-User-Id") String userId) {
-        return service.getOrders(userId);
+            @RequestHeader("X-User-Id") String userId,
+            @RequestHeader(value = "X-User-Role", required = false) String userRole) {
+        return service.getOrders(userId, userRole);
     }
 
     @Operation(
             summary = "Get orders (paginated)",
-            description = "Returns a paginated list of orders for the user"
+            description = "Paginated orders for the user, or all orders when the caller is ADMIN"
     )
     @GetMapping("/list")
     public ResponseEntity<Page<OrderResponse>> getOrdersPage(
             @RequestHeader("X-User-Id") String userId,
+            @RequestHeader(value = "X-User-Role", required = false) String userRole,
             Pageable pageable) {
-        return ResponseEntity.ok(service.getOrdersPage(userId, pageable));
+        return ResponseEntity.ok(service.getOrdersPage(userId, userRole, pageable));
     }
 
     // ===================== GET ORDER BY ID =====================
@@ -133,9 +123,10 @@ public class OrderController {
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponse> getOrderById(
             @RequestHeader("X-User-Id") String userId,
+            @RequestHeader(value = "X-User-Role", required = false) String userRole,
             @PathVariable("id") Long orderId) {
 
-        return service.getOrder(userId, orderId)
+        return service.getOrder(userId, orderId, userRole)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

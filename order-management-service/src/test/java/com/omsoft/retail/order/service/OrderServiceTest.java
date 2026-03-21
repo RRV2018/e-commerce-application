@@ -1,24 +1,32 @@
 package com.omsoft.retail.order.service;
 
 import com.omsoft.retail.order.dto.OrderResponse;
+import com.omsoft.retail.order.entity.Order;
 import com.omsoft.retail.order.repo.OrderRepository;
 import com.omsoft.retail.order.repo.ShippingOptionRepository;
 import com.omsoft.retail.order.repo.UserCardRepository;
 import com.omsoft.retail.order.client.InventoryClient;
 import com.omsoft.retail.order.client.PaymentClient;
 import com.omsoft.retail.order.service.CouponService;
+import com.omsoft.retail.order.type.OrderStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
 import org.springframework.kafka.core.KafkaTemplate;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -64,19 +72,49 @@ class OrderServiceTest {
     void getOrders_whenEmpty_returnsEmptyList() {
         when(orderRepository.findByUserId("user1")).thenReturn(Collections.emptyList());
 
-        List<OrderResponse> result = orderService.getOrders("user1");
+        List<OrderResponse> result = orderService.getOrders("user1", null);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
     @Test
+    void getOrders_whenAdmin_usesFindAllSorted() {
+        when(orderRepository.findAll(any(Sort.class))).thenReturn(Collections.emptyList());
+
+        List<OrderResponse> result = orderService.getOrders("admin@example.com", "ADMIN");
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(orderRepository).findAll(any(Sort.class));
+        verify(orderRepository, never()).findByUserId(any());
+    }
+
+    @Test
     void getOrderById_whenNotFound_returnsEmpty() {
         when(orderRepository.findByUserId("user1")).thenReturn(Collections.emptyList());
 
-        Optional<OrderResponse> result = orderService.getOrder("user1", 1L);
+        Optional<OrderResponse> result = orderService.getOrder("user1", 1L, null);
 
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void getOrder_whenAdmin_resolvesByOrderId() {
+        Order order = new Order();
+        order.setId(5L);
+        order.setUserId("customer@example.com");
+        order.setStatus(OrderStatus.CREATED);
+        order.setTotalAmount(BigDecimal.TEN);
+        order.setItems(new ArrayList<>());
+        when(orderRepository.findById(5L)).thenReturn(Optional.of(order));
+
+        Optional<OrderResponse> result = orderService.getOrder("admin@example.com", 5L, "ADMIN");
+
+        assertTrue(result.isPresent());
+        assertEquals("ORD00005", result.get().orderId());
+        verify(orderRepository).findById(5L);
+        verify(orderRepository, never()).findByUserId(any());
     }
 
     @Test

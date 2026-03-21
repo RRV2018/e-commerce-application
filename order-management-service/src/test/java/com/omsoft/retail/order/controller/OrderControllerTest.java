@@ -47,9 +47,9 @@ class OrderControllerTest {
     @Test
     void getOrders_returnsListFromService() {
         List<OrderResponse> list = Collections.emptyList();
-        when(orderService.getOrders("user1")).thenReturn(list);
+        when(orderService.getOrders("user1", null)).thenReturn(list);
 
-        List<OrderResponse> result = orderController.getOrders("user1");
+        List<OrderResponse> result = orderController.getOrders("user1", null);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -61,9 +61,9 @@ class OrderControllerTest {
                 "ORD00001", "user1", OrderStatus.CREATED,
                 BigDecimal.valueOf(100), Collections.emptyList(), null, null
         );
-        when(orderService.getOrder("user1", 1L)).thenReturn(Optional.of(order));
+        when(orderService.getOrder("user1", 1L, null)).thenReturn(Optional.of(order));
 
-        ResponseEntity<OrderResponse> response = orderController.getOrderById("user1", 1L);
+        ResponseEntity<OrderResponse> response = orderController.getOrderById("user1", null, 1L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -72,9 +72,9 @@ class OrderControllerTest {
 
     @Test
     void getOrderById_whenNotFound_returns404() {
-        when(orderService.getOrder("user1", 999L)).thenReturn(Optional.empty());
+        when(orderService.getOrder("user1", 999L, null)).thenReturn(Optional.empty());
 
-        ResponseEntity<OrderResponse> response = orderController.getOrderById("user1", 999L);
+        ResponseEntity<OrderResponse> response = orderController.getOrderById("user1", null, 999L);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }

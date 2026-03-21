@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -183,7 +184,12 @@ public class OrderService {
         return mapToResponse(orderRepository.save(order));
     }
 
-    public List<OrderResponse> getOrders(String userId) {
+    public List<OrderResponse> getOrders(String userId, String userRole) {
+        if (isAdmin(userRole)) {
+            return orderRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).stream()
+                    .map(this::mapToResponse)
+                    .toList();
+        }
         List<Order> orders = orderRepository.findByUserId(userId);
         return Optional.ofNullable(orders).orElse(Collections.emptyList())
                 .stream()
@@ -191,17 +197,27 @@ public class OrderService {
                 .toList();
     }
 
-    public Page<OrderResponse> getOrdersPage(String userId, Pageable pageable) {
+    public Page<OrderResponse> getOrdersPage(String userId, String userRole, Pageable pageable) {
+        if (isAdmin(userRole)) {
+            return orderRepository.findAll(pageable).map(this::mapToResponse);
+        }
         return orderRepository.findByUserId(userId, pageable).map(this::mapToResponse);
     }
 
-    public Optional<OrderResponse> getOrder(String userId, Long orderId) {
+    public Optional<OrderResponse> getOrder(String userId, Long orderId, String userRole) {
+        if (isAdmin(userRole)) {
+            return orderRepository.findById(orderId).map(this::mapToResponse);
+        }
         List<Order> orders = orderRepository.findByUserId(userId);
         return Optional.ofNullable(orders).orElse(Collections.emptyList())
                 .stream()
                 .filter(order -> order.getId().equals(orderId))
                 .map(this::mapToResponse)
                 .findFirst();
+    }
+
+    private static boolean isAdmin(String userRole) {
+        return userRole != null && "ADMIN".equalsIgnoreCase(userRole.trim());
     }
 
     public boolean cancelOrderById(Long id) {
