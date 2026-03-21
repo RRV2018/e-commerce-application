@@ -16,15 +16,21 @@ A full-stack e-commerce platform built with a **microservices architecture**: Re
 2. **Run with Docker (recommended):**
    ```bash
    # From project root; ensure .env is present (see docs/CONFIGURATION.md)
-   docker compose up --build
+   ./scripts/run-install.ps1
    ```
+3. **Run on local machine : (Need Postgres, nodeJS, kafka on local) **
+   ```bash
+   # From project root; ensure .env is present (see docs/CONFIGURATION.md)
+   ./scripts/run-local.ps1
+   ```
+
    - API Gateway: http://localhost:8081  
    - Eureka: http://localhost:8761  
    - Config Server: http://localhost:8888  
    - Frontend (via Nginx): http://localhost:8181  
    - Grafana: http://localhost:3000 (default login: admin / admin; Loki datasource pre-configured)  
 
-3. **Run frontend locally (dev):**
+4**Run frontend locally (dev):**
    ```bash
    cd e-commerce-fe
    npm install
@@ -32,7 +38,7 @@ A full-stack e-commerce platform built with a **microservices architecture**: Re
    ```
    Uses proxy: `/api` → Gateway (8081), `/auth` → User Service (8082). Backend services must be running.
 
-4. **Build backend (Maven):**
+5**Build backend (Maven):**
    ```bash
    mvn clean install
    ```
