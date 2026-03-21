@@ -4,6 +4,15 @@ server:
   http_listen_port: 3100
   log_level: info
 
+# Single-process Loki: rings must not use Consul (default KV) — nothing listens on :8500.
+# inmemory is correct for one replica; use memberlist/etcd/consul only when clustering.
+common:
+  replication_factor: 1
+  ring:
+    instance_addr: 127.0.0.1
+    kvstore:
+      store: inmemory
+
 ingester:
   chunk_idle_period: 5m
   chunk_retain_period: 30s
