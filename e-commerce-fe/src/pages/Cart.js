@@ -11,6 +11,8 @@ export default function Cart() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  /** ONLINE = pay now via payment service; COD = cash on delivery, order stays CREATED */
+  const [checkoutPayment, setCheckoutPayment] = useState("ONLINE");
 
   const fetchCart = async () => {
     try {
@@ -64,11 +66,21 @@ export default function Cart() {
       alert("Your cart is empty.");
       return;
     }
-    if (!window.confirm("Proceed to checkout and place order?")) return;
+    const payLabel =
+      checkoutPayment === "COD"
+        ? "Place order with Cash on Delivery? You will pay when the order is delivered."
+        : "Proceed to checkout and pay online now?";
+    if (!window.confirm(payLabel)) return;
     setCheckoutLoading(true);
     try {
-      await api.post("/api/order/card");
-      alert("Order placed successfully.");
+      const body =
+        checkoutPayment === "COD" ? { paymentMethod: "CASH_ON_DELIVERY" } : {};
+      await api.post("/api/order/card", body);
+      alert(
+        checkoutPayment === "COD"
+          ? "Order placed. Pay with cash when your order is delivered."
+          : "Order placed successfully."
+      );
       fetchCart();
     } catch (err) {
       alert(err.response?.data?.message || "Checkout failed.");
@@ -123,6 +135,37 @@ export default function Cart() {
             </table>
           </div>
           <div className="page-card cart-checkout-card">
+            <div className="cart-payment-section">
+              <span className="cart-payment-label">Payment</span>
+              <div className="cart-payment-options" role="radiogroup" aria-label="Payment method">
+                <label className={`cart-payment-option ${checkoutPayment === "ONLINE" ? "is-selected" : ""}`}>
+                  <input
+                    type="radio"
+                    name="checkoutPayment"
+                    value="ONLINE"
+                    checked={checkoutPayment === "ONLINE"}
+                    onChange={() => setCheckoutPayment("ONLINE")}
+                  />
+                  <span className="cart-payment-option-text">
+                    <strong>Pay online</strong>
+                    <small>Card / wallet — order marked paid when payment succeeds</small>
+                  </span>
+                </label>
+                <label className={`cart-payment-option ${checkoutPayment === "COD" ? "is-selected" : ""}`}>
+                  <input
+                    type="radio"
+                    name="checkoutPayment"
+                    value="COD"
+                    checked={checkoutPayment === "COD"}
+                    onChange={() => setCheckoutPayment("COD")}
+                  />
+                  <span className="cart-payment-option-text">
+                    <strong>Cash on delivery</strong>
+                    <small>Pay with cash when you receive your order</small>
+                  </span>
+                </label>
+              </div>
+            </div>
             <div className="cart-total-row">
               <strong>Total</strong>
               <strong className="cart-total-amount">₹ {Number(totalAmount).toFixed(2)}</strong>
@@ -130,7 +173,7 @@ export default function Cart() {
             <div className="cart-checkout-actions">
               <Link to="/products" className="btn btn-secondary">Continue shopping</Link>
               <button type="button" className="btn btn-primary" onClick={checkout} disabled={checkoutLoading}>
-                {checkoutLoading ? "Placing order..." : "Checkout"}
+                {checkoutLoading ? "Placing order..." : checkoutPayment === "COD" ? "Place order (COD)" : "Checkout"}
               </button>
             </div>
           </div>

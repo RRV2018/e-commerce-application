@@ -5,6 +5,7 @@ import com.omsoft.retail.order.service.CouponService;
 import com.omsoft.retail.order.service.OrderService;
 import com.omsoft.retail.order.service.ShippingOptionService;
 import com.omsoft.retail.order.type.OrderStatus;
+import com.omsoft.retail.order.type.PaymentMethod;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -72,8 +73,11 @@ public class OrderController {
             }
     )
     @PostMapping("/card")
-    public ResponseEntity<Void> bookOrderFromCard(@RequestHeader("X-User-Id") String userId) {
-        boolean booked = service.bookOrderFromCard(userId);
+    public ResponseEntity<Void> bookOrderFromCard(
+            @RequestHeader("X-User-Id") String userId,
+            @RequestBody(required = false) BookFromCardRequest body) {
+        PaymentMethod pm = body != null ? body.paymentMethod() : null;
+        boolean booked = service.bookOrderFromCard(userId, pm);
         return booked
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.notFound().build();

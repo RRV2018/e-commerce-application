@@ -81,18 +81,18 @@ class OrderControllerTest {
 
     @Test
     void bookOrderFromCard_whenSuccess_returnsOk() {
-        when(orderService.bookOrderFromCard("user1")).thenReturn(true);
+        when(orderService.bookOrderFromCard("user1", null)).thenReturn(true);
 
-        ResponseEntity<Void> response = orderController.bookOrderFromCard("user1");
+        ResponseEntity<Void> response = orderController.bookOrderFromCard("user1", null);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     void bookOrderFromCard_whenFail_returnsNotFound() {
-        when(orderService.bookOrderFromCard("user1")).thenReturn(false);
+        when(orderService.bookOrderFromCard("user1", null)).thenReturn(false);
 
-        ResponseEntity<Void> response = orderController.bookOrderFromCard("user1");
+        ResponseEntity<Void> response = orderController.bookOrderFromCard("user1", null);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }

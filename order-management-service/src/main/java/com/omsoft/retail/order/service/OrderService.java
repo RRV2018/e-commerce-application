@@ -15,6 +15,7 @@ import com.omsoft.retail.order.repo.OrderRepository;
 import com.omsoft.retail.order.repo.ShippingOptionRepository;
 import com.omsoft.retail.order.repo.UserCardRepository;
 import com.omsoft.retail.order.type.OrderStatus;
+import com.omsoft.retail.order.type.PaymentMethod;
 import com.omsoft.retail.order.type.PaymentStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,12 +47,12 @@ public class OrderService {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Transactional
-    public boolean bookOrderFromCard(String userId) {
+    public boolean bookOrderFromCard(String userId, PaymentMethod paymentMethod) {
         List<UserCard> userCardItems =  cardRepo.findUserOrders(userId);
         if (!CollectionUtils.isEmpty(userCardItems)) {
             List<OrderItemRequest> items = new ArrayList<>();
             userCardItems.forEach(item -> items.add(new OrderItemRequest(item.getProductId(), item.getQuantity().intValue(), item.getAmount())));
-            CreateOrderRequest request = new CreateOrderRequest(items);
+            CreateOrderRequest request = new CreateOrderRequest(items, null, null, paymentMethod);
             placeOrder(request, userId);
             userCardItems.forEach(this::clearCardItem);
         }
@@ -118,6 +119,7 @@ public class OrderService {
         orderEvent.setType(OrderStatus.CREATED);
         orderEvent.setProducts(productEvents);
         publishEvent(orderEvent);
+        PaymentMethod paymentMethod = dto.paymentMethod() != null ? dto.paymentMethod() : PaymentMethod.ONLINE;
         try {
             // 3️ Reserve inventory
             for (OrderItem item : order.getItems()) {
@@ -129,7 +131,23 @@ public class OrderService {
                 );
             }
 
-            // 4️ Call payment service
+            if (paymentMethod == PaymentMethod.CASH_ON_DELIVERY) {
+                for (OrderItem item : order.getItems()) {
+                    inventoryClient.confirm(
+                            new InventoryRequest(
+                                    item.getProductId(),
+                                    item.getQuantity()
+                            )
+                    );
+                }
+                order.setStatus(OrderStatus.CREATED);
+                if (order.getCouponCode() != null) {
+                    couponService.findByCode(order.getCouponCode()).ifPresent(couponService::incrementUsedCount);
+                }
+                return mapToResponse(orderRepository.save(order));
+            }
+
+            // 4️ Call payment service (online)
             PaymentResponse paymentResponse =
                     paymentClient.pay(
                             new PaymentRequest(
