@@ -206,7 +206,7 @@ public class OrderService {
 
     public boolean cancelOrderById(Long id) {
         if (orderRepository.existsById(id)) {
-            orderRepository.deleteById(id);
+            updateOrderStatus(id, OrderStatus.CANCELLED);
             return true;
         }
         return false;
