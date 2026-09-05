@@ -3,11 +3,52 @@ networks:
     driver: bridge
 
 services:
+
+  # =========================
+  # Eureka
+  # =========================
+  eureka-discovery-server:
+    image: rvarade/eureka-discovery-server:${IMAGE_TAG:-latest}
+    container_name: eureka-discovery-server
+    ports:
+      - "8761:8761"
+    networks:
+      - app-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  # =========================
+  # Config Server
+  # =========================
+  property-config-server:
+    image: rvarade/property-config-server:${IMAGE_TAG:-latest}
+    container_name: property-config-server
+    ports:
+      - "8888:8888"
+    networks:
+      - app-net
+    environment:
+      EUREKA_DEFAULT_ZONE: ${EUREKA_DEFAULT_ZONE}
+    depends_on:
+      eureka-discovery-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  # =========================
+  # API Gateway
+  # =========================
   api-gateway-service:
-    build:
-      context: ./api-gateway-service
-      dockerfile: ../docker/api-gateway-service/Dockerfile
-    image: api-gateway-service
+    image: rvarade/api-gateway-service:${IMAGE_TAG:-latest}
+    container_name: api-gateway-service
     ports:
       - "8081:8081"
     labels:
@@ -16,35 +57,203 @@ services:
     networks:
       - app-net
     environment:
-      - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
-      - CONFIG_SERVER_URL=${CONFIG_SERVER_URL}
+      EUREKA_DEFAULT_ZONE: ${EUREKA_DEFAULT_ZONE}
+      CONFIG_SERVER_URL: ${CONFIG_SERVER_URL}
     depends_on:
       property-config-server:
         condition: service_healthy
       eureka-discovery-server:
         condition: service_healthy
-  eureka-discovery-server:
-    build:
-      context: ./eureka-discovery-server
-      dockerfile: ../docker/eureka-discovery-server/Dockerfile
-    image: eureka-discovery-server
+
+  # =========================
+  # User Management
+  # =========================
+  user-management-service:
+    image: rvarade/user-management-service:${IMAGE_TAG:-latest}
+    container_name: user-management-service
     ports:
-      - "8761:8761"
+      - "8082:8082"
     labels:
-      app: eureka-server
+      app: user-service
       env: local
     networks:
       - app-net
+    environment:
+      SPRING_APPLICATION_NAME: user-management-service
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "true"
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
+      KEYCLOAK_AUTH_SERVER_URL: ${KEYCLOAK_AUTH_SERVER_URL}
+      EUREKA_DEFAULT_ZONE: ${EUREKA_DEFAULT_ZONE}
+      CONFIG_SERVER_URL: ${CONFIG_SERVER_URL}
+      ENCRYPTION_SECRET_KEY: ${ENCRYPTION_SECRET_KEY}
+    depends_on:
+      property-config-server:
+        condition: service_healthy
+      eureka-discovery-server:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
+      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
       interval: 10s
       timeout: 5s
       retries: 10
+      start_period: 30s
+
+  # =========================
+  # Product Catalog
+  # =========================
+  product-catalog-service:
+    image: rvarade/product-catalog-service:${IMAGE_TAG:-latest}
+    container_name: product-catalog-service
+    ports:
+      - "8083:8083"
+    labels:
+      app: product-catalog
+      env: local
+    networks:
+      - app-net
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
+      KEYCLOAK_AUTH_SERVER_URL: ${KEYCLOAK_AUTH_SERVER_URL}
+      EUREKA_DEFAULT_ZONE: ${EUREKA_DEFAULT_ZONE}
+      CONFIG_SERVER_URL: ${CONFIG_SERVER_URL}
+    depends_on:
+      property-config-server:
+        condition: service_healthy
+      eureka-discovery-server:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # =========================
+  # Order Management
+  # =========================
+  order-management-service:
+    image: rvarade/order-management-service:${IMAGE_TAG:-latest}
+    container_name: order-management-service
+    ports:
+      - "8084:8084"
+    labels:
+      app: order-service
+      env: local
+    networks:
+      - app-net
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
+      KEYCLOAK_AUTH_SERVER_URL: ${KEYCLOAK_AUTH_SERVER_URL}
+      EUREKA_DEFAULT_ZONE: ${EUREKA_DEFAULT_ZONE}
+      CONFIG_SERVER_URL: ${CONFIG_SERVER_URL}
+    depends_on:
+      property-config-server:
+        condition: service_healthy
+      eureka-discovery-server:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8084/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # =========================
+  # Inventory Management
+  # =========================
+  inventory-management-service:
+    image: rvarade/inventory-management-service:${IMAGE_TAG:-latest}
+    container_name: inventory-management-service
+    ports:
+      - "8085:8085"
+    labels:
+      app: inventory-service
+      env: local
+    networks:
+      - app-net
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
+      KEYCLOAK_AUTH_SERVER_URL: ${KEYCLOAK_AUTH_SERVER_URL}
+      EUREKA_DEFAULT_ZONE: ${EUREKA_DEFAULT_ZONE}
+      CONFIG_SERVER_URL: ${CONFIG_SERVER_URL}
+    depends_on:
+      property-config-server:
+        condition: service_healthy
+      eureka-discovery-server:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8085/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # =========================
+  # Payment Management
+  # =========================
+  payment-management-service:
+    image: rvarade/payment-management-service:${IMAGE_TAG:-latest}
+    container_name: payment-management-service
+    ports:
+      - "8086:8086"
+    labels:
+      app: payment
+      env: local
+    networks:
+      - app-net
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
+      KEYCLOAK_AUTH_SERVER_URL: ${KEYCLOAK_AUTH_SERVER_URL}
+      EUREKA_DEFAULT_ZONE: ${EUREKA_DEFAULT_ZONE}
+      CONFIG_SERVER_URL: ${CONFIG_SERVER_URL}
+    depends_on:
+      property-config-server:
+        condition: service_healthy
+      eureka-discovery-server:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # =========================
+  # Monitoring Admin
+  # =========================
   app-monitoring-admin-server:
-    build:
-      context: ./app-monitoring-admin-server
-      dockerfile: ../docker/app-monitoring-admin-server/Dockerfile
-    image: app-monitoring-admin-server
+    image: rvarade/app-monitoring-admin-server:${IMAGE_TAG:-latest}
+    container_name: app-monitoring-admin-server
     ports:
       - "8087:8087"
     labels:
@@ -53,222 +262,40 @@ services:
     networks:
       - app-net
     environment:
-      - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
-      - CONFIG_SERVER_URL=${CONFIG_SERVER_URL}
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8087/actuator/health" ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
+      EUREKA_DEFAULT_ZONE: ${EUREKA_DEFAULT_ZONE}
+      CONFIG_SERVER_URL: ${CONFIG_SERVER_URL}
     depends_on:
       property-config-server:
         condition: service_healthy
       eureka-discovery-server:
         condition: service_healthy
-  inventory-management-service:
-    build:
-      context: ./inventory-management-service
-      dockerfile: ../docker/inventory-management-service/Dockerfile
-    image: inventory-management-service
-    ports:
-      - "8085:8085"
-    labels:
-      app: inventory-service
-      env: local
-    networks:
-      - app-net
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8085/actuator/health" ]
+      test: ["CMD", "curl", "-f", "http://localhost:8087/actuator/health"]
       interval: 10s
       timeout: 5s
       retries: 10
-    environment:
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
-      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
-      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS}
-      - KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
-      - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
-      - CONFIG_SERVER_URL=${CONFIG_SERVER_URL}
-    depends_on:
-      property-config-server:
-        condition: service_healthy
-      eureka-discovery-server:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-  order-management-service:
-    build:
-      context: ./order-management-service
-      dockerfile: ../docker/order-management-service/Dockerfile
-    image: order-management-service
-    ports:
-      - "8084:8084"
-    labels:
-      app: order-service
-      env: local
-    networks:
-      - app-net
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8084/actuator/health" ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-    environment:
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
-      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
-      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS}
-      - KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
-      - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
-      - CONFIG_SERVER_URL=${CONFIG_SERVER_URL}
-    depends_on:
-      property-config-server:
-        condition: service_healthy
-      eureka-discovery-server:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-  payment-management-service:
-    build:
-      context: ./payment-management-service
-      dockerfile: ../docker/payment-management-service/Dockerfile
-    image: payment-management-service
-    ports:
-      - "8086:8086"
-    labels:
-      app: payment
-      env: local
-    networks:
-      - app-net
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8086/actuator/health" ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-    environment:
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
-      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
-      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS}
-      - KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
-      - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
-      - CONFIG_SERVER_URL=${CONFIG_SERVER_URL}
-    depends_on:
-      property-config-server:
-        condition: service_healthy
-      eureka-discovery-server:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-  product-catalog-service:
-    build:
-      context: ./product-catalog-service
-      dockerfile: ../docker/product-catalog-service/Dockerfile
-    image: product-catalog-service
-    ports:
-      - "8083:8083"
-    labels:
-      app: product-catalog
-      env: local
-    networks:
-      - app-net
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8083/actuator/health" ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-    environment:
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
-      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
-      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS}
-      - KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
-      - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
-      - CONFIG_SERVER_URL=${CONFIG_SERVER_URL}
-    depends_on:
-      property-config-server:
-        condition: service_healthy
-      eureka-discovery-server:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-  property-config-server:
-    build:
-      context: ./property-config-server
-      dockerfile: ../docker/property-config-server/Dockerfile
-    image: property-config-server
-    ports:
-      - "8888:8888"
-    labels:
-      app: property-config
-      env: local
-    networks:
-      - app-net
-    depends_on:
-      eureka-discovery-server:
-        condition: service_healthy
-    environment:
-      - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-  user-management-service:
-    build:
-      context: ./user-management-service
-      dockerfile: ../docker/user-management-service/Dockerfile
-    image: user-management-service
-    ports:
-      - "8082:8082"
-    labels:
-      app: user-service
-      env: local
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8082/actuator/health" ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-    environment:
-      - SPRING_APPLICATION_NAME=user-management-service
-      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
-      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
-      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=${SPRING_KAFKA_BOOTSTRAP_SERVERS}
-      - KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
-      - EUREKA_DEFAULT_ZONE=${EUREKA_DEFAULT_ZONE}
-      - CONFIG_SERVER_URL=${CONFIG_SERVER_URL}
-      - ENCRYPTION_SECRET_KEY=${ENCRYPTION_SECRET_KEY}
-    networks:
-      - app-net
-    depends_on:
-      property-config-server:
-        condition: service_healthy
-      eureka-discovery-server:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
+      start_period: 30s
+
+  # =========================
+  # Frontend
+  # =========================
   e-commerce-fe:
-    build:
-      context: ./e-commerce-fe
-      dockerfile: ../docker/e-commerce-fe/Dockerfile
-    image: e-commerce-fe
+    image: rvarade/e-commerce-fe:${IMAGE_TAG:-latest}
+    container_name: e-commerce-fe
     ports:
       - "3001:3001"
     labels:
       app: e-commerce-fe
       env: local
-    depends_on:
-      - user-management-service
     networks:
       - app-net
+    depends_on:
+      user-management-service:
+        condition: service_started
+
+  # =========================
+  # PostgreSQL
+  # =========================
   postgres:
     image: postgres:15
     container_name: postgres
@@ -282,13 +309,18 @@ services:
       - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 10s
-      retries: 5
-      start_period: 10s
     networks:
       - app-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # =========================
+  # Flyway
+  # =========================
   flyway:
     image: flyway/flyway:10
     command: >
@@ -304,44 +336,79 @@ services:
       - ./flywaydb-scripts/src/main/resources/db/migration:/flyway/sql
     networks:
       - app-net
+
+  # =========================
+  # Nginx
+  # =========================
   nginx:
-    image: nginx
+    image: nginx:latest
+    container_name: nginx
     ports:
-      # Use 8080 on host (rootless Docker cannot bind to ports < 1024 like 80)
       - "8080:80"
     volumes:
-      - ./e-commerce-fe/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./e-commerce-fe/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
-      - user-management-service
+      user-management-service:
+        condition: service_started
     networks:
       - app-net
+
+  # =========================
+  # Loki
+  # =========================
   loki:
     image: grafana/loki:2.9.6
+    container_name: loki
     ports:
       - "3100:3100"
     networks:
       - app-net
     command: -config.file=/etc/loki/local-config.yaml
+
+  # =========================
+  # Grafana
+  # =========================
   grafana:
     image: grafana/grafana:10.2.3
+    container_name: grafana
     ports:
       - "3000:3000"
     networks:
       - app-net
     depends_on:
       - loki
+
+  # =========================
+  # Prometheus
+  # =========================
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - app-net
+
+  # =========================
+  # Promtail
+  # =========================
   promtail:
     image: grafana/promtail:2.9.6
+    container_name: promtail
     volumes:
-      # Bind-mount of /var/lib/docker/containers causes "permission denied" on Windows/Docker Desktop.
-      # Uncomment the line below on Linux if you need Promtail to read container logs from the host.
-      # - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - ./promtail-config.yml:/etc/promtail/config.yml
+      - ./promtail-config.yml:/etc/promtail/config.yml:ro
     command: -config.file=/etc/promtail/config.yml
     networks:
       - app-net
+
+  # =========================
+  # Zookeeper
+  # =========================
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
     ports:
@@ -349,11 +416,15 @@ services:
     networks:
       - app-net
 
+  # =========================
+  # Kafka
+  # =========================
   kafka:
     image: confluentinc/cp-kafka:7.5.0
     container_name: kafka
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_started
     ports:
       - "9092:9092"
     networks:
@@ -361,14 +432,11 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-
 
 volumes:
   pgdata:
