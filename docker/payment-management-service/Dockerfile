@@ -1,4 +1,4 @@
-FROM omsoft/common-base-image:1.0
+FROM omsoft/common-base-image:latest
 
 COPY payment-management-service/target/payment-management-service.jar payment-management-service.jar
 EXPOSE 8086

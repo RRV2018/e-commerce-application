@@ -1,4 +1,4 @@
-FROM omsoft/common-base-image:1.0
+FROM omsoft/common-base-image:latest
 
 COPY user-management-service/target/user-management-service.jar user-management-service.jar
 EXPOSE 8082

@@ -1,4 +1,4 @@
-FROM omsoft/common-base-image:1.0
+FROM omsoft/common-base-image:latest
 
 COPY eureka-discovery-server/target/eureka-discovery-server.jar eureka-discovery-server.jar
 EXPOSE 8761

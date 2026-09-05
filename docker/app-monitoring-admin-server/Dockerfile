@@ -1,4 +1,4 @@
-FROM omsoft/common-base-image:1.0
+FROM omsoft/common-base-image:latest
 
 COPY app-monitoring-admin-server/target/app-monitoring-admin-server.jar app-monitoring-admin-server.jar
 EXPOSE 8087

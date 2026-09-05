@@ -1,4 +1,4 @@
-FROM omsoft/common-base-image:1.0
+FROM omsoft/common-base-image:latest
 
 COPY product-catalog-service/target/product-catalog-service.jar product-catalog-service.jar
 EXPOSE 8083
