@@ -271,7 +271,6 @@ services:
       - app-net
   postgres:
     image: postgres:15
-    container_name: postgres
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
@@ -346,7 +345,6 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
-    container_name: kafka
     depends_on:
       - zookeeper
     ports:
